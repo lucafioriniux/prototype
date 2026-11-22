@@ -1,0 +1,75 @@
+export type DysonModel =
+  | 'All Models'
+  | 'Dyson V8 / V7'
+  | 'Dyson V10 Cyclone'
+  | 'Dyson V11 Torque'
+  | 'Dyson V12 Detect Slim'
+  | 'Dyson V15 Detect'
+  | 'Dyson Gen5detect'
+  | 'Dyson Outsize'
+
+export interface MaterialOption {
+  id: string
+  name: string
+  code: string
+  description: string
+  benefits: string[]
+  recommendedFor: string
+  priceMultiplier: number
+  durabilityRating: number // 1-5
+  flexibilityRating: number // 1-5
+}
+
+export interface FilamentColor {
+  id: string
+  name: string
+  hex: string
+  borderClass: string
+  bgClass: string
+  dysonMatch: string
+}
+
+export type InfillLevel = 'standard' | 'heavy' | 'solid'
+
+export interface InfillOption {
+  id: InfillLevel
+  name: string
+  percentage: number
+  description: string
+  timeMultiplier: number
+  priceOffset: number
+}
+
+export interface Product {
+  id: string
+  name: string
+  category: 'Docks & Storage' | 'Ergonomics' | 'Nozzles & Tips' | 'Adapters' | 'On-Board Storage' | 'Air & Filtration'
+  basePrice: number
+  rating: number
+  reviewsCount: number
+  summary: string
+  description: string
+  compatibleModels: DysonModel[]
+  incompatibleNotes?: string
+  printSpecs: {
+    weightGrams: number
+    printTimeMinutes: number
+    layerHeightMm: number
+    recommendedMaterial: string
+  }
+  badge?: string
+  features: string[]
+  iconType: 'mount' | 'trigger' | 'nozzle' | 'adapter' | 'clip' | 'carousel' | 'diffuser' | 'light'
+}
+
+export interface CartItem {
+  cartId: string
+  productId: string
+  product: Product
+  material: MaterialOption
+  color: FilamentColor
+  infill: InfillOption
+  selectedModel: DysonModel
+  quantity: number
+  unitPrice: number
+}
