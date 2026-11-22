@@ -1068,7 +1068,7 @@ export function App() {
 
                 <button
                   onClick={() => {
-                    const mockId = `DYS-${Math.floor(10000 + Math.random() * 90000)}`
+                    const mockId = `MOD-${Math.floor(10000 + Math.random() * 90000)}`
                     setOrderConfirmed({ id: mockId, total: orderTotal, count: cartTotalItems })
                     setCart([])
                     setIsCartOpen(false)

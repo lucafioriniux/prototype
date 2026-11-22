@@ -1,10 +1,10 @@
-# DysPrint 3D — Design & Accessibility Guidelines
+# Modus 3D — Design & Accessibility Guidelines
 *Additive Manufacturing Accessories & Replacement Parts for Dyson Systems*
 
 ---
 
 ## 1. Project Overview & Scope
-**DysPrint 3D** is a specialized direct-to-consumer and maker e-commerce platform designed for ordering precision 3D printed accessories, dock organizers, nozzle adapters, and ergonomic attachments for Dyson appliances—starting with cordless and upright vacuums, with future expansion to hair care (Supersonic/Airwrap) and air treatment (Purifier/Humidify).
+**Modus 3D** is a specialized direct-to-consumer and maker e-commerce platform designed for ordering precision 3D printed accessories, dock organizers, nozzle adapters, and ergonomic attachments for Dyson appliances—starting with cordless and upright vacuums, with future expansion to hair care (Supersonic/Airwrap) and air treatment (Purifier/Humidify).
 
 All user interfaces, design tokens, interaction models, and future builds under this project **must strictly adhere** to the guidelines outlined in this document.
 
