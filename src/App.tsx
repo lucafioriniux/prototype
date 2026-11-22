@@ -39,6 +39,7 @@ import {
   PRODUCTS
 } from './data/products'
 import { Logo } from './components/Logo'
+import { initiateCheckout } from './services/checkout'
 
 export function App() {
   // Theme state
@@ -56,7 +57,15 @@ export function App() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isModelFinderOpen, setIsModelFinderOpen] = useState(false)
   const [isGuidelinesOpen, setIsGuidelinesOpen] = useState(false)
-  const [orderConfirmed, setOrderConfirmed] = useState<{ id: string; total: number; count: number } | null>(null)
+  const [orderConfirmed, setOrderConfirmed] = useState<{
+    id: string
+    total: number
+    count: number
+    shipping: number
+    subtotal: number
+    payload?: any
+  } | null>(null)
+  const [showStripePayload, setShowStripePayload] = useState(false)
 
   // Customizer form state
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption>(MATERIALS[0])
@@ -1085,11 +1094,20 @@ export function App() {
                 </div>
 
                 <button
-                  onClick={() => {
-                    const mockId = `MOD-${Math.floor(10000 + Math.random() * 90000)}`
-                    setOrderConfirmed({ id: mockId, total: orderTotal, count: cartTotalItems })
-                    setCart([])
-                    setIsCartOpen(false)
+                  onClick={async () => {
+                    const result = await initiateCheckout(cart)
+                    if (result.orderSummary) {
+                      setOrderConfirmed({
+                        id: result.orderSummary.orderId,
+                        total: result.orderSummary.total,
+                        count: result.orderSummary.itemCount,
+                        subtotal: result.orderSummary.subtotal,
+                        shipping: result.orderSummary.shipping,
+                        payload: result.orderSummary.payload,
+                      })
+                      setCart([])
+                      setIsCartOpen(false)
+                    }
                   }}
                   className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
                 >
@@ -1255,18 +1273,47 @@ export function App() {
 
             <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left text-xs space-y-2">
               <div className="flex justify-between">
-                <span className="text-zinc-500">Facility:</span>
-                <span className="font-semibold text-zinc-900 dark:text-zinc-100">Prusa MK4 Farm #3 (Boston, MA)</span>
+                <span className="text-zinc-500">Order Subtotal:</span>
+                <span className="font-semibold text-zinc-900 dark:text-zinc-100">${orderConfirmed.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Layer Height:</span>
-                <span className="font-semibold text-zinc-900 dark:text-zinc-100">0.20mm Functional Precision</span>
+                <span className="text-zinc-500">Shipping:</span>
+                <span className="font-semibold text-zinc-900 dark:text-zinc-100">{orderConfirmed.shipping === 0 ? 'FREE' : `$${orderConfirmed.shipping.toFixed(2)}`}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">Facility:</span>
+                <span className="font-semibold text-zinc-900 dark:text-zinc-100">Prusa MK4 Farm #3 (Boston, MA)</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">Estimated Dispatch:</span>
                 <span className="font-semibold text-emerald-600 dark:text-emerald-400">Within 24–48 Hours</span>
               </div>
             </div>
+
+            {/* Expandable Stripe & Shipping Technical Inspection */}
+            {orderConfirmed.payload && (
+              <div className="text-left">
+                <button
+                  type="button"
+                  onClick={() => setShowStripePayload(!showStripePayload)}
+                  className="text-xs text-cyan-600 dark:text-cyan-400 font-semibold hover:underline flex items-center gap-1"
+                >
+                  <Cpu className="w-3.5 h-3.5" aria-hidden="true" />
+                  {showStripePayload ? 'Hide Stripe & Shipping Payload' : 'Inspect Production Stripe Payload'}
+                </button>
+
+                {showStripePayload && (
+                  <div className="mt-2 p-3 rounded-xl bg-zinc-900 text-zinc-300 font-mono text-[11px] overflow-x-auto max-h-48 border border-zinc-700 space-y-2">
+                    <div className="text-cyan-400 font-bold text-[10px] uppercase">
+                      ✓ Production Stripe Session & Line Items Formatted:
+                    </div>
+                    <pre className="text-[10px] leading-tight text-zinc-400 whitespace-pre-wrap">
+                      {JSON.stringify(orderConfirmed.payload, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            )}
 
             <button
               onClick={() => setOrderConfirmed(null)}
