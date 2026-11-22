@@ -15,7 +15,8 @@ import {
   Trash2,
   Plus,
   Minus,
-  Printer,
+  ShoppingCart,
+  CreditCard,
   FileText,
   CheckCircle2,
   Box,
@@ -601,7 +602,7 @@ export function App() {
                         className="flex-1 py-2.5 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 text-xs font-bold flex items-center justify-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
                         aria-label={`Configure and order ${product.name}`}
                       >
-                        <Printer className="w-3.5 h-3.5 text-cyan-400 dark:text-cyan-600" aria-hidden="true" />
+                        <ShoppingCart className="w-3.5 h-3.5 text-cyan-400 dark:text-cyan-600" aria-hidden="true" />
                         Configure & Order
                       </button>
                     </div>
@@ -1092,8 +1093,8 @@ export function App() {
                   }}
                   className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
                 >
-                  <Printer className="w-4 h-4" aria-hidden="true" />
-                  Dispatch Order to 3D Print Farm
+                  <CreditCard className="w-4 h-4" aria-hidden="true" />
+                  Place Order & Dispatch to Print Farm
                 </button>
               </div>
             )}
