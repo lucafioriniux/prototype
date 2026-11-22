@@ -37,6 +37,7 @@ import {
   INFILL_OPTIONS,
   PRODUCTS
 } from './data/products'
+import { Logo } from './components/Logo'
 
 export function App() {
   // Theme state
@@ -267,24 +268,7 @@ export function App() {
       <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
           {/* Logo & Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-700 dark:to-zinc-900 flex items-center justify-center text-cyan-400 border border-zinc-700 shadow-md">
-              <Printer className="w-5 h-5" aria-hidden="true" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-                  DYSPRINT<span className="text-cyan-500">3D</span>
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                  Precision Lab
-                </span>
-              </div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Engineered for Dyson Cordless & Upright Vacuums
-              </p>
-            </div>
-          </div>
+          <Logo size="md" />
 
           {/* Model Lock Selector (Global Header Tool) */}
           <div className="hidden lg:flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/80 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700/60">
@@ -679,11 +663,9 @@ export function App() {
       {/* Footer */}
       <footer className="mt-16 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-zinc-500 dark:text-zinc-400">
-          <div>
-            <p className="font-bold text-zinc-900 dark:text-zinc-200">
-              DYSPRINT 3D — Additive Engineering Lab
-            </p>
-            <p className="mt-0.5">
+          <div className="space-y-1">
+            <Logo size="sm" showTagline={false} />
+            <p className="mt-1">
               Not affiliated with Dyson Ltd. Dyson, V8, V10, V11, V12, V15, and Gen5detect are registered trademarks of Dyson Ltd.
             </p>
           </div>
