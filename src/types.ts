@@ -60,6 +60,7 @@ export interface Product {
   badge?: string
   features: string[]
   iconType: 'mount' | 'trigger' | 'nozzle' | 'adapter' | 'clip' | 'carousel' | 'diffuser' | 'light'
+  imageUrl: string
 }
 
 export interface CartItem {

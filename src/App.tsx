@@ -517,34 +517,37 @@ export function App() {
                     className="flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-lg transition-all duration-200"
                   >
                     <div>
-                      {/* Product Preview Header Box */}
-                      <div className="relative p-6 bg-gradient-to-br from-zinc-100 to-zinc-200/60 dark:from-zinc-800/60 dark:to-zinc-900/80 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-center min-h-[160px]">
+                      {/* Product Preview Header Image */}
+                      <div className="relative h-48 bg-zinc-900 overflow-hidden group/img">
+                        <img
+                          src={product.imageUrl.startsWith('http') ? product.imageUrl : `${import.meta.env.BASE_URL}${product.imageUrl}`}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-zinc-950/30 pointer-events-none" />
+
                         {/* Badges */}
                         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                           {product.badge && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs backdrop-blur-xs">
                               {product.badge}
                             </span>
                           )}
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/80 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700">
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
                             {product.category}
                           </span>
                         </div>
 
-                        {/* Visual Icon Illustration */}
-                        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-cyan-600 dark:text-cyan-400">
-                          <Layers className="w-10 h-10" aria-hidden="true" />
-                        </div>
-
                         {/* Model Compatibility Badge */}
-                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
+                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
                           {selectedModel !== 'All Models' && (
                             isCompatible ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800 text-[11px] font-semibold">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700 text-[11px] font-semibold backdrop-blur-xs">
                                 <Check className="w-3.5 h-3.5" aria-hidden="true" /> Guaranteed Fit
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 text-[11px] font-semibold">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700 text-[11px] font-semibold backdrop-blur-xs">
                                 <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" /> Incompatible with {selectedModel}
                               </span>
                             )
@@ -723,24 +726,38 @@ export function App() {
 
             {/* Modal Body */}
             <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-              {/* Live Render & Color Specimen */}
-              <div className="p-6 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex flex-col sm:flex-row items-center gap-6">
-                <div
-                  className="w-24 h-24 rounded-2xl flex items-center justify-center shadow-lg transition-colors duration-300"
-                  style={{ backgroundColor: selectedColor.hex }}
-                >
-                  <Layers className="w-12 h-12 text-white/90 drop-shadow" aria-hidden="true" />
-                </div>
-                <div className="flex-1 space-y-1 text-center sm:text-left">
-                  <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                    Active Filament Simulation
+              {/* Product Photograph & Live Filament Simulation */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="relative h-32 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-zinc-900">
+                  <img
+                    src={customizingProduct.imageUrl.startsWith('http') ? customizingProduct.imageUrl : `${import.meta.env.BASE_URL}${customizingProduct.imageUrl}`}
+                    alt={customizingProduct.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
+                  <span className="absolute bottom-2 left-3 text-[11px] font-semibold text-white/90">
+                    3D Print Geometry
                   </span>
-                  <h3 className="font-bold text-base text-zinc-900 dark:text-white">
-                    {selectedColor.name} ({selectedColor.dysonMatch})
-                  </h3>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    Engineered in {selectedMaterial.name} with {selectedInfill.name} infill structure.
-                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex items-center gap-4">
+                  <div
+                    className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-300 flex-shrink-0"
+                    style={{ backgroundColor: selectedColor.hex }}
+                  >
+                    <Layers className="w-8 h-8 text-white/90 drop-shadow" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0 space-y-0.5">
+                    <span className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-400 block truncate">
+                      Filament Preview
+                    </span>
+                    <h4 className="font-bold text-xs text-zinc-900 dark:text-white truncate">
+                      {selectedColor.name}
+                    </h4>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
+                      {selectedMaterial.name} ({selectedInfill.name})
+                    </p>
+                  </div>
                 </div>
               </div>
 

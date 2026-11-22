@@ -151,6 +151,7 @@ export const PRODUCTS: Product[] = [
       'Airflow bypass to prevent dust trapping',
     ],
     iconType: 'mount',
+    imageUrl: 'products/dyson_dual_mount_dock_hero_1795370778371.jpg',
   },
   {
     id: 'zero-fatigue-trigger-lock',
@@ -177,6 +178,7 @@ export const PRODUCTS: Product[] = [
       'Installs in 5 seconds with zero tools',
     ],
     iconType: 'trigger',
+    imageUrl: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'ultra-slim-tpu-crevice',
@@ -202,6 +204,7 @@ export const PRODUCTS: Product[] = [
       'Red quick-release release button integration',
     ],
     iconType: 'nozzle',
+    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'shopvac-universal-coupler',
@@ -225,6 +228,7 @@ export const PRODUCTS: Product[] = [
       'Tough reinforced collar ring to prevent splitting',
     ],
     iconType: 'adapter',
+    imageUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'wand-mounted-clip-caddy',
@@ -251,6 +255,7 @@ export const PRODUCTS: Product[] = [
       'Does not interfere with wall charging dock',
     ],
     iconType: 'clip',
+    imageUrl: 'https://images.unsplash.com/photo-1631553127988-348616238622?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'rotary-carousel-dock',
@@ -276,6 +281,7 @@ export const PRODUCTS: Product[] = [
       'Tactile detent stops at every 60° index',
     ],
     iconType: 'carousel',
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'exhaust-diffuser-scent-ring',
@@ -301,6 +307,7 @@ export const PRODUCTS: Product[] = [
       'Twist-lock engagement matching Dyson filter threads',
     ],
     iconType: 'diffuser',
+    imageUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'optic-dust-shroud',
@@ -326,5 +333,6 @@ export const PRODUCTS: Product[] = [
       'Snap retention tabs fit without tools',
     ],
     iconType: 'light',
+    imageUrl: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80',
   },
 ]
