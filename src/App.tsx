@@ -442,8 +442,8 @@ export function App() {
           <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-10">
-            {/* Hero Header, Intro Text & CTAs */}
-            <div className="max-w-3xl space-y-6">
+            {/* Hero Header & Intro Text */}
+            <div className="w-full space-y-6">
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-wider uppercase shadow-xs">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -460,7 +460,7 @@ export function App() {
                     Thoughtfully Designed. Precisely Made.
                   </span>
                 </h1>
-                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
                   Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Home & Cleaning</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Car Comfort</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
                 </p>
               </div>
@@ -479,7 +479,7 @@ export function App() {
               <div className="relative aspect-[16/9] w-full overflow-hidden">
                 <img
                   src={`${import.meta.env.BASE_URL}hero.jpg`}
-                  alt="Commercial studio showcase of Dyson vacuum systems, Supersonic hair dryers, and custom 3D printed accessories"
+                  alt="Independent precision 3D printing workshop with active CoreXY printers, CAD slicer workstation, and custom additive tool wall"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
                   loading="eager"
                 />
@@ -489,28 +489,28 @@ export function App() {
 
                 {/* Interactive Product & 3D Print Callout Badges */}
                 <div className="absolute top-4 left-4 z-10 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-xs font-medium backdrop-blur-md shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span>Dyson Cordless Wall Dock (PETG)</span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  <span>Active Print Bed • In-House CAD & Slicing</span>
                 </div>
 
                 <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-xs font-medium backdrop-blur-md shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  <span>Dyson Supersonic Desktop Cradle</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>Custom Additive Tooling & Storage</span>
                 </div>
 
                 <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-2 text-xs">
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 font-medium backdrop-blur-md shadow-md flex items-center gap-1.5">
                     <span className="text-cyan-400 font-bold">⚡</span>
-                    <span>0.20mm Micro-Layer FDM</span>
+                    <span>0.16mm - 0.20mm Micro-Layer FDM</span>
                   </span>
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-emerald-400 font-semibold backdrop-blur-md shadow-md flex items-center gap-1.5">
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>±0.15mm Calibrated Quick-Release</span>
+                    <span>±0.15mm Hand-Verified Tolerances</span>
                   </span>
                 </div>
 
                 <div className="absolute bottom-4 right-4 z-10 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300 text-xs backdrop-blur-md shadow-md">
-                  <span>Dyson OEM Matched Colors: Iron • Violet • Fuchsia</span>
+                  <span>Materials: High-Flow PLA • Impact PLA+ • 75°C PETG</span>
                 </div>
               </div>
             </div>
