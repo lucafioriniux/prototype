@@ -388,8 +388,10 @@ export function App() {
       </header>
 
       {/* Main Content Landmark */}
-      <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {/* Hero Section */}
+      <main id="main-content" className="flex-1 w-full space-y-8">
+        {/* Hero Section Container */}
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
+          {/* Hero Section */}
         {/* Hero Section with Cinematic Showcase, Rich Intro & Top Selling CTA */}
         <section
           aria-labelledby="hero-heading"
@@ -531,9 +533,25 @@ export function App() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+        </div>
 
-            {/* Bottom 4-Pillar Engineering & Trust Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-zinc-800">
+        {/* Full-Width 4-Pillar Engineering & Trust Stripe Directly Below Hero */}
+        <section
+          aria-label="Engineering guarantees and customer trust"
+          className="w-full bg-zinc-900 border-y border-zinc-800 relative overflow-hidden py-4 sm:py-5 shadow-inner text-white"
+        >
+          {/* Subtle Industrial Background Grid & Radial Glow */}
+          <div
+            className="absolute inset-0 opacity-15 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"
+            aria-hidden="true"
+          />
+          <div className="absolute -top-12 left-1/4 w-72 h-36 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+          <div className="absolute -bottom-12 right-1/4 w-72 h-36 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
                 <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                   <ShieldCheck className="w-5 h-5" aria-hidden="true" />
@@ -577,7 +595,9 @@ export function App() {
           </div>
         </section>
 
-        {/* Filter, Search & Compatibility Control Bar */}
+        {/* Catalog, Products & Additive Deep-Dive Container */}
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-8">
+          {/* Filter, Search & Compatibility Control Bar */}
         <section aria-labelledby="catalog-controls-heading" className="bg-white dark:bg-zinc-900 rounded-2xl p-4 sm:p-5 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
           <h2 id="catalog-controls-heading" className="sr-only">Product Search and Filter Controls</h2>
           
@@ -1000,6 +1020,7 @@ export function App() {
             </a>
           </div>
         </section>
+        </div>
       </main>
 
       {/* Footer */}
