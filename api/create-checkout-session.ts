@@ -27,7 +27,7 @@ export async function createStripeCheckoutSession(reqBody: CheckoutRequest, stri
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const Stripe = require('stripe')
   const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: '2023-10-16',
+    apiVersion: '2026-03-25.dahlia',
   })
 
   const subtotal = reqBody.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
@@ -54,36 +54,22 @@ export async function createStripeCheckoutSession(reqBody: CheckoutRequest, stri
   }))
 
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: lineItems,
+    ui_mode: 'form',
     mode: 'payment',
     billing_address_collection: 'auto',
+    phone_number_collection: {
+      enabled: false,
+    },
+    automatic_tax: {
+      enabled: false,
+    },
+    submit_type: 'pay',
     shipping_address_collection: {
-      allowed_countries: ['US', 'CA'],
+      allowed_countries: ['US'],
     },
-    shipping_options: [
-      {
-        shipping_rate_data: {
-          type: 'fixed_amount',
-          fixed_amount: {
-            amount: isFreeShipping ? 0 : 499,
-            currency: 'usd',
-          },
-          display_name: isFreeShipping ? 'Free Standard Shipping' : 'Standard Shipping (USPS Ground)',
-          delivery_estimate: {
-            minimum: { unit: 'business_day', value: 3 },
-            maximum: { unit: 'business_day', value: 5 },
-          },
-        },
-      },
-    ],
-    metadata: {
-      source: 'Modus 3D E-Commerce',
-      totalItems: reqBody.items.reduce((sum, i) => sum + i.quantity, 0).toString(),
-    },
-    success_url: reqBody.successUrl || 'https://lucafioriniux.github.io/prototype/?order=success&session_id={CHECKOUT_SESSION_ID}',
-    cancel_url: reqBody.cancelUrl || 'https://lucafioriniux.github.io/prototype/?order=cancelled',
+    integration_identifier: 'custom_embedded_web_0001',
+    line_items: lineItems,
   })
 
-  return session
+  return { client_secret: session.client_secret }
 }
