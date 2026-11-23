@@ -67,7 +67,7 @@ export function Logo({ className = '', showTagline = true, size = 'md' }: LogoPr
         </div>
         {showTagline && (
           <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium leading-tight mt-0.5">
-            Modular Additive Systems for Dyson
+            Thoughtfully Designed. Precisely Made.
           </span>
         )}
       </div>

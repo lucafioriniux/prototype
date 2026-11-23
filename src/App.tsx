@@ -418,14 +418,13 @@ export function App() {
 
               <div className="space-y-4">
                 <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
-                  Precision 3D Printed Accessories for Your{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200">
-                    Dyson
+                  Modus 3D
+                  <span className="block text-2xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
+                    Thoughtfully Designed. Precisely Made.
                   </span>
-                  .
                 </h1>
                 <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
-                  I design, 3D print, and hand-inspect every wall dock, adapter, and trigger lock right here in my workshop. While large corporations cut corners with brittle plastic and hide behind automated bots, you work directly with me. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with laser-verified <strong>±0.15mm</strong> click-fit detents.
+                  Precision 3D printed accessories for your Dyson—designed, printed, and hand-inspected right here in my workshop. While large corporations cut corners with brittle plastic and hide behind automated bots, you work directly with me. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with laser-verified <strong>±0.15mm</strong> click-fit detents.
                 </p>
               </div>
 
