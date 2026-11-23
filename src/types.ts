@@ -43,7 +43,15 @@ export interface InfillOption {
 export interface Product {
   id: string
   name: string
-  category: 'Docks & Storage' | 'Ergonomics' | 'Nozzles & Tips' | 'Adapters' | 'On-Board Storage' | 'Air & Filtration'
+  category:
+    | 'Wall Mounts & Docks'
+    | 'Docks & Storage'
+    | 'Nozzles & Kits'
+    | 'Nozzles & Tips'
+    | 'Ergonomics'
+    | 'Adapters'
+    | 'On-Board Storage'
+    | 'Air & Filtration'
   basePrice: number
   rating: number
   reviewsCount: number

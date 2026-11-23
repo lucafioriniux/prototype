@@ -247,7 +247,7 @@ export function App() {
   const orderTotal = cartSubtotal + shippingCost
 
   // Filter products
-  const categories = ['All', 'Docks & Storage', 'Ergonomics', 'Nozzles & Tips', 'Adapters', 'On-Board Storage', 'Air & Filtration']
+  const categories = ['All', ...Array.from(new Set(PRODUCTS.map((p) => p.category)))]
 
   const filteredProducts = PRODUCTS.filter(product => {
     // Model compatibility check
