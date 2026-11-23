@@ -405,101 +405,57 @@ export function App() {
           <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-10">
-            {/* Top Row: Hero Header, Intro Text & CTAs */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: Heading & Value Prop */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-wider uppercase shadow-xs">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+            {/* Hero Header, Intro Text & CTAs */}
+            <div className="max-w-3xl space-y-6">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-wider uppercase shadow-xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                Independent Solo Maker Workshop • Direct-to-Customer
+              </div>
+
+              <div className="space-y-4">
+                <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+                  Precision 3D Printed Accessories for Your{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200">
+                    Dyson
                   </span>
-                  <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                  Independent Solo Maker Workshop • Direct-to-Customer
-                </div>
+                  .
+                </h1>
+                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                  I design, 3D print, and hand-inspect every wall dock, adapter, and trigger lock right here in my workshop. While large corporations cut corners with brittle plastic and hide behind automated bots, you work directly with me. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with laser-verified <strong>±0.15mm</strong> click-fit detents.
+                </p>
+              </div>
 
-                <div className="space-y-4">
-                  <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
-                    Precision 3D Printed Accessories for Your{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200">
-                      Dyson
-                    </span>
-                    .
-                  </h1>
-                  <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
-                    I design, 3D print, and hand-inspect every wall dock, adapter, and trigger lock right here in my workshop. While large corporations cut corners with brittle plastic and hide behind automated bots, you work directly with me. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with laser-verified <strong>±0.15mm</strong> click-fit detents.
-                  </p>
-                </div>
-
-                {/* Capacity Safeguard & Human Touch Note */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-950/70 border border-zinc-800 text-xs text-zinc-300">
-                    <Gauge className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                    <span><strong>Protected Capacity:</strong> Daily order volume is capped so quality never slips and backorders never occur.</span>
-                  </div>
-                </div>
-
-                {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
-                <div className="flex flex-wrap items-center gap-3.5 pt-1">
-                  <a
-                    href="#products-heading"
-                    className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <ShoppingBag className="w-5 h-5 text-zinc-950" aria-hidden="true" />
-                    Explore Handcrafted Upgrades
-                    <ArrowRight className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-                  </a>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsModelFinderOpen(true)}
-                    className="px-5 py-4 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/80 font-semibold text-sm sm:text-base transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                  >
-                    <HelpCircle className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                    Identify My Dyson Model
-                  </button>
+              {/* Capacity Safeguard & Human Touch Note */}
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-950/70 border border-zinc-800 text-xs text-zinc-300">
+                  <Gauge className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                  <span><strong>Protected Capacity:</strong> Daily order volume is capped so quality never slips and backorders never occur.</span>
                 </div>
               </div>
 
-              {/* Right Column: Model Quick Filter Card */}
-              <div className="lg:col-span-5 bg-zinc-950/70 border border-zinc-800 rounded-2xl p-5 sm:p-6 backdrop-blur-md space-y-4">
-                <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-200 block">
-                      Filter by Your Dyson Model
-                    </span>
-                    <span className="text-[11px] text-zinc-400">Guaranteed fit detection & calibration</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-                    7 Models Ready
-                  </span>
-                </div>
+              {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-1">
+                <a
+                  href="#products-heading"
+                  className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <ShoppingBag className="w-5 h-5 text-zinc-950" aria-hidden="true" />
+                  Explore Handcrafted Upgrades
+                  <ArrowRight className="w-4 h-4 text-zinc-950" aria-hidden="true" />
+                </a>
 
-                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
-                  {DYSON_MODELS.map((model) => {
-                    const isSelected = selectedModel === model
-                    return (
-                      <button
-                        key={model}
-                        role="radio"
-                        aria-checked={isSelected}
-                        onClick={() => setSelectedModel(model)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
-                          isSelected
-                            ? 'bg-cyan-500 text-zinc-950 font-bold shadow-md shadow-cyan-500/25 ring-2 ring-cyan-400'
-                            : 'bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700/60'
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
-                        {model}
-                      </button>
-                    )
-                  })}
-                </div>
-
-                <p className="text-[11px] text-zinc-400 pt-1 leading-normal">
-                  Active filter displays all docks, adapters, and accessories verified to snap fit into your {selectedModel}.
-                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsModelFinderOpen(true)}
+                  className="px-5 py-4 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/80 font-semibold text-sm sm:text-base transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                >
+                  <HelpCircle className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                  Identify My Dyson Model
+                </button>
               </div>
             </div>
 
@@ -608,10 +564,11 @@ export function App() {
         {/* Catalog, Products & Additive Deep-Dive Container */}
         <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-8">
           {/* Filter, Search & Compatibility Control Bar */}
-        <section aria-labelledby="catalog-controls-heading" className="bg-white dark:bg-zinc-900 rounded-2xl p-4 sm:p-5 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
+        <section aria-labelledby="catalog-controls-heading" className="bg-white dark:bg-zinc-900 rounded-2xl p-4 sm:p-6 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
           <h2 id="catalog-controls-heading" className="sr-only">Product Search and Filter Controls</h2>
           
-          <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+          {/* Top Row: Search Input + Sorting + Help Diagnostic */}
+          <div className="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
             {/* Search Input */}
             <div className="relative flex-1">
               <label htmlFor={searchInputId} className="sr-only">Search Dyson 3D printed accessories</label>
@@ -628,29 +585,15 @@ export function App() {
                 <button
                   onClick={() => setSearchQuery('')}
                   aria-label="Clear search text"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-full"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-full cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               )}
             </div>
 
-            {/* Compatibility toggle & Sorting */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Only Compatible Toggle */}
-              {selectedModel !== 'All Models' && (
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700">
-                  <input
-                    type="checkbox"
-                    checked={onlyCompatible}
-                    onChange={(e) => setOnlyCompatible(e.target.checked)}
-                    className="w-4 h-4 rounded text-cyan-600 focus:ring-cyan-500 border-zinc-400"
-                  />
-                  <span>Only 100% Fit for {selectedModel}</span>
-                </label>
-              )}
-
-              {/* Sort By Select */}
+            {/* Quick Sort & Model Helper */}
+            <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <label htmlFor={sortSelectId} className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   Sort:
@@ -667,29 +610,105 @@ export function App() {
                   <option value="time">Fastest Print Time</option>
                 </select>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setIsModelFinderOpen(true)}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
+                title="Don't know your model? Take the quick 2-step diagnostic"
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+                <span>Find My Model</span>
+              </button>
             </div>
           </div>
 
-          {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Product categories">
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat
-              return (
-                <button
-                  key={cat}
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                    isActive
-                      ? 'bg-zinc-900 text-white dark:bg-cyan-500 dark:text-zinc-950 shadow-xs'
-                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              )
-            })}
+          {/* Middle Row: Filter by Dyson Model (Moved from Hero) */}
+          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+                  Filter by Your Dyson Model:
+                </span>
+                <span className="hidden sm:inline text-xs text-zinc-300 dark:text-zinc-600">•</span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  Guaranteed fit detection & calibration
+                </span>
+              </div>
+
+              {selectedModel !== 'All Models' && (
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                    <input
+                      type="checkbox"
+                      checked={onlyCompatible}
+                      onChange={(e) => setOnlyCompatible(e.target.checked)}
+                      className="w-3.5 h-3.5 rounded text-cyan-600 focus:ring-cyan-500 border-zinc-400"
+                    />
+                    <span>Only 100% Fit for {selectedModel}</span>
+                  </label>
+                  <button
+                    onClick={() => {
+                      setSelectedModel('All Models')
+                      setOnlyCompatible(false)
+                    }}
+                    className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer font-medium"
+                  >
+                    Reset
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Model Filter Pills */}
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
+              {DYSON_MODELS.map((model) => {
+                const isSelected = selectedModel === model
+                return (
+                  <button
+                    key={model}
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => setSelectedModel(model)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                      isSelected
+                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-xs ring-2 ring-cyan-400'
+                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/60'
+                    }`}
+                  >
+                    {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
+                    {model}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Bottom Row: Category Tabs */}
+          <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Product categories">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider hidden sm:inline mr-1">
+                Category:
+              </span>
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat
+                return (
+                  <button
+                    key={cat}
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                      isActive
+                        ? 'bg-zinc-900 text-white dark:bg-cyan-500 dark:text-zinc-950 shadow-xs'
+                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </section>
 
