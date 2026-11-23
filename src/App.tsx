@@ -803,7 +803,7 @@ export function App() {
                     </div>
 
                     {/* Product Card Footer */}
-                    <div className="p-5 pt-0 mt-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+                    <div className="p-5 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
                       <div>
                         <span className="text-[10px] text-zinc-500 uppercase font-semibold block">Base Price</span>
                         <span className="text-lg font-extrabold text-zinc-900 dark:text-white">
