@@ -348,57 +348,6 @@ export function App() {
           {/* Logo & Identity */}
           <Logo size="md" />
 
-          {/* Collection & Model Selector (Global Header Tool) */}
-          <div className="hidden lg:flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/80 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700/60">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-              Collection:
-            </span>
-            <select
-              value={activeCollection}
-              onChange={(e) => {
-                setActiveCollection(e.target.value as ProductCollection)
-                setSelectedCategory('All')
-              }}
-              aria-label="Select product collection"
-              className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-none focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded py-0.5 pr-2 cursor-pointer"
-            >
-              {COLLECTIONS.map((c) => (
-                <option key={c.id} value={c.id} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
-                  {c.label}
-                </option>
-              ))}
-            </select>
-
-            {activeCollection === 'Home & Cleaning' && (
-              <>
-                <span className="text-zinc-300 dark:text-zinc-600">|</span>
-                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                  Dyson:
-                </span>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value as DysonModel)}
-                  aria-label="Filter parts by Dyson vacuum model"
-                  className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-none focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded py-0.5 pr-2 cursor-pointer"
-                >
-                  {DYSON_MODELS.map((model) => (
-                    <option key={model} value={model} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
-                      {model}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => setIsModelFinderOpen(true)}
-                  className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium ml-1"
-                  title="Help identifying your model"
-                >
-                  <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                  Identify
-                </button>
-              </>
-            )}
-          </div>
-
           {/* Search, Theme, Cart Actions */}
           <div className="flex items-center gap-3">
             {/* Dark/Light Mode Switcher */}
