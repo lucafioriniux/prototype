@@ -1,4 +1,40 @@
-import type { Product, MaterialOption, FilamentColor, InfillOption, DysonModel } from '../types'
+import type { Product, MaterialOption, FilamentColor, InfillOption, DysonModel, ProductCollection } from '../types'
+
+export interface CollectionInfo {
+  id: ProductCollection
+  label: string
+  headline: string
+  description: string
+  subCollectionName?: string
+}
+
+export const COLLECTIONS: CollectionInfo[] = [
+  {
+    id: 'Home & Cleaning',
+    label: 'Home & Cleaning',
+    headline: 'Home & Cleaning Additive Systems',
+    description: 'Precision mounts, docks, and detailing accessories featuring the Dyson Additive Collection.',
+    subCollectionName: 'Dyson Precision Upgrades',
+  },
+  {
+    id: 'Workshop',
+    label: 'Workshop',
+    headline: 'Rugged Workshop & Tool Organizers',
+    description: 'Heavy-duty cordless tool battery wall docks, magnetic driver carousels, and airtight vac couplers.',
+  },
+  {
+    id: 'Gaming',
+    label: 'Gaming',
+    headline: 'Ergonomic Battlestation Accessories',
+    description: 'Under-desk stealth controller cradles, headphone rests, and low-friction cable anchors.',
+  },
+  {
+    id: 'Car Comfort',
+    label: 'Car Comfort',
+    headline: 'Automotive & Cockpit Mounts',
+    description: 'Heat-resistant 75°C PETG MagSafe vent mounts, modular console dividers, and visor cradles.',
+  },
+]
 
 export const DYSON_MODELS: DysonModel[] = [
   'All Models',
@@ -126,9 +162,14 @@ export const INFILL_OPTIONS: InfillOption[] = [
 ]
 
 export const PRODUCTS: Product[] = [
+  // ==========================================
+  // COLLECTION 1: HOME & CLEANING (DYSON PRECISION)
+  // ==========================================
   {
     id: 'accessory-storage-wall-mount',
     name: 'Quick-Release Accessory Storage Wall Mount',
+    collection: 'Home & Cleaning',
+    subCollection: 'Dyson Precision',
     category: 'Wall Mounts & Docks',
     basePrice: 16.5,
     rating: 4.95,
@@ -156,6 +197,8 @@ export const PRODUCTS: Product[] = [
   {
     id: 'v15-car-detailing-nozzle-set',
     name: 'Precision Car Cleaning Nozzle Kit (Dyson V15)',
+    collection: 'Home & Cleaning',
+    subCollection: 'Dyson Precision',
     category: 'Nozzles & Kits',
     basePrice: 24.0,
     rating: 4.9,
@@ -182,6 +225,8 @@ export const PRODUCTS: Product[] = [
   {
     id: 'zero-fatigue-trigger-lock',
     name: 'Zero-Fatigue Continuous Power Trigger Lock',
+    collection: 'Home & Cleaning',
+    subCollection: 'Dyson Precision',
     category: 'Ergonomics',
     basePrice: 9.0,
     rating: 4.85,
@@ -209,6 +254,8 @@ export const PRODUCTS: Product[] = [
   {
     id: 'on-wand-dual-caddy',
     name: 'On-Wand Dual Accessory Carrying Caddy (Fits 4 Tools)',
+    collection: 'Home & Cleaning',
+    subCollection: 'Dyson Precision',
     category: 'On-Board Storage',
     basePrice: 16.0,
     rating: 4.9,
@@ -232,5 +279,199 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'clip',
     imageUrl: 'products/on-wand-carrying-caddy-4-tools.jpg',
+  },
+
+  // ==========================================
+  // COLLECTION 2: WORKSHOP
+  // ==========================================
+  {
+    id: 'tool-battery-wall-mount',
+    name: 'Heavy-Duty Cordless Tool & Battery Wall Mount',
+    collection: 'Workshop',
+    category: 'Tool Storage',
+    basePrice: 18.0,
+    rating: 4.95,
+    reviewsCount: 84,
+    summary: 'Lockable under-shelf or wall dock for 18V/20V cordless power tool batteries and drills with secure slide-latch retention.',
+    description: 'Engineered in tough heat-resistant PETG to survive dusty, hot shop environments. Heavy-duty detents click into place with genuine tool pack friction, keeping your bench clear and batteries organized.',
+    compatibleModels: ['Universal Workshop', 'Milwaukee M18', 'DeWalt 20V Max', 'Makita 18V LXT'],
+    printSpecs: {
+      weightGrams: 85,
+      printTimeMinutes: 240,
+      layerHeightMm: 0.2,
+      recommendedMaterial: 'PETG',
+    },
+    badge: 'High Load PETG',
+    features: [
+      'Tested to support 25+ lbs of suspended weight',
+      'Reinforced keyhole mounting channels',
+      '75°C heat deflection for hot workshops',
+    ],
+    iconType: 'mount',
+    imageUrl: 'products/accessory-storage-wall-mount.jpg',
+  },
+  {
+    id: 'magnetic-bit-hex-carousel',
+    name: '360° Magnetic Hex Bit & Driver Carousel',
+    collection: 'Workshop',
+    category: 'Organizers',
+    basePrice: 15.5,
+    rating: 4.85,
+    reviewsCount: 59,
+    summary: 'Compact rotating desktop organizer with embedded neodymium magnets holding up to 36 1/4" hex driver bits.',
+    description: 'Keep your most-used impact driver bits, torx drives, and sockets right at your fingertips with a satisfying magnetic click and smooth 360° rotation.',
+    compatibleModels: ['Universal Workshop', '1/4" Hex Standard'],
+    printSpecs: {
+      weightGrams: 75,
+      printTimeMinutes: 190,
+      layerHeightMm: 0.2,
+      recommendedMaterial: 'PLA+',
+    },
+    badge: 'Neodymium Core',
+    features: [
+      'Houses 36 standard 1/4" hex driver bits',
+      'Embedded N52 neodymium magnets prevent spills',
+      'Weighted anti-skid base ring',
+    ],
+    iconType: 'carousel',
+    imageUrl: 'products/car-cleaning-nozzle-kit-v15.jpg',
+  },
+  {
+    id: 'shopvac-universal-coupler',
+    name: 'Universal Stepped Shop-Vac to Tool Hose Coupler',
+    collection: 'Workshop',
+    category: 'Dust Collection',
+    basePrice: 14.5,
+    rating: 4.9,
+    reviewsCount: 92,
+    summary: 'Multi-tiered airtight adapter connecting shop extractors (Rigid, Festool, DeWalt) to palm sanders and miter dust ports.',
+    description: 'Eliminate makeshift duct tape adapters. Calibrated 1.5° locking tapers fit 1-1/4", 1-7/8", and 2-1/2" vacuum hoses with zero suction loss.',
+    compatibleModels: ['Universal Workshop', 'Festool', 'DeWalt', 'Rigid 2.5"'],
+    printSpecs: {
+      weightGrams: 52,
+      printTimeMinutes: 125,
+      layerHeightMm: 0.2,
+      recommendedMaterial: 'PETG',
+    },
+    badge: 'Airtight Seal',
+    features: [
+      'Stepped multi-diameter collar fits 32mm to 64mm ports',
+      'Tough ribbed sleeve prevents collapse under heavy vacuum',
+      'Airtight internal taper',
+    ],
+    iconType: 'adapter',
+    imageUrl: 'products/zero-fatigue-trigger-lock.jpg',
+  },
+
+  // ==========================================
+  // COLLECTION 3: GAMING
+  // ==========================================
+  {
+    id: 'underdesk-dual-headphone-controller-cradle',
+    name: 'Under-Desk Dual Headset & Controller Stealth Cradle',
+    collection: 'Gaming',
+    category: 'Desk Setup',
+    basePrice: 19.0,
+    rating: 4.95,
+    reviewsCount: 142,
+    summary: 'Low-profile under-desk bracket that cradles your audiophile headset and wireless controller out of sight.',
+    description: 'Declutter your battlestation. Features a curved silicone-friendly headset rest to prevent headband creasing and a contoured cradle that fits Xbox, PlayStation, and Pro controllers perfectly.',
+    compatibleModels: ['Universal Gaming', 'Xbox Series X/S', 'PlayStation 5 DualSense', 'Nintendo Switch Pro'],
+    printSpecs: {
+      weightGrams: 88,
+      printTimeMinutes: 230,
+      layerHeightMm: 0.2,
+      recommendedMaterial: 'PLA+',
+    },
+    badge: 'Zero Desk Clutter',
+    features: [
+      'Dual cradles for 1 headset and 1 controller',
+      'Integrated cable pass-through channel for charging',
+      'Includes pre-drilled screw points and heavy-duty 3M VHB tape',
+    ],
+    iconType: 'clip',
+    imageUrl: 'products/on-wand-carrying-caddy-4-tools.jpg',
+  },
+  {
+    id: 'low-friction-mouse-bungee',
+    name: 'Precision Low-Friction Mouse Bungee & Cord Anchor',
+    collection: 'Gaming',
+    category: 'Peripherals',
+    basePrice: 12.5,
+    rating: 4.8,
+    reviewsCount: 67,
+    summary: 'Weighted desk anchor with flexible cord spring channel providing zero-drag wireless feel for competitive gaming mice.',
+    description: 'Engineered to eliminate cable drag and snag against desk edges during rapid mouse sweeps. Low-profile footprint with textured silicone feet.',
+    compatibleModels: ['Universal Gaming', 'All Braided & Rubber Cables'],
+    printSpecs: {
+      weightGrams: 45,
+      printTimeMinutes: 95,
+      layerHeightMm: 0.16,
+      recommendedMaterial: 'PLA+',
+    },
+    badge: 'Zero Drag',
+    features: [
+      'Elevates cable 45mm above mousepad surface',
+      'Universal snap-fit cable channel',
+      'Compact non-slip desk footprint',
+    ],
+    iconType: 'nozzle',
+    imageUrl: 'products/zero-fatigue-trigger-lock.jpg',
+  },
+
+  // ==========================================
+  // COLLECTION 4: CAR COMFORT
+  // ==========================================
+  {
+    id: 'magsafe-lowprofile-vent-mount',
+    name: 'Low-Profile MagSafe Vent Mount & Hidden Cable Guide',
+    collection: 'Car Comfort',
+    category: 'Cockpit Mounts',
+    basePrice: 18.5,
+    rating: 4.9,
+    reviewsCount: 113,
+    summary: 'Heat-resistant PETG car vent cradle designed specifically for official Apple MagSafe pucks with integrated cable concealment.',
+    description: 'Standard phone mounts shake and fall off air vents. This precision-calibrated clamp grips vent louvers with screw-tightened mechanical tension. Printed in 75°C heat-resistant PETG so it never sags or melts on hot summer dashboards.',
+    compatibleModels: ['Universal Vehicle', 'Apple MagSafe Qi2', 'Horizontal & Vertical Vents'],
+    printSpecs: {
+      weightGrams: 36,
+      printTimeMinutes: 110,
+      layerHeightMm: 0.18,
+      recommendedMaterial: 'PETG',
+    },
+    badge: '75°C Heat Proof',
+    features: [
+      'Printed in 75°C automotive PETG to prevent dashboard heat sag',
+      'Fits standard 55mm MagSafe charging pucks snug with zero adhesive',
+      'Concealed channel routes USB-C cord cleanly behind dash',
+    ],
+    iconType: 'mount',
+    imageUrl: 'products/car-cleaning-nozzle-kit-v15.jpg',
+  },
+  {
+    id: 'modular-center-console-divider',
+    name: 'Modular Center Console Multi-Level Storage Grid',
+    collection: 'Car Comfort',
+    category: 'Interior Organization',
+    basePrice: 15.0,
+    rating: 4.85,
+    reviewsCount: 78,
+    summary: 'Interlocking modular dividers that turn cavernous center consoles into dedicated compartments for keys, cards, and sunglasses.',
+    description: 'Stop digging through a black hole of loose receipts and cables. Snaps together in customized layouts with soft rounded top bevels that never scratch hands or devices.',
+    compatibleModels: ['Universal Vehicle', 'Midsize & Full-Size Consoles'],
+    printSpecs: {
+      weightGrams: 64,
+      printTimeMinutes: 165,
+      layerHeightMm: 0.2,
+      recommendedMaterial: 'PETG',
+    },
+    badge: 'Modular Fit',
+    features: [
+      'Interlocking modular grid customizable to console width',
+      'Card slot and coin organizer inserts',
+      'Heat resistant to prevent warping',
+    ],
+    iconType: 'carousel',
+    imageUrl: 'products/accessory-storage-wall-mount.jpg',
   },
 ]

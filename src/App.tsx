@@ -25,7 +25,11 @@ import {
   RotateCcw,
   UserCheck,
   HeartHandshake,
-  Gauge
+  Gauge,
+  Home,
+  Wrench,
+  Gamepad2,
+  Car
 } from 'lucide-react'
 import type {
   DysonModel,
@@ -33,14 +37,16 @@ import type {
   MaterialOption,
   FilamentColor,
   InfillOption,
-  CartItem
+  CartItem,
+  ProductCollection
 } from './types'
 import {
   DYSON_MODELS,
   MATERIALS,
   FILAMENT_COLORS,
   INFILL_OPTIONS,
-  PRODUCTS
+  PRODUCTS,
+  COLLECTIONS
 } from './data/products'
 import { Logo } from './components/Logo'
 import { initiateCheckout } from './services/checkout'
@@ -53,7 +59,8 @@ export function App() {
     return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
   })
 
-  // Dyson Model Filter state
+  // Collection and Dyson Model Filter state
+  const [activeCollection, setActiveCollection] = useState<ProductCollection>('Home & Cleaning')
   const [selectedModel, setSelectedModel] = useState<DysonModel>('Dyson V15 Detect')
   const [onlyCompatible, setOnlyCompatible] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
@@ -207,6 +214,11 @@ export function App() {
   const handleAddToCart = () => {
     if (!customizingProduct) return
     const unitPrice = calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill)
+    const modelForCart =
+      customizingProduct.collection === 'Home & Cleaning'
+        ? (selectedModel === 'All Models' ? 'Dyson V15 Detect' : selectedModel)
+        : (customizingProduct.compatibleModels[0] || 'Universal Standard')
+
     const newItem: CartItem = {
       cartId: `cart-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       productId: customizingProduct.id,
@@ -214,7 +226,7 @@ export function App() {
       material: selectedMaterial,
       color: selectedColor,
       infill: selectedInfill,
-      selectedModel: selectedModel === 'All Models' ? 'Dyson V15 Detect' : selectedModel,
+      selectedModel: modelForCart,
       quantity: customQuantity,
       unitPrice,
     }
@@ -246,12 +258,13 @@ export function App() {
   const shippingCost = cartTotalItems === 0 ? 0 : freeShippingMet ? 0 : 4.99
   const orderTotal = cartSubtotal + shippingCost
 
-  // Filter products
-  const categories = ['All', ...Array.from(new Set(PRODUCTS.map((p) => p.category)))]
+  // Filter products by active collection
+  const collectionProducts = PRODUCTS.filter((p) => p.collection === activeCollection)
+  const categories = ['All', ...Array.from(new Set(collectionProducts.map((p) => p.category)))]
 
-  const filteredProducts = PRODUCTS.filter(product => {
-    // Model compatibility check
-    if (selectedModel !== 'All Models') {
+  const filteredProducts = collectionProducts.filter(product => {
+    // Model compatibility check (active only when in Home & Cleaning)
+    if (activeCollection === 'Home & Cleaning' && selectedModel !== 'All Models') {
       const isCompatible = product.compatibleModels.includes(selectedModel)
       if (onlyCompatible && !isCompatible) return false
     }
@@ -335,31 +348,55 @@ export function App() {
           {/* Logo & Identity */}
           <Logo size="md" />
 
-          {/* Model Lock Selector (Global Header Tool) */}
+          {/* Collection & Model Selector (Global Header Tool) */}
           <div className="hidden lg:flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/80 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700/60">
             <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-              Your Dyson:
+              Collection:
             </span>
             <select
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value as DysonModel)}
-              aria-label="Filter parts by Dyson vacuum model"
+              value={activeCollection}
+              onChange={(e) => {
+                setActiveCollection(e.target.value as ProductCollection)
+                setSelectedCategory('All')
+              }}
+              aria-label="Select product collection"
               className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-none focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded py-0.5 pr-2 cursor-pointer"
             >
-              {DYSON_MODELS.map((model) => (
-                <option key={model} value={model} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
-                  {model}
+              {COLLECTIONS.map((c) => (
+                <option key={c.id} value={c.id} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
+                  {c.label}
                 </option>
               ))}
             </select>
-            <button
-              onClick={() => setIsModelFinderOpen(true)}
-              className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium ml-1"
-              title="Help identifying your model"
-            >
-              <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
-              Identify
-            </button>
+
+            {activeCollection === 'Home & Cleaning' && (
+              <>
+                <span className="text-zinc-300 dark:text-zinc-600">|</span>
+                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                  Dyson:
+                </span>
+                <select
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value as DysonModel)}
+                  aria-label="Filter parts by Dyson vacuum model"
+                  className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-none focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded py-0.5 pr-2 cursor-pointer"
+                >
+                  {DYSON_MODELS.map((model) => (
+                    <option key={model} value={model} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
+                      {model}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => setIsModelFinderOpen(true)}
+                  className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium ml-1"
+                  title="Help identifying your model"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                  Identify
+                </button>
+              </>
+            )}
           </div>
 
           {/* Search, Theme, Cart Actions */}
@@ -424,7 +461,7 @@ export function App() {
                   </span>
                 </h1>
                 <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
-                  Precision 3D printed accessories for your Dyson—designed, printed, and hand-inspected right here in my workshop. While large corporations cut corners with brittle plastic and hide behind automated bots, you work directly with me. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with laser-verified <strong>±0.15mm</strong> click-fit detents.
+                  Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Home & Cleaning</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Car Comfort</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
                 </p>
               </div>
 
@@ -561,7 +598,90 @@ export function App() {
         </section>
 
         {/* Catalog, Products & Additive Deep-Dive Container */}
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-8">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-6">
+          {/* Lifestyle Collections Switcher Bar */}
+          <section aria-labelledby="collections-heading" className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1.5 px-1">
+              <div>
+                <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 tracking-wider uppercase">
+                  Lifestyle Collections
+                </span>
+                <h2 id="collections-heading" className="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-white">
+                  Explore Systems by Environment
+                </h2>
+              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Click to switch collections • Hand-calibrated for each application
+              </p>
+            </div>
+
+            {/* 4-way tactile segmented button grid */}
+            <div
+              role="tablist"
+              aria-label="Product collections"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 p-1.5 rounded-2xl bg-zinc-200/80 dark:bg-zinc-900/90 border border-zinc-300/80 dark:border-zinc-800 shadow-inner"
+            >
+              {COLLECTIONS.map((col) => {
+                const isActive = activeCollection === col.id
+                const count = PRODUCTS.filter((p) => p.collection === col.id).length
+                const IconComponent =
+                  col.id === 'Home & Cleaning'
+                    ? Home
+                    : col.id === 'Workshop'
+                    ? Wrench
+                    : col.id === 'Gaming'
+                    ? Gamepad2
+                    : Car
+
+                return (
+                  <button
+                    key={col.id}
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => {
+                      setActiveCollection(col.id)
+                      setSelectedCategory('All')
+                    }}
+                    className={`group relative flex items-center gap-3 p-3 sm:p-3.5 rounded-xl transition-all duration-200 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                      isActive
+                        ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-md ring-1 ring-zinc-300 dark:ring-zinc-700/80 scale-[1.01]'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-800/50'
+                    }`}
+                  >
+                    <div
+                      className={`p-2 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-cyan-500 text-zinc-950 font-bold shadow-xs'
+                          : 'bg-zinc-100 dark:bg-zinc-950/60 text-zinc-500 dark:text-zinc-400 group-hover:text-cyan-500'
+                      }`}
+                    >
+                      <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-bold text-xs sm:text-sm truncate">
+                          {col.label}
+                        </span>
+                        <span
+                          className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                            isActive
+                              ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
+                              : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
+                          }`}
+                        >
+                          {count}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate hidden sm:block">
+                        {col.id === 'Home & Cleaning' ? 'Dyson Upgrades' : col.headline.replace(/^Rugged |^Ergonomic |^Automotive & /, '')}
+                      </p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+
           {/* Filter, Search & Compatibility Control Bar */}
         <section aria-labelledby="catalog-controls-heading" className="bg-white dark:bg-zinc-900 rounded-2xl p-4 sm:p-6 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
           <h2 id="catalog-controls-heading" className="sr-only">Product Search and Filter Controls</h2>
@@ -570,14 +690,14 @@ export function App() {
           <div className="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
             {/* Search Input */}
             <div className="relative flex-1">
-              <label htmlFor={searchInputId} className="sr-only">Search Dyson 3D printed accessories</label>
+              <label htmlFor={searchInputId} className="sr-only">Search 3D printed accessories</label>
               <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
               <input
                 id={searchInputId}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search accessories (e.g. wall dock, trigger lock, TPU nozzle)..."
+                placeholder={activeCollection === 'Home & Cleaning' ? 'Search accessories (e.g. wall mount, car nozzle, trigger lock)...' : `Search ${activeCollection} accessories...`}
                 className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-sm text-zinc-900 dark:text-zinc-100 border border-transparent focus:border-cyan-500 focus:bg-white dark:focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
               />
               {searchQuery && (
@@ -610,78 +730,94 @@ export function App() {
                 </select>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsModelFinderOpen(true)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
-                title="Don't know your model? Take the quick 2-step diagnostic"
-              >
-                <HelpCircle className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
-                <span>Find My Model</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Middle Row: Filter by Dyson Model (Moved from Hero) */}
-          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
-                  Filter by Your Dyson Model:
-                </span>
-                <span className="hidden sm:inline text-xs text-zinc-300 dark:text-zinc-600">•</span>
-                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                  Guaranteed fit detection & calibration
-                </span>
-              </div>
-
-              {selectedModel !== 'All Models' && (
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                    <input
-                      type="checkbox"
-                      checked={onlyCompatible}
-                      onChange={(e) => setOnlyCompatible(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded text-cyan-600 focus:ring-cyan-500 border-zinc-400"
-                    />
-                    <span>Only 100% Fit for {selectedModel}</span>
-                  </label>
-                  <button
-                    onClick={() => {
-                      setSelectedModel('All Models')
-                      setOnlyCompatible(false)
-                    }}
-                    className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer font-medium"
-                  >
-                    Reset
-                  </button>
-                </div>
+              {activeCollection === 'Home & Cleaning' && (
+                <button
+                  type="button"
+                  onClick={() => setIsModelFinderOpen(true)}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
+                  title="Don't know your model? Take the quick 2-step diagnostic"
+                >
+                  <HelpCircle className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+                  <span>Find My Model</span>
+                </button>
               )}
             </div>
-
-            {/* Model Filter Pills */}
-            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
-              {DYSON_MODELS.map((model) => {
-                const isSelected = selectedModel === model
-                return (
-                  <button
-                    key={model}
-                    role="radio"
-                    aria-checked={isSelected}
-                    onClick={() => setSelectedModel(model)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                      isSelected
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-xs ring-2 ring-cyan-400'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/60'
-                    }`}
-                  >
-                    {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
-                    {model}
-                  </button>
-                )
-              })}
-            </div>
           </div>
+
+          {/* Middle Row: Filter by Dyson Model (Conditional when Home & Cleaning is active) */}
+          {activeCollection === 'Home & Cleaning' ? (
+            <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+                    Filter by Your Dyson Model:
+                  </span>
+                  <span className="hidden sm:inline text-xs text-zinc-300 dark:text-zinc-600">•</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                    Guaranteed fit detection & calibration
+                  </span>
+                </div>
+
+                {selectedModel !== 'All Models' && (
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                      <input
+                        type="checkbox"
+                        checked={onlyCompatible}
+                        onChange={(e) => setOnlyCompatible(e.target.checked)}
+                        className="w-3.5 h-3.5 rounded text-cyan-600 focus:ring-cyan-500 border-zinc-400"
+                      />
+                      <span>Only 100% Fit for {selectedModel}</span>
+                    </label>
+                    <button
+                      onClick={() => {
+                        setSelectedModel('All Models')
+                        setOnlyCompatible(false)
+                      }}
+                      className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer font-medium"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Model Filter Pills */}
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
+                {DYSON_MODELS.map((model) => {
+                  const isSelected = selectedModel === model
+                  return (
+                    <button
+                      key={model}
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => setSelectedModel(model)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                        isSelected
+                          ? 'bg-cyan-500 text-zinc-950 font-bold shadow-xs ring-2 ring-cyan-400'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/60'
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
+                      {model}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                <span className="font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+                  {COLLECTIONS.find((c) => c.id === activeCollection)?.headline}
+                </span>
+                <span className="hidden sm:inline text-zinc-300 dark:text-zinc-600">•</span>
+                <span className="hidden sm:inline">
+                  {COLLECTIONS.find((c) => c.id === activeCollection)?.description}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Bottom Row: Category Tabs */}
           <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-3">
@@ -715,13 +851,13 @@ export function App() {
         <section aria-labelledby="products-heading" className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 id="products-heading" className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <span>Catalog</span>
+              <span>{activeCollection} Catalog</span>
               <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">
                 ({filteredProducts.length} items available)
               </span>
             </h2>
 
-            {selectedModel !== 'All Models' && (
+            {activeCollection === 'Home & Cleaning' && selectedModel !== 'All Models' && (
               <span className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
                 Active Model Filter: <strong className="text-zinc-800 dark:text-zinc-200">{selectedModel}</strong>
@@ -784,7 +920,7 @@ export function App() {
 
                         {/* Model Compatibility Badge */}
                         <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
-                          {selectedModel !== 'All Models' && (
+                          {activeCollection === 'Home & Cleaning' && selectedModel !== 'All Models' ? (
                             isCompatible ? (
                               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700 text-[11px] font-semibold backdrop-blur-xs">
                                 <Check className="w-3.5 h-3.5" aria-hidden="true" /> Guaranteed Fit
@@ -794,6 +930,10 @@ export function App() {
                                 <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" /> Incompatible with {selectedModel}
                               </span>
                             )
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-950/80 text-zinc-300 border border-zinc-700 text-[11px] font-medium backdrop-blur-xs">
+                              {product.compatibleModels[0]}
+                            </span>
                           )}
                         </div>
                       </div>

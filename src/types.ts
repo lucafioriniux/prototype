@@ -40,24 +40,20 @@ export interface InfillOption {
   priceOffset: number
 }
 
+export type ProductCollection = 'Home & Cleaning' | 'Workshop' | 'Gaming' | 'Car Comfort'
+
 export interface Product {
   id: string
   name: string
-  category:
-    | 'Wall Mounts & Docks'
-    | 'Docks & Storage'
-    | 'Nozzles & Kits'
-    | 'Nozzles & Tips'
-    | 'Ergonomics'
-    | 'Adapters'
-    | 'On-Board Storage'
-    | 'Air & Filtration'
+  collection: ProductCollection
+  subCollection?: string
+  category: string
   basePrice: number
   rating: number
   reviewsCount: number
   summary: string
   description: string
-  compatibleModels: DysonModel[]
+  compatibleModels: string[]
   incompatibleNotes?: string
   printSpecs: {
     weightGrams: number
@@ -67,7 +63,7 @@ export interface Product {
   }
   badge?: string
   features: string[]
-  iconType: 'mount' | 'trigger' | 'nozzle' | 'adapter' | 'clip' | 'carousel' | 'diffuser' | 'light'
+  iconType: string
   imageUrl: string
 }
 
@@ -78,7 +74,7 @@ export interface CartItem {
   material: MaterialOption
   color: FilamentColor
   infill: InfillOption
-  selectedModel: DysonModel
+  selectedModel: DysonModel | string
   quantity: number
   unitPrice: number
 }
