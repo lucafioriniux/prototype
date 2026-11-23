@@ -472,27 +472,6 @@ export function App() {
                   <span><strong>Protected Capacity:</strong> Daily order volume is capped so quality never slips and backorders never occur.</span>
                 </div>
               </div>
-
-              {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-1">
-                <a
-                  href="#products-heading"
-                  className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <ShoppingBag className="w-5 h-5 text-zinc-950" aria-hidden="true" />
-                  Explore Handcrafted Upgrades
-                  <ArrowRight className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-                </a>
-
-                <button
-                  type="button"
-                  onClick={() => setIsModelFinderOpen(true)}
-                  className="px-5 py-4 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/80 font-semibold text-sm sm:text-base transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                >
-                  <HelpCircle className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                  Identify My Dyson Model
-                </button>
-              </div>
             </div>
 
             {/* Cinematic High Quality Hero Image Showcase Container (16:9) */}
