@@ -5,7 +5,6 @@ import {
   X,
   ShoppingBag,
   Search,
-  Sparkles,
   ShieldCheck,
   AlertCircle,
   Moon,
@@ -24,8 +23,9 @@ import {
   Box,
   Cpu,
   RotateCcw,
-  Truck,
-  Star
+  UserCheck,
+  HeartHandshake,
+  Gauge
 } from 'lucide-react'
 import type {
   DysonModel,
@@ -305,19 +305,20 @@ export function App() {
       <div className="bg-zinc-900 text-zinc-300 text-xs py-2 px-4 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5 text-cyan-400 font-medium">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-            100% Fit Guarantee & Free Replacement
+            <UserCheck className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+            Independent Solo Workshop • Hand-Calibrated & Inspected
           </span>
           <span className="hidden md:inline text-zinc-600">|</span>
           <span className="hidden md:inline text-zinc-400">
-            Precision Additive Manufacturing (PETG / Tough PLA+ / TPU 95A)
+            Work directly with the maker • Protected batch queue (zero backorders)
           </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-            WCAG 2.1 AA Compliant
+            Workshop Queue: Open (Orders Capped Daily for Quality)
           </span>
+          <span className="hidden sm:inline text-zinc-600">|</span>
           <button
             onClick={() => setIsGuidelinesOpen(true)}
             className="text-zinc-400 hover:text-white flex items-center gap-1 underline underline-offset-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded px-1"
@@ -413,8 +414,8 @@ export function App() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                   </span>
-                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                  Additive Engineering Lab • 2026 Fleet Edition
+                  <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                  Independent Solo Maker Workshop • Direct-to-Customer
                 </div>
 
                 <div className="space-y-4">
@@ -426,8 +427,16 @@ export function App() {
                     .
                   </h1>
                   <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
-                    Engineered to eliminate factory limitations. From heavy-duty dual wall docks and zero-hand-fatigue trigger locks to shop-vac adapters and Supersonic desktop cradles—manufactured on-demand in <strong>PLA, PLA+, and heat-resistant PETG</strong> with calibrated <strong>±0.15mm</strong> snap-fit detents.
+                    I design, 3D print, and hand-inspect every wall dock, adapter, and trigger lock right here in my workshop. While large corporations cut corners with brittle plastic and hide behind automated bots, you work directly with me. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with laser-verified <strong>±0.15mm</strong> click-fit detents.
                   </p>
+                </div>
+
+                {/* Capacity Safeguard & Human Touch Note */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-950/70 border border-zinc-800 text-xs text-zinc-300">
+                    <Gauge className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                    <span><strong>Protected Capacity:</strong> Daily order volume is capped so quality never slips and backorders never occur.</span>
+                  </div>
                 </div>
 
                 {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
@@ -437,7 +446,7 @@ export function App() {
                     className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <ShoppingBag className="w-5 h-5 text-zinc-950" aria-hidden="true" />
-                    Explore Top Selling Products
+                    Explore Handcrafted Upgrades
                     <ArrowRight className="w-4 h-4 text-zinc-950" aria-hidden="true" />
                   </a>
 
@@ -558,8 +567,8 @@ export function App() {
                   <ShieldCheck className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">±0.15mm Fit Guarantee</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Precision latching matches factory Dyson wands.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">±0.15mm Hand-Fit Check</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Every piece is physically test-fit on authentic Dyson wands before shipping.</p>
                 </div>
               </div>
 
@@ -569,27 +578,27 @@ export function App() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-zinc-900 dark:text-white">PLA, PLA+ & PETG</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">From cost-efficient home prints to 75°C heat resistance.</p>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">From cost-efficient home docks to 75°C heat-resistant utility prints.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
                 <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
-                  <Truck className="w-5 h-5" aria-hidden="true" />
+                  <Gauge className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">Free US Shipping</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Included automatically on all orders over $35.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">Protected Order Queue</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Orders are capped at workshop capacity to prevent massive backorders.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
                 <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-200/60 dark:border-amber-500/20">
-                  <Star className="w-5 h-5 fill-amber-400 text-amber-500 dark:text-amber-400" aria-hidden="true" />
+                  <HeartHandshake className="w-5 h-5 text-amber-500 dark:text-amber-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">4.9/5 Owner Rating</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">1,400+ custom Dyson upgrades shipped nationwide.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">100% Direct Maker Care</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">No bots, ticket queues, or phone trees. Work directly with the person who built it.</p>
                 </div>
               </div>
             </div>
@@ -829,20 +838,20 @@ export function App() {
         </section>
 
         {/* ======================================================== */}
-        {/* SNAPSHOT STAGGERED SECTION: WHY ADDITIVE OVER MASS-MOLDED */}
+        {/* SNAPSHOT STAGGERED SECTION: SOLO MAKER & ADDITIVE CRAFT */}
         {/* ======================================================== */}
         <section aria-labelledby="why-additive-heading" className="space-y-8 py-6">
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-wider uppercase">
-              <Cpu className="w-3.5 h-3.5" aria-hidden="true" />
-              Additive vs Mass Production
+              <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+              Human Craftsmanship • Additive Precision
             </div>
             <h2 id="why-additive-heading" className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
-              Why Additive Manufacturing?
+              Crafted by a Human. Not a Mass Factory.
             </h2>
             <p className="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 font-medium">
-              Mass production cuts corners with loose tolerances and brittle plastics. Here is the additive advantage in four snapshots.
+              Why working directly with an independent solo maker beats faceless injection molders and automated drop-shippers.
             </p>
           </div>
 
@@ -854,17 +863,17 @@ export function App() {
                   01 • Micro-Precision
                 </span>
                 <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  ±0.15mm Click-Fit. <span className="text-cyan-500 dark:text-cyan-400">Zero Wand Wobble.</span>
+                  ±0.15mm Hand-Fit. <span className="text-cyan-500 dark:text-cyan-400">Zero Wand Wobble.</span>
                 </h3>
                 <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  Factory-calibrated quick-release detents lock with an authoritative snap—matching authentic Dyson tolerances with zero draft-angle slop or suction leaks.
+                  Mass molders accept loose ±0.50mm tolerances because retooling costs tens of thousands. Because I personally slice, print, and physically test-fit every piece, every detent clicks with factory Dyson tactility and zero suction leaks.
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Factory Tactile Click
+                    ✓ Factory Tactile Snap
                   </span>
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Airtight Suction Seal
+                    ✓ Physically Test-Fitted
                   </span>
                 </div>
               </div>
@@ -875,7 +884,7 @@ export function App() {
                   ±0.15<span className="text-3xl sm:text-4xl">mm</span>
                 </span>
                 <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  Laser-Verified Detent Tolerance
+                  Laser & Hand Verified Fit
                 </span>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400">
                   vs ±0.50mm loose injection mold slop
@@ -884,7 +893,7 @@ export function App() {
             </div>
           </div>
 
-          {/* Burst 2: Small-Batch Agility (Stat Left, Text Right) */}
+          {/* Burst 2: Quality-Capped Queue & Zero Backorders (Stat Left, Text Right) */}
           <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-pink-500/40 transition">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Big Stat Snapshot Card (Left on Desktop) */}
@@ -893,29 +902,29 @@ export function App() {
                   48 <span className="text-3xl sm:text-4xl">Hours</span>
                 </span>
                 <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  CAD Concept to Verified Batch
+                  Print Bed to Mailbox Dispatch
                 </span>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  vs 18-month overseas tooling delay
+                  vs months of overseas backorders
                 </span>
               </div>
 
               <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
                 <span className="text-xs font-bold tracking-widest uppercase text-pink-500 dark:text-pink-400">
-                  02 • Small-Batch Agility
+                  02 • Capacity Protection
                 </span>
                 <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  Iterated in Days. <span className="text-pink-500 dark:text-pink-400">Never in Years.</span>
+                  Quality-Capped Queue. <span className="text-pink-500 dark:text-pink-400">Zero Backorder Limbo.</span>
                 </h3>
                 <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  Zero rigid steel tooling. When Dyson drops a new vacuum, we refine digital CAD models and print verified upgrades in hours—continuously reinforcing stress points based on real user feedback.
+                  I refuse to run an order sweatshop where backorders spiral out of control. When my print capacity is reached, new orders temporarily pause so every piece gets the attention it deserves and ships within 48 hours. Small batch buffers keep top sellers ready to go.
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Immediate New-Model Support
+                    ✓ Protected 48h Turnaround
                   </span>
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Small-Batch Refinements
+                    ✓ Small Batch Buffer Inventory
                   </span>
                 </div>
               </div>
@@ -933,7 +942,7 @@ export function App() {
                   Engineered Polymers. <span className="text-purple-500 dark:text-purple-400">Not Brittle Plastic.</span>
                 </h3>
                 <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  We don't use brittle commodity styrene. Choose cost-efficient <strong>PLA</strong> for desk stands, impact-modified <strong>PLA+</strong> for daily tool swapping, or industrial <strong>PETG</strong> heat-rated to 75°C for utility vans and workshops.
+                  Big box sellers use brittle commodity plastic that snaps after a few months of tool swapping. I print in cost-efficient <strong>PLA</strong> for home docks, impact-modified <strong>PLA+</strong> for daily tool swapping, and industrial heat-resistant <strong>PETG</strong> (rated to 75°C) for utility vans, garages, and heavy mechanical strain.
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
@@ -963,38 +972,38 @@ export function App() {
             </div>
           </div>
 
-          {/* Burst 4: On-Demand Zero-Waste Sustainability (Stat Left, Text Right) */}
+          {/* Burst 4: The Human Connection Over Automated Bots (Stat Left, Text Right) */}
           <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-emerald-500/40 transition">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Big Stat Snapshot Card (Left on Desktop) */}
               <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
                 <span className="text-5xl sm:text-7xl font-black tracking-tight text-emerald-500">
-                  0 <span className="text-3xl sm:text-4xl">kg</span>
+                  1 : 1
                 </span>
                 <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  Warehouse Landfill Waste
+                  Direct Human Connection
                 </span>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  Printed 100% on-demand in local US micro-farms
+                  Zero bots, outsourced tiers, or automated phone trees
                 </span>
               </div>
 
               <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
                 <span className="text-xs font-bold tracking-widest uppercase text-emerald-500 dark:text-emerald-400">
-                  04 • Clean Manufacturing
+                  04 • Direct Craftsmanship
                 </span>
                 <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  Made On-Demand. <span className="text-emerald-500 dark:text-emerald-400">Locally in the USA.</span>
+                  A Real Human Maker. <span className="text-emerald-500 dark:text-emerald-400">Zero Automated Bots.</span>
                 </h3>
                 <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  Zero overseas container ships. Zero obsolete inventory scrapped. We print exactly what you order with 100% closed-loop recycling of internal test prints and purge blocks.
+                  While large organizations replace their people with generative chatbots and ticket trees, I run this as an authentic human craft. When you have a question, need a custom fit, or request a tweak, you talk directly to the person who designed the CAD, calibrated the machine, and boxed your order.
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Printed On-Demand
+                    ✓ Direct Maker Support
                   </span>
                   <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Closed-Loop Recycled
+                    ✓ 100% Personal Accountability
                   </span>
                 </div>
               </div>
@@ -1005,10 +1014,10 @@ export function App() {
           <div className="rounded-3xl bg-zinc-900 border border-zinc-800 p-8 sm:p-10 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
             <div className="space-y-1 text-center sm:text-left">
               <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Experience the Additive Difference
+                Experience the Solo Maker Difference
               </h3>
               <p className="text-base text-zinc-400 max-w-xl font-medium">
-                Upgrade your Dyson with custom mounts, docks, and adapters engineered to precision specifications.
+                Every Dyson mount, dock, and adapter is designed, printed on-demand, and hand-inspected by an independent maker who genuinely cares about fit and finish.
               </p>
             </div>
             <a
@@ -1016,7 +1025,7 @@ export function App() {
               className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02]"
             >
               <ShoppingBag className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-              Explore Products
+              Explore Handcrafted Catalog
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
@@ -1029,7 +1038,10 @@ export function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="space-y-1">
             <Logo size="sm" showTagline={false} />
-            <p className="mt-1">
+            <p className="mt-1 font-medium text-zinc-700 dark:text-zinc-300">
+              Independent solo additive workshop operated with pride in the USA. Designed, printed, calibrated, and packed by Luca.
+            </p>
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
               Not affiliated with Dyson Ltd. Dyson, V8, V10, V11, V12, V15, and Gen5detect are registered trademarks of Dyson Ltd.
             </p>
           </div>
