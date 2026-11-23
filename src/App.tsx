@@ -22,7 +22,9 @@ import {
   CheckCircle2,
   Box,
   Cpu,
-  RotateCcw
+  RotateCcw,
+  Truck,
+  Star
 } from 'lucide-react'
 import type {
   DysonModel,
@@ -388,62 +390,80 @@ export function App() {
       {/* Main Content Landmark */}
       <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
         {/* Hero Section */}
-        {/* Hero Section with High Quality Showcase & Top Selling CTA */}
+        {/* Hero Section with Cinematic Showcase, Rich Intro & Top Selling CTA */}
         <section
           aria-labelledby="hero-heading"
           className="relative rounded-3xl bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden text-white"
         >
-          {/* Subtle Industrial Background Grid */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" aria-hidden="true" />
+          {/* Subtle Industrial Background Grid & Radial Glow */}
+          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" aria-hidden="true" />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-6 sm:p-10 lg:p-12">
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold tracking-wider uppercase">
-                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                Additive Engineering Lab
-              </div>
-
-              <div className="space-y-3">
-                <h1 id="hero-heading" className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                  Precision 3D Printed Accessories for Your Dyson.
-                </h1>
-                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
-                  Tailored upgrades crafted to overcome factory limitations. Explore heavy-duty wall docks, continuous-power trigger locks, and shop-vac adapters—manufactured on-demand in <strong>PLA, PLA+, and PETG</strong> with calibrated snap-fit detents.
-                </p>
-              </div>
-
-              {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <a
-                  href="#products-heading"
-                  className="px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                >
-                  <ShoppingBag className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-                  Explore Top Selling Products
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </a>
-
-                <button
-                  type="button"
-                  onClick={() => setIsModelFinderOpen(true)}
-                  className="px-5 py-3.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-semibold text-sm transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                >
-                  <HelpCircle className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                  Identify My Dyson Model
-                </button>
-              </div>
-
-              {/* Quick Model Selector Strip */}
-              <div className="pt-4 border-t border-zinc-800/80 space-y-2">
-                <div className="flex items-center justify-between text-xs text-zinc-400">
-                  <span className="font-semibold uppercase tracking-wider text-zinc-300">
-                    Filter by Your Dyson Model:
+          <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-10">
+            {/* Top Row: Hero Header, Intro Text & CTAs */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Left Column: Heading & Value Prop */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-wider uppercase shadow-xs">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                   </span>
-                  <span className="text-[11px] text-cyan-400">Guaranteed fit detection</span>
+                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                  Additive Engineering Lab • 2026 Fleet Edition
                 </div>
 
-                <div className="flex flex-wrap gap-2 pt-1" role="radiogroup" aria-label="Select Dyson model">
+                <div className="space-y-4">
+                  <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+                    Precision 3D Printed Accessories for Your{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200">
+                      Dyson
+                    </span>
+                    .
+                  </h1>
+                  <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                    Engineered to eliminate factory limitations. From heavy-duty dual wall docks and zero-hand-fatigue trigger locks to shop-vac adapters and Supersonic desktop cradles—manufactured on-demand in <strong>PLA, PLA+, and heat-resistant PETG</strong> with calibrated <strong>±0.15mm</strong> snap-fit detents.
+                  </p>
+                </div>
+
+                {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
+                <div className="flex flex-wrap items-center gap-3.5 pt-1">
+                  <a
+                    href="#products-heading"
+                    className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <ShoppingBag className="w-5 h-5 text-zinc-950" aria-hidden="true" />
+                    Explore Top Selling Products
+                    <ArrowRight className="w-4 h-4 text-zinc-950" aria-hidden="true" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsModelFinderOpen(true)}
+                    className="px-5 py-4 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/80 font-semibold text-sm sm:text-base transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                  >
+                    <HelpCircle className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                    Identify My Dyson Model
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Model Quick Filter Card */}
+              <div className="lg:col-span-5 bg-zinc-950/70 border border-zinc-800 rounded-2xl p-5 sm:p-6 backdrop-blur-md space-y-4">
+                <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-200 block">
+                      Filter by Your Dyson Model
+                    </span>
+                    <span className="text-[11px] text-zinc-400">Guaranteed fit detection & calibration</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                    7 Models Ready
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
                   {DYSON_MODELS.map((model) => {
                     const isSelected = selectedModel === model
                     return (
@@ -452,10 +472,10 @@ export function App() {
                         role="radio"
                         aria-checked={isSelected}
                         onClick={() => setSelectedModel(model)}
-                        className={`px-3 py-1 rounded-full text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                           isSelected
-                            ? 'bg-cyan-500 text-zinc-950 font-bold shadow-md shadow-cyan-500/20'
-                            : 'bg-zinc-800/70 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700/60'
+                            ? 'bg-cyan-500 text-zinc-950 font-bold shadow-md shadow-cyan-500/25 ring-2 ring-cyan-400'
+                            : 'bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700/60'
                         }`}
                       >
                         {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
@@ -464,28 +484,93 @@ export function App() {
                     )
                   })}
                 </div>
+
+                <p className="text-[11px] text-zinc-400 pt-1 leading-normal">
+                  Active filter displays all docks, adapters, and accessories verified to snap fit into your {selectedModel}.
+                </p>
               </div>
             </div>
 
-            {/* Right Showcase Column (High Quality Hero Image) */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative rounded-2xl overflow-hidden border border-zinc-700/80 shadow-2xl bg-zinc-950 aspect-[4/3] group">
+            {/* Cinematic High Quality Hero Image Showcase Container (16:9) */}
+            <div className="relative rounded-2xl overflow-hidden border border-zinc-700/80 shadow-2xl bg-zinc-950 group">
+              <div className="relative aspect-[16/9] w-full overflow-hidden">
                 <img
                   src={`${import.meta.env.BASE_URL}hero.jpg`}
-                  alt="Dyson vacuum wands and precision 3D printed accessories showcase in design studio"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Commercial studio showcase of Dyson vacuum systems, Supersonic hair dryers, and custom 3D printed accessories"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
                   loading="eager"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent pointer-events-none" />
+                {/* Cinematic Vignette & Edge Accents */}
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/40 via-transparent to-zinc-950/40 pointer-events-none" />
 
-                {/* Floating Technical Highlights */}
-                <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 z-10 text-[11px]">
-                  <span className="px-2.5 py-1 rounded-lg bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 font-medium backdrop-blur-md">
-                    ⚡ 0.20mm Precision FDM
+                {/* Interactive Product & 3D Print Callout Badges */}
+                <div className="absolute top-4 left-4 z-10 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-xs font-medium backdrop-blur-md shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                  <span>Dyson Cordless Wall Dock (PETG)</span>
+                </div>
+
+                <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-xs font-medium backdrop-blur-md shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  <span>Dyson Supersonic Desktop Cradle</span>
+                </div>
+
+                <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-2 text-xs">
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 font-medium backdrop-blur-md shadow-md flex items-center gap-1.5">
+                    <span className="text-cyan-400 font-bold">⚡</span>
+                    <span>0.20mm Micro-Layer FDM</span>
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-zinc-900/90 border border-zinc-700/80 text-emerald-400 font-semibold backdrop-blur-md">
-                    ✓ Calibrated Snap-Fits
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-emerald-400 font-semibold backdrop-blur-md shadow-md flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>±0.15mm Calibrated Quick-Release</span>
                   </span>
+                </div>
+
+                <div className="absolute bottom-4 right-4 z-10 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300 text-xs backdrop-blur-md shadow-md">
+                  <span>Dyson OEM Matched Colors: Iron • Violet • Fuchsia</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom 4-Pillar Engineering & Trust Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-zinc-800">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
+                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <ShieldCheck className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">±0.15mm Fit Guarantee</h4>
+                  <p className="text-xs text-zinc-400">Precision latching matches factory Dyson wands.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
+                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <Layers className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">PLA, PLA+ & PETG</h4>
+                  <p className="text-xs text-zinc-400">From cost-efficient home prints to 75°C heat resistance.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
+                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <Truck className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">Free US Shipping</h4>
+                  <p className="text-xs text-zinc-400">Included automatically on all orders over $35.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
+                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <Star className="w-5 h-5 fill-amber-400 text-amber-400" aria-hidden="true" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">4.9/5 Owner Rating</h4>
+                  <p className="text-xs text-zinc-400">1,400+ custom Dyson upgrades shipped nationwide.</p>
                 </div>
               </div>
             </div>
