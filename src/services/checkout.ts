@@ -22,7 +22,7 @@ export interface CheckoutSessionResult {
  */
 const FALLBACK_TEST_KEY =
   typeof atob !== 'undefined'
-    ? atob('c2tfdGVzdF81MVVlU1BkNXUzZkRjamtxYnhRR0hZTm10QW5kSWVpMEJFNzZhc3QzVUttVmhmMXpVQ2NCNXpEMnpGbW5xcEhDc3dpSnpxdDlydEllNTdkZUtsOWdDRTRkeTAwbHNReXdoN3c=')
+    ? atob('c2tfdGVzdF81MVVlU1BkNXUzZkRjamtxYnhRR0hZTm10QW5kSWVpMEJFNzZhc3QzVUttVmhmMXpVQ2NCNXpEMnpGbW5xcEhDc3dpSnpxdDZydEllNTdkZUtsOWdDRTRkeTAwbHNReXdoN3c=')
     : ''
 
 /**
