@@ -808,245 +808,172 @@ export function App() {
         </section>
 
         {/* ======================================================== */}
-        {/* STAGGERED DEEP-DIVE: WHY ADDITIVE MANUFACTURING FOR DYSON */}
+        {/* SNAPSHOT STAGGERED SECTION: WHY ADDITIVE OVER MASS-MOLDED */}
         {/* ======================================================== */}
-        <section aria-labelledby="why-additive-heading" className="space-y-12 py-6">
+        <section aria-labelledby="why-additive-heading" className="space-y-8 py-6">
           {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-wider uppercase">
               <Cpu className="w-3.5 h-3.5" aria-hidden="true" />
-              Additive Engineering vs Mass Production
+              Additive vs Mass Production
             </div>
-            <h2 id="why-additive-heading" className="text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white leading-tight">
-              Why Additive Manufacturing for Dyson Accessories?
+            <h2 id="why-additive-heading" className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
+              Why Additive Manufacturing?
             </h2>
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Traditional injection molding forces compromises: rigid 18-month tooling cycles, brittle commodity plastics, and loose tolerances. Here is why precision additive manufacturing creates categorically better upgrades for your Dyson.
+            <p className="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 font-medium">
+              Mass production cuts corners with loose tolerances and brittle plastics. Here is the additive advantage in four snapshots.
             </p>
           </div>
 
-          {/* Staggered Story 1: Mechanical Snap-Fit Precision vs Mold Wear (Text Left, Card Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 sm:p-10 shadow-xs">
+          {/* Burst 1: Mechanical Snap-Fit Precision (Text Left, Stat Right) */}
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-cyan-500/40 transition">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-bold">
-                  <span>01</span>
-                  <span>•</span>
-                  <span>Micron-Level Detents</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
-                  Mechanical Precision: Eliminating Wand Wobble and Loose Clips
+                <span className="text-xs font-bold tracking-widest uppercase text-cyan-500 dark:text-cyan-400">
+                  01 • Micro-Precision
+                </span>
+                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
+                  ±0.15mm Click-Fit. <span className="text-cyan-500 dark:text-cyan-400">Zero Wand Wobble.</span>
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Mass-market injection molds run hundreds of thousands of shots. Over time, high temperatures and mechanical tool wear introduce draft angle variances and sink marks—causing third-party attachments to rattle, leak suction, or unlatch mid-vacuuming.
+                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
+                  Factory-calibrated quick-release detents lock with an authoritative snap—matching authentic Dyson tolerances with zero draft-angle slop or suction leaks.
                 </p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Modus 3D calibrates every locking tab and quick-release detent to a precise <strong className="text-zinc-900 dark:text-zinc-200">±0.15mm interference tolerance</strong>. Each accessory engages with an unmistakable, tactile snap that matches factory-fresh Dyson wands.
-                </p>
-                <div className="pt-2 flex flex-wrap gap-3 text-xs">
-                  <span className="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-500" />
-                    Zero Draft-Angle Penalty
+                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Factory Tactile Click
                   </span>
-                  <span className="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-500" />
-                    Sealed Airflow Compression
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Airtight Suction Seal
                   </span>
                 </div>
               </div>
 
-              {/* Comparison Card Right */}
-              <div className="lg:col-span-5 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-700/60 space-y-4">
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 pb-2 border-b border-zinc-200 dark:border-zinc-700">
-                  Tolerance Benchmark
-                </div>
-                <div className="space-y-3">
-                  <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-red-200 dark:border-red-900/40 space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold text-red-600 dark:text-red-400">
-                      <span>Mass Injection Molding</span>
-                      <span>±0.40mm - ±0.60mm</span>
-                    </div>
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                      Tool wear causes loose detents, wand wobble, and suction leakage over time.
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 space-y-1">
-                    <div className="flex items-center justify-between text-xs font-extrabold text-cyan-700 dark:text-cyan-300">
-                      <span>Modus 3D Additive</span>
-                      <span>±0.15mm Calibrated</span>
-                    </div>
-                    <p className="text-[11px] text-cyan-800 dark:text-cyan-200">
-                      100% optical verification ensures tight, wobble-free factory click-fit.
-                    </p>
-                  </div>
-                </div>
+              {/* Big Stat Snapshot Card */}
+              <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
+                <span className="text-5xl sm:text-7xl font-black tracking-tight text-cyan-500">
+                  ±0.15<span className="text-3xl sm:text-4xl">mm</span>
+                </span>
+                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                  Laser-Verified Detent Tolerance
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  vs ±0.50mm loose injection mold slop
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Staggered Story 2: Small-Batch Processing & Rapid Evolution (Card Left, Text Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 sm:p-10 shadow-xs">
+          {/* Burst 2: Small-Batch Agility (Stat Left, Text Right) */}
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-pink-500/40 transition">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Metric Card Left */}
-              <div className="lg:col-span-5 order-2 lg:order-1 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-700/60 space-y-4">
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 pb-2 border-b border-zinc-200 dark:border-zinc-700">
-                  Agile Production Speed
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
-                    <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">CAD to Verified Print</span>
-                    <span className="text-xs font-bold text-cyan-500">48 Hours</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
-                    <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Injection Mold Retooling</span>
-                    <span className="text-xs font-bold text-zinc-400">12 - 18 Months</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
-                    <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Customer Feedback Implementation</span>
-                    <span className="text-xs font-bold text-emerald-500">Continuous Batch Refinement</span>
-                  </div>
-                </div>
+              {/* Big Stat Snapshot Card (Left on Desktop) */}
+              <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
+                <span className="text-5xl sm:text-7xl font-black tracking-tight text-pink-500">
+                  48 <span className="text-3xl sm:text-4xl">Hours</span>
+                </span>
+                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                  CAD Concept to Verified Batch
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  vs 18-month overseas tooling delay
+                </span>
               </div>
 
-              {/* Text Column Right */}
               <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-pink-500/10 text-pink-600 dark:text-pink-400 text-xs font-bold">
-                  <span>02</span>
-                  <span>•</span>
-                  <span>Small-Batch Agility</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
-                  Small-Batch Processing: Rapid Iteration Without Multi-Year Retooling
+                <span className="text-xs font-bold tracking-widest uppercase text-pink-500 dark:text-pink-400">
+                  02 • Small-Batch Agility
+                </span>
+                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
+                  Iterated in Days. <span className="text-pink-500 dark:text-pink-400">Never in Years.</span>
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Traditional injection molding locks companies into $60,000+ hardened steel dies. When Dyson releases a new vacuum series—like the Gen5detect with an updated wand latch or the V12 with a slimmer battery footprint—mass producers take over a year to justify new molds.
+                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
+                  Zero rigid steel tooling. When Dyson drops a new vacuum, we refine digital CAD models and print verified upgrades in hours—continuously reinforcing stress points based on real user feedback.
                 </p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Modus 3D runs on an agile, small-batch manufacturing protocol. We refine designs continuously based on real customer feedback: reinforcing wall fillets where drop stresses concentrate, lightening secondary structures, and releasing compatibility updates for new Dyson models in days, not years.
-                </p>
-                <div className="pt-2 flex flex-wrap gap-3 text-xs">
-                  <span className="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-pink-500" />
-                    No Stagnant Warehousing
+                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Immediate New-Model Support
                   </span>
-                  <span className="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-pink-500" />
-                    Immediate Model Support
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Small-Batch Refinements
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Staggered Story 3: Tailored Polymers vs Commodity Plastics (Text Left, Card Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 sm:p-10 shadow-xs">
+          {/* Burst 3: Purpose-Engineered Polymers (Text Left, Stat Right) */}
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-purple-500/40 transition">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 text-xs font-bold">
-                  <span>03</span>
-                  <span>•</span>
-                  <span>Polymer Engineering</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
-                  Purpose-Specific Polymers: Tailored for Structural Strength & Heat
+                <span className="text-xs font-bold tracking-widest uppercase text-purple-500 dark:text-purple-400">
+                  03 • Polymer Science
+                </span>
+                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
+                  Engineered Polymers. <span className="text-purple-500 dark:text-purple-400">Not Brittle Plastic.</span>
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Cheap aftermarket accessories cut costs with generic polystyrene or thin ABS that shatters on impact and warps in warm environments. Additive manufacturing unlocks exact material selection for the specific mechanical job:
+                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
+                  We don't use brittle commodity styrene. Choose cost-efficient <strong>PLA</strong> for desk stands, impact-modified <strong>PLA+</strong> for daily tool swapping, or industrial <strong>PETG</strong> heat-rated to 75°C for utility vans and workshops.
                 </p>
-                <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
-                  <li className="flex items-start gap-2">
-                    <strong className="text-zinc-900 dark:text-zinc-200 min-w-16">PLA:</strong>
-                    <span>High dimensional rigidity and cost efficiency—ideal for indoor desktop docks and tool organizing stations.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <strong className="text-zinc-900 dark:text-zinc-200 min-w-16">PLA+:</strong>
-                    <span>Enhanced with impact modifiers for 3x higher layer-to-layer weld strength, resisting fatigue from daily tool swapping.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <strong className="text-zinc-900 dark:text-zinc-200 min-w-16">PETG:</strong>
-                    <span>Industrial glycol-modified polyester with high ductility and heat resistance up to 75°C (167°F)—built for heavy wall anchors and garage/van storage.</span>
-                  </li>
-                </ul>
+                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ PLA • Cost-Efficient
+                  </span>
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ PLA+ • 3x Impact Toughness
+                  </span>
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ PETG • 75°C Heat Resistance
+                  </span>
+                </div>
               </div>
 
-              {/* Material Hierarchy Card Right */}
-              <div className="lg:col-span-5 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-700/60 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 pb-2 border-b border-zinc-200 dark:border-zinc-700">
-                  Material Thermal & Mechanical Ceiling
-                </div>
-                <div className="space-y-2 text-xs">
-                  <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
-                    <div>
-                      <span className="font-bold text-zinc-900 dark:text-white block">Standard PLA</span>
-                      <span className="text-[11px] text-zinc-500">Most cost-efficient • Display & desk</span>
-                    </div>
-                    <span className="font-mono text-zinc-700 dark:text-zinc-300">55°C HDT</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
-                    <div>
-                      <span className="font-bold text-zinc-900 dark:text-white block">Tough PLA+</span>
-                      <span className="text-[11px] text-zinc-500">3x Impact Modified • Daily use</span>
-                    </div>
-                    <span className="font-mono text-cyan-500 font-bold">60°C HDT</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-cyan-500/40 flex justify-between items-center">
-                    <div>
-                      <span className="font-bold text-zinc-900 dark:text-white block">Structural PETG</span>
-                      <span className="text-[11px] text-zinc-500">Industrial strength • Heavy duty docks</span>
-                    </div>
-                    <span className="font-mono text-emerald-500 font-bold">75°C HDT</span>
-                  </div>
-                </div>
+              {/* Big Stat Snapshot Card */}
+              <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
+                <span className="text-5xl sm:text-7xl font-black tracking-tight text-purple-500">
+                  75°<span className="text-3xl sm:text-4xl">C</span>
+                </span>
+                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                  PETG Heat Deflection Ceiling
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Resists hot vans, garages & heavy structural strain
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Staggered Story 4: On-Demand Zero-Waste Sustainability (Card Left, Text Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 sm:p-10 shadow-xs">
+          {/* Burst 4: On-Demand Zero-Waste Sustainability (Stat Left, Text Right) */}
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-emerald-500/40 transition">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Sustainability Visual Card Left */}
-              <div className="lg:col-span-5 order-2 lg:order-1 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-700/60 space-y-4">
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 pb-2 border-b border-zinc-200 dark:border-zinc-700">
-                  Environmental Impact Footprint
-                </div>
-                <div className="space-y-3">
-                  <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 space-y-1">
-                    <span className="text-2xl font-black text-cyan-500 block">0 kg</span>
-                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 block">Unsold Inventory Scrapped</span>
-                    <p className="text-[11px] text-zinc-500">Every single unit is printed strictly on-demand after an order is placed.</p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 space-y-1">
-                    <span className="text-2xl font-black text-emerald-500 block">100%</span>
-                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 block">Closed-Loop Recycled Scraps</span>
-                    <p className="text-[11px] text-zinc-500">Support structures and test coupons are re-pelletized into utility spools.</p>
-                  </div>
-                </div>
+              {/* Big Stat Snapshot Card (Left on Desktop) */}
+              <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
+                <span className="text-5xl sm:text-7xl font-black tracking-tight text-emerald-500">
+                  0 <span className="text-3xl sm:text-4xl">kg</span>
+                </span>
+                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                  Warehouse Landfill Waste
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Printed 100% on-demand in local US micro-farms
+                </span>
               </div>
 
-              {/* Text Column Right */}
               <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
-                  <span>04</span>
-                  <span>•</span>
-                  <span>Zero-Overproduction</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
-                  On-Demand Sustainable Manufacturing: Made Locally, Never Warehoused
+                <span className="text-xs font-bold tracking-widest uppercase text-emerald-500 dark:text-emerald-400">
+                  04 • Clean Manufacturing
+                </span>
+                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
+                  Made On-Demand. <span className="text-emerald-500 dark:text-emerald-400">Locally in the USA.</span>
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Traditional supply chains manufacture tens of thousands of plastic parts overseas, pack them into heavy diesel container ships, and transport them across oceans to sit in warehouses. When a vacuum model is discontinued, millions of unsold plastic units end up in landfills.
+                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
+                  Zero overseas container ships. Zero obsolete inventory scrapped. We print exactly what you order with 100% closed-loop recycling of internal test prints and purge blocks.
                 </p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Modus 3D produces accessories on-demand in localized micro-farms right here in the United States. We only melt the exact grams of filament required to fulfill your order—dramatically reducing transit emissions and completely eliminating warehouse waste.
-                </p>
-                <div className="pt-2 flex flex-wrap gap-3 text-xs">
-                  <span className="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    Local US Micro-Farms
+                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Printed On-Demand
                   </span>
-                  <span className="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    Zero Overseas Cargo Transit
+                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Closed-Loop Recycled
                   </span>
                 </div>
               </div>
@@ -1054,18 +981,18 @@ export function App() {
           </div>
 
           {/* Section Call to Action Banner */}
-          <div className="rounded-3xl bg-gradient-to-r from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 p-8 sm:p-10 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-            <div className="space-y-2 text-center sm:text-left">
-              <h3 className="text-xl sm:text-2xl font-extrabold text-white">
+          <div className="rounded-3xl bg-zinc-900 border border-zinc-800 p-8 sm:p-10 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+            <div className="space-y-1 text-center sm:text-left">
+              <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 Experience the Additive Difference
               </h3>
-              <p className="text-sm text-zinc-400 max-w-xl">
+              <p className="text-base text-zinc-400 max-w-xl font-medium">
                 Upgrade your Dyson with custom mounts, docks, and adapters engineered to precision specifications.
               </p>
             </div>
             <a
               href="#products-heading"
-              className="px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+              className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02]"
             >
               <ShoppingBag className="w-4 h-4 text-zinc-950" aria-hidden="true" />
               Explore Products
