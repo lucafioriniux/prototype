@@ -1,3 +1,4 @@
+
 import { useState, useId, useEffect } from 'react'
 import {
   Check,
@@ -540,55 +541,55 @@ export function App() {
         {/* Full-Width 4-Pillar Engineering & Trust Stripe Directly Below Hero */}
         <section
           aria-label="Engineering guarantees and customer trust"
-          className="w-full bg-zinc-900 border-y border-zinc-800 relative overflow-hidden py-4 sm:py-5 shadow-inner text-white"
+          className="w-full bg-zinc-100/90 dark:bg-zinc-900 border-y border-zinc-200/90 dark:border-zinc-800 relative overflow-hidden py-4 sm:py-5 shadow-xs dark:shadow-inner transition-colors duration-200"
         >
           {/* Subtle Industrial Background Grid & Radial Glow */}
           <div
-            className="absolute inset-0 opacity-15 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"
+            className="absolute inset-0 opacity-25 dark:opacity-15 bg-[radial-gradient(#0891b2_1px,transparent_1px)] dark:bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"
             aria-hidden="true"
           />
-          <div className="absolute -top-12 left-1/4 w-72 h-36 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-          <div className="absolute -bottom-12 right-1/4 w-72 h-36 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+          <div className="absolute -top-12 left-1/4 w-72 h-36 bg-cyan-400/10 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+          <div className="absolute -bottom-12 right-1/4 w-72 h-36 bg-purple-400/10 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
-                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
+                <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
                   <ShieldCheck className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">±0.15mm Fit Guarantee</h4>
-                  <p className="text-xs text-zinc-400">Precision latching matches factory Dyson wands.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">±0.15mm Fit Guarantee</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Precision latching matches factory Dyson wands.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
-                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
+                <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
                   <Layers className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">PLA, PLA+ & PETG</h4>
-                  <p className="text-xs text-zinc-400">From cost-efficient home prints to 75°C heat resistance.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">PLA, PLA+ & PETG</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">From cost-efficient home prints to 75°C heat resistance.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
-                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
+                <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
                   <Truck className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Free US Shipping</h4>
-                  <p className="text-xs text-zinc-400">Included automatically on all orders over $35.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">Free US Shipping</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Included automatically on all orders over $35.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60">
-                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  <Star className="w-5 h-5 fill-amber-400 text-amber-400" aria-hidden="true" />
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
+                <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-200/60 dark:border-amber-500/20">
+                  <Star className="w-5 h-5 fill-amber-400 text-amber-500 dark:text-amber-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">4.9/5 Owner Rating</h4>
-                  <p className="text-xs text-zinc-400">1,400+ custom Dyson upgrades shipped nationwide.</p>
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">4.9/5 Owner Rating</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">1,400+ custom Dyson upgrades shipped nationwide.</p>
                 </div>
               </div>
             </div>
