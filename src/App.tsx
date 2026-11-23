@@ -1539,7 +1539,12 @@ export function App() {
                     try {
                       const result = await initiateCheckout(cart)
                       if (result.url) {
-                        return // Redirecting to Stripe hosted page
+                        window.location.href = result.url
+                        return
+                      }
+                      if (result.error) {
+                        alert(`Stripe Checkout note: ${result.error}`)
+                        return
                       }
                       if (result.orderSummary) {
                         setOrderConfirmed({
@@ -1553,6 +1558,9 @@ export function App() {
                         setCart([])
                         setIsCartOpen(false)
                       }
+                    } catch (err: any) {
+                      console.error('Checkout error:', err)
+                      alert(`Checkout error: ${err.message || err}`)
                     } finally {
                       setIsCheckingOut(false)
                     }
@@ -1560,7 +1568,7 @@ export function App() {
                   className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-zinc-950 font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
                 >
                   <CreditCard className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-                  {isCheckingOut ? 'Redirecting to Stripe Checkout...' : 'Proceed to Stripe Checkout'}
+                  {isCheckingOut ? 'Opening Stripe Checkout...' : 'Proceed to Stripe Checkout'}
                 </button>
               </div>
             )}
