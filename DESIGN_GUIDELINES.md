@@ -110,12 +110,12 @@ The #1 failure mode in 3D printed vacuum accessories is model mismatch (e.g., V8
 
 ### 5.2 3D Print Technical Customizer
 Every item ordered for manufacturing must allow full configuration:
-1. **Engineering Grade Material**:
-   - **PETG (Polyethylene Terephthalate Glycol)**: Tough, impact resistant, chemically inert. Recommended for wall docks and tool holders.
-   - **Tough PLA+**: High rigidity, smooth surface finish, tightest dimensional tolerances ($\pm0.15\text{mm}$). Ideal for crevice nozzles and trigger clamps.
-   - **TPU 95A (Thermoplastic Polyurethane)**: Semi-flexible elastomer. Prevents scratching delicate furniture, hardwood baseboards, and car interiors.
+1. **Engineering Grade Materials**:
+   - **PLA (Polylactic Acid)**: Most cost-efficient. High surface detail and smooth exterior for lightweight utility attachments.
+   - **PLA+ (Reinforced Polymer)**: Balanced durability. Enhanced layer adhesion and tightest dimensional tolerances (±0.15mm) for trigger locks and couplers.
+   - **PETG (Polyethylene Terephthalate Glycol)**: Strongest material option. Outstanding impact strength, ductile snap clips, and heat resistance up to 75°C for wall docks and heavy mounts.
 2. **Color Palette Matching**:
-   - Formulated to complement authentic Dyson body finishes: *Iron Grey*, *Dyson Fuchsia*, *Electric Royal Blue*, *Sunset Copper*, *Matte Stealth Black*, and *Safety Orange*.
+   - Formulated to complement authentic Dyson body finishes: *Iron Grey*, *Dyson Fuchsia*, *Electric Royal Blue*, *Sunset Copper*, *Matte Stealth Black*, and *Royal Purple*.
 3. **Infill / Durability Profiles**:
    - *Standard (25% Infill)*: Everyday residential use.
    - *Heavy-Duty (55% Infill)*: Commercial/garage use, high mechanical stress.

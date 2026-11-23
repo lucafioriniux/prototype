@@ -17,6 +17,7 @@ import {
   Minus,
   ShoppingCart,
   CreditCard,
+  ArrowRight,
   FileText,
   CheckCircle2,
   Box,
@@ -42,8 +43,12 @@ import { Logo } from './components/Logo'
 import { initiateCheckout } from './services/checkout'
 
 export function App() {
-  // Theme state
-  const [darkMode, setDarkMode] = useState(true)
+  // Theme state: auto-detect system preference with localStorage persistence
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('modus-theme')
+    if (saved) return saved === 'dark'
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
 
   // Dyson Model Filter state
   const [selectedModel, setSelectedModel] = useState<DysonModel>('Dyson V15 Detect')
@@ -66,6 +71,7 @@ export function App() {
     payload?: any
   } | null>(null)
   const [showStripePayload, setShowStripePayload] = useState(false)
+  const [isCheckingOut, setIsCheckingOut] = useState(false)
 
   // Customizer form state
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption>(MATERIALS[0])
@@ -95,14 +101,59 @@ export function App() {
   const searchInputId = useId()
   const sortSelectId = useId()
 
-  // Sync dark mode class to <html>
+  // Sync dark mode class to <html> and update localStorage
   useEffect(() => {
+    const root = document.documentElement
     if (darkMode) {
-      document.documentElement.classList.add('dark')
+      root.classList.add('dark')
+      root.style.colorScheme = 'dark'
     } else {
-      document.documentElement.classList.remove('dark')
+      root.classList.remove('dark')
+      root.style.colorScheme = 'light'
     }
+    localStorage.setItem('modus-theme', darkMode ? 'dark' : 'light')
   }, [darkMode])
+
+  // Listen to system OS dark mode preference changes
+  useEffect(() => {
+    if (!window.matchMedia) return
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = (e: MediaQueryListEvent) => {
+      const saved = localStorage.getItem('modus-theme')
+      // Only auto-switch if user hasn't explicitly set a preference override
+      if (!saved) {
+        setDarkMode(e.matches)
+      }
+    }
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
+
+  // Check for Stripe return URL params (?order=success&session_id=...)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const orderStatus = params.get('order')
+    const sessionId = params.get('session_id')
+
+    if (orderStatus === 'success') {
+      const shortId = sessionId ? `STRIPE-${sessionId.slice(-6).toUpperCase()}` : `MOD-${Math.floor(10000 + Math.random() * 90000)}`
+      setOrderConfirmed({
+        id: shortId,
+        total: 0,
+        count: 1,
+        shipping: 0,
+        subtotal: 0,
+        payload: {
+          status: 'paid_verified',
+          stripeSessionId: sessionId,
+          note: 'Payment successfully processed through Stripe Checkout.',
+        },
+      })
+      setCart([])
+      // Clean query parameters from URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+  }, [])
 
   // Keyboard navigation: Escape key closes modals and drawers
   useEffect(() => {
@@ -337,56 +388,105 @@ export function App() {
       {/* Main Content Landmark */}
       <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
         {/* Hero Section */}
-        <section aria-labelledby="hero-heading" className="relative rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 text-white p-8 sm:p-12 border border-zinc-800 shadow-2xl overflow-hidden">
-          {/* Subtle Industrial Background Pattern */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]" aria-hidden="true" />
+        {/* Hero Section with High Quality Showcase & Top Selling CTA */}
+        <section
+          aria-labelledby="hero-heading"
+          className="relative rounded-3xl bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden text-white"
+        >
+          {/* Subtle Industrial Background Grid */}
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" aria-hidden="true" />
 
-          <div className="relative z-10 max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold tracking-wider uppercase">
-              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-              On-Demand Additive Manufacturing
-            </div>
-            <h1 id="hero-heading" className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-              Precision 3D Printed Upgrades for Your Dyson.
-            </h1>
-            <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
-              Custom wall docks, zero-fatigue trigger locks, scratch-proof TPU nozzles, and workshop adapters. Made on-demand with aerospace-grade tolerances and calibrated snap-fits.
-            </p>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-6 sm:p-10 lg:p-12">
+            {/* Left Content Column */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold tracking-wider uppercase">
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                Additive Engineering Lab
+              </div>
 
-            {/* Quick Model Selector Strip */}
-            <div className="pt-4 space-y-2">
-              <div className="flex items-center justify-between text-xs text-zinc-400">
-                <span className="font-semibold uppercase tracking-wider text-zinc-300">
-                  Select Your Model for Guaranteed Fit:
-                </span>
-                <button
-                  onClick={() => setIsModelFinderOpen(true)}
-                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 font-medium"
+              <div className="space-y-3">
+                <h1 id="hero-heading" className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                  Precision 3D Printed Accessories for Your Dyson.
+                </h1>
+                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                  Tailored upgrades crafted to overcome factory limitations. Explore heavy-duty wall docks, continuous-power trigger locks, and shop-vac adapters—manufactured on-demand in <strong>PLA, PLA+, and PETG</strong> with calibrated snap-fit detents.
+                </p>
+              </div>
+
+              {/* Action Buttons: Primary CTA to Top Sellers + Secondary Model Diagnostic */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <a
+                  href="#products-heading"
+                  className="px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
                 >
-                  Not sure which you have?
+                  <ShoppingBag className="w-4 h-4 text-zinc-950" aria-hidden="true" />
+                  Explore Top Selling Products
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModelFinderOpen(true)}
+                  className="px-5 py-3.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-semibold text-sm transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                >
+                  <HelpCircle className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                  Identify My Dyson Model
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2 pt-1" role="radiogroup" aria-label="Select Dyson model">
-                {DYSON_MODELS.map((model) => {
-                  const isSelected = selectedModel === model
-                  return (
-                    <button
-                      key={model}
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => setSelectedModel(model)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
-                        isSelected
-                          ? 'bg-cyan-500 text-zinc-950 font-bold shadow-md shadow-cyan-500/20'
-                          : 'bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700/60'
-                      }`}
-                    >
-                      {isSelected && <Check className="w-3.5 h-3.5 inline mr-1 -mt-0.5" aria-hidden="true" />}
-                      {model}
-                    </button>
-                  )
-                })}
+              {/* Quick Model Selector Strip */}
+              <div className="pt-4 border-t border-zinc-800/80 space-y-2">
+                <div className="flex items-center justify-between text-xs text-zinc-400">
+                  <span className="font-semibold uppercase tracking-wider text-zinc-300">
+                    Filter by Your Dyson Model:
+                  </span>
+                  <span className="text-[11px] text-cyan-400">Guaranteed fit detection</span>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1" role="radiogroup" aria-label="Select Dyson model">
+                  {DYSON_MODELS.map((model) => {
+                    const isSelected = selectedModel === model
+                    return (
+                      <button
+                        key={model}
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() => setSelectedModel(model)}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+                          isSelected
+                            ? 'bg-cyan-500 text-zinc-950 font-bold shadow-md shadow-cyan-500/20'
+                            : 'bg-zinc-800/70 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700/60'
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
+                        {model}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Showcase Column (High Quality Hero Image) */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-2xl overflow-hidden border border-zinc-700/80 shadow-2xl bg-zinc-950 aspect-[4/3] group">
+                <img
+                  src={`${import.meta.env.BASE_URL}hero.jpg`}
+                  alt="Dyson vacuum wands and precision 3D printed accessories showcase in design studio"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="eager"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent pointer-events-none" />
+
+                {/* Floating Technical Highlights */}
+                <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 z-10 text-[11px]">
+                  <span className="px-2.5 py-1 rounded-lg bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 font-medium backdrop-blur-md">
+                    ⚡ 0.20mm Precision FDM
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-zinc-900/90 border border-zinc-700/80 text-emerald-400 font-semibold backdrop-blur-md">
+                    ✓ Calibrated Snap-Fits
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -771,43 +871,16 @@ export function App() {
                 </div>
               </div>
 
-              {/* 1. Material Choice */}
+              {/* 1. Color Selection */}
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                  1. Select Technical Material
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {MATERIALS.map((mat) => {
-                    const isSelected = selectedMaterial.id === mat.id
-                    return (
-                      <button
-                        key={mat.id}
-                        type="button"
-                        onClick={() => setSelectedMaterial(mat)}
-                        className={`p-3.5 rounded-xl border text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                          isSelected
-                            ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 text-zinc-900 dark:text-white shadow-xs'
-                            : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-xs">{mat.name}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />}
-                        </div>
-                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                          {mat.description}
-                        </p>
-                      </button>
-                    )
-                  })}
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                    1. Select Filament Color Match
+                  </label>
+                  <span className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400">
+                    Selected: {selectedColor.name}
+                  </span>
                 </div>
-              </div>
-
-              {/* 2. Color Selection */}
-              <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                  2. Select Filament Color Match
-                </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {FILAMENT_COLORS.map((col) => {
                     const isSelected = selectedColor.id === col.id
@@ -818,8 +891,8 @@ export function App() {
                         onClick={() => setSelectedColor(col)}
                         className={`p-2.5 rounded-xl border flex items-center gap-2.5 text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
                           isSelected
-                            ? 'border-cyan-500 bg-zinc-100 dark:bg-zinc-800 shadow-xs'
-                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 shadow-xs'
+                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-800/40'
                         }`}
                       >
                         <span
@@ -831,8 +904,72 @@ export function App() {
                           <span className="text-xs font-bold block truncate text-zinc-900 dark:text-white">
                             {col.name}
                           </span>
-                          <span className="text-[10px] text-zinc-500 block truncate">
+                          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate">
                             {col.dysonMatch}
+                          </span>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Print Material Choice (PLA, PLA+, PETG) */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                    2. Select Print Material
+                  </label>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                    PLA (Most Cost-Efficient) → PETG (Strongest)
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {MATERIALS.map((mat) => {
+                    const isSelected = selectedMaterial.id === mat.id
+                    const badgeText =
+                      mat.id === 'pla'
+                        ? 'Most Cost-Efficient'
+                        : mat.id === 'pla_plus'
+                        ? 'Reinforced & Balanced'
+                        : 'Strongest • Industrial'
+                    const badgeColor =
+                      mat.id === 'pla'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                        : mat.id === 'pla_plus'
+                        ? 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800'
+                        : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800'
+
+                    return (
+                      <button
+                        key={mat.id}
+                        type="button"
+                        onClick={() => setSelectedMaterial(mat)}
+                        className={`p-3.5 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                          isSelected
+                            ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 text-zinc-900 dark:text-white shadow-xs'
+                            : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="font-extrabold text-sm text-zinc-900 dark:text-white">{mat.name}</span>
+                            {isSelected && <Check className="w-4 h-4 text-cyan-500" aria-hidden="true" />}
+                          </div>
+
+                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-2 ${badgeColor}`}>
+                            {badgeText}
+                          </span>
+
+                          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                            {mat.description}
+                          </p>
+                        </div>
+
+                        <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-[10px] font-medium text-zinc-500 flex justify-between">
+                          <span>Durability</span>
+                          <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                            {'★'.repeat(mat.durabilityRating)}{'☆'.repeat(5 - mat.durabilityRating)}
                           </span>
                         </div>
                       </button>
@@ -1094,25 +1231,34 @@ export function App() {
                 </div>
 
                 <button
+                  disabled={isCheckingOut}
                   onClick={async () => {
-                    const result = await initiateCheckout(cart)
-                    if (result.orderSummary) {
-                      setOrderConfirmed({
-                        id: result.orderSummary.orderId,
-                        total: result.orderSummary.total,
-                        count: result.orderSummary.itemCount,
-                        subtotal: result.orderSummary.subtotal,
-                        shipping: result.orderSummary.shipping,
-                        payload: result.orderSummary.payload,
-                      })
-                      setCart([])
-                      setIsCartOpen(false)
+                    setIsCheckingOut(true)
+                    try {
+                      const result = await initiateCheckout(cart)
+                      if (result.url) {
+                        return // Redirecting to Stripe hosted page
+                      }
+                      if (result.orderSummary) {
+                        setOrderConfirmed({
+                          id: result.orderSummary.orderId,
+                          total: result.orderSummary.total,
+                          count: result.orderSummary.itemCount,
+                          subtotal: result.orderSummary.subtotal,
+                          shipping: result.orderSummary.shipping,
+                          payload: result.orderSummary.payload,
+                        })
+                        setCart([])
+                        setIsCartOpen(false)
+                      }
+                    } finally {
+                      setIsCheckingOut(false)
                     }
                   }}
-                  className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
+                  className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-zinc-950 font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
                 >
-                  <CreditCard className="w-4 h-4" aria-hidden="true" />
-                  Place Order & Dispatch to Print Farm
+                  <CreditCard className="w-4 h-4 text-zinc-950" aria-hidden="true" />
+                  {isCheckingOut ? 'Redirecting to Stripe Checkout...' : 'Proceed to Stripe Checkout'}
                 </button>
               </div>
             )}
