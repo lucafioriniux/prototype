@@ -6,10 +6,8 @@ import {
   ShoppingBag,
   Search,
   ShieldCheck,
-  AlertCircle,
   Moon,
   Sun,
-  Clock,
   Layers,
   HelpCircle,
   Trash2,
@@ -28,7 +26,9 @@ import {
   Home,
   Wrench,
   Gamepad2,
-  Compass
+  Compass,
+  Star,
+  Eye
 } from 'lucide-react'
 import type {
   DysonModel,
@@ -182,6 +182,7 @@ export function App() {
   const [sortBy, setSortBy] = useState<'recommended' | 'price-asc' | 'price-desc' | 'time'>('recommended')
 
   // Modals & Drawers state
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
   const [customizingProduct, setCustomizingProduct] = useState<Product | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isModelFinderOpen, setIsModelFinderOpen] = useState(false)
@@ -283,7 +284,8 @@ export function App() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (customizingProduct) setCustomizingProduct(null)
+        if (quickViewProduct) setQuickViewProduct(null)
+        else if (customizingProduct) setCustomizingProduct(null)
         else if (isCartOpen) setIsCartOpen(false)
         else if (isModelFinderOpen) setIsModelFinderOpen(false)
         else if (isGuidelinesOpen) setIsGuidelinesOpen(false)
@@ -292,7 +294,7 @@ export function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [customizingProduct, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
+  }, [quickViewProduct, customizingProduct, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
 
   // Open customizer for a specific product
   const handleOpenCustomizer = (product: Product) => {
@@ -923,90 +925,88 @@ export function App() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredProducts.map((product) => {
-                      const isCompatible = selectedModel === 'All Models' || product.compatibleModels.includes(selectedModel)
-
                       return (
                         <article
                           key={product.id}
                           className={`flex flex-col justify-between rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200 ${activeTheme.cardHoverBorder}`}
                         >
                           <div>
-                            {/* Product Preview Header Image */}
-                            <div className="relative h-48 bg-zinc-900 overflow-hidden group/img">
+                            {/* Product Preview Header Image with Quick View Trigger */}
+                            <div
+                              onClick={() => setQuickViewProduct(product)}
+                              className="relative h-48 bg-zinc-900 overflow-hidden group/img cursor-pointer"
+                              title={`Click to preview ${product.name}`}
+                            >
                               <img
                                 src={product.imageUrl.startsWith('http') ? product.imageUrl : `${import.meta.env.BASE_URL}${product.imageUrl}`}
                                 alt={product.name}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105"
                                 loading="lazy"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-zinc-950/30 pointer-events-none" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent pointer-events-none" />
 
-                              {/* Badges */}
-                              <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                                {product.badge && (
-                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs backdrop-blur-xs">
+                              {/* Bestseller Tag Only */}
+                              {product.badge && (
+                                <div className="absolute top-3 left-3 z-10">
+                                  <span className="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md backdrop-blur-xs">
                                     {product.badge}
                                   </span>
-                                )}
-                                <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
-                                  {product.category}
-                                </span>
-                              </div>
+                                </div>
+                              )}
 
-                              {/* Model Compatibility Badge */}
-                              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
-                                {activeCollection === 'Household' && selectedModel !== 'All Models' ? (
-                                  isCompatible ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700 text-[11px] font-semibold backdrop-blur-xs">
-                                      <Check className="w-3.5 h-3.5" aria-hidden="true" /> Guaranteed Fit
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700 text-[11px] font-semibold backdrop-blur-xs">
-                                      <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" /> Incompatible with {selectedModel}
-                                    </span>
-                                  )
-                                ) : (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-950/80 text-zinc-300 border border-zinc-700 text-[11px] font-medium backdrop-blur-xs">
-                                    {product.compatibleModels[0]}
-                                  </span>
-                                )}
+                              {/* Quick View Hover Action Pill */}
+                              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 bg-zinc-950/30 backdrop-blur-[2px]">
+                                <span className="px-3.5 py-2 rounded-xl bg-white/95 dark:bg-zinc-900/95 text-zinc-900 dark:text-white text-xs font-bold shadow-lg flex items-center gap-1.5 transform translate-y-1 group-hover/img:translate-y-0 transition-transform">
+                                  <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+                                  Quick View
+                                </span>
                               </div>
                             </div>
 
                             {/* Product Body */}
-                            <div className="p-5 space-y-3">
+                            <div className="p-5 space-y-2.5">
                               <div>
-                                <div className="flex items-center justify-between gap-2">
-                                  <h4 className="font-bold text-base text-zinc-900 dark:text-white leading-snug">
-                                    {product.name}
-                                  </h4>
-                                </div>
-                                <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2">
-                                  {product.summary}
-                                </p>
+                                <h4
+                                  onClick={() => setQuickViewProduct(product)}
+                                  className="font-bold text-base text-zinc-900 dark:text-white leading-snug cursor-pointer hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                                  title={`View details for ${product.name}`}
+                                >
+                                  {product.name}
+                                </h4>
                               </div>
 
-                              {/* Technical Print Spec chips */}
-                              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-[11px]">
-                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
-                                  <Clock className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
-                                  <span>~{Math.floor(product.printSpecs.printTimeMinutes / 60)}h {product.printSpecs.printTimeMinutes % 60}m print</span>
+                              {/* Amazon-Style Rating Stars */}
+                              <div className="flex items-center gap-1.5 pt-0.5">
+                                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                                  {product.rating.toFixed(1)}
+                                </span>
+                                <div className="flex items-center text-amber-400" aria-label={`${product.rating} out of 5 stars`}>
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`w-3.5 h-3.5 ${
+                                        star <= Math.round(product.rating)
+                                          ? 'fill-amber-400 text-amber-400'
+                                          : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
+                                      }`}
+                                      aria-hidden="true"
+                                    />
+                                  ))}
                                 </div>
-                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
-                                  <Cpu className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
-                                  <span>{product.printSpecs.weightGrams}g filament</span>
-                                </div>
+                                <span className="text-zinc-500 dark:text-zinc-400 text-[11px] font-medium">
+                                  ({product.reviewsCount.toLocaleString()})
+                                </span>
                               </div>
 
-                              {/* Compatible Models list hint */}
-                              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                                <strong>Fits:</strong> {product.compatibleModels.join(', ')}
-                              </div>
+                              {/* Concise Summary Description */}
+                              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2">
+                                {product.summary}
+                              </p>
                             </div>
                           </div>
 
                           {/* Product Card Footer */}
-                          <div className="p-5 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+                          <div className="p-5 pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-3">
                             <div>
                               <span className="text-[10px] text-zinc-500 uppercase font-semibold block">Base Price</span>
                               <span className="text-lg font-extrabold text-zinc-900 dark:text-white">
@@ -1243,6 +1243,163 @@ export function App() {
           </div>
         </div>
       </footer>
+
+      {/* ======================================================== */}
+      {/* QUICK VIEW PREVIEW MODAL                                 */}
+      {/* ======================================================== */}
+      {quickViewProduct && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="quickview-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/75 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setQuickViewProduct(null)
+          }}
+        >
+          <div className="relative w-full max-w-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden my-8">
+            {/* Close Button Top Right */}
+            <button
+              onClick={() => setQuickViewProduct(null)}
+              aria-label="Close product preview"
+              className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer backdrop-blur-xs shadow-xs"
+            >
+              <X className="w-5 h-5" aria-hidden="true" />
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              {/* Product Visual Showcase (Left) */}
+              <div className="relative bg-zinc-950 flex flex-col justify-between overflow-hidden min-h-[300px] md:min-h-[460px]">
+                <img
+                  src={quickViewProduct.imageUrl.startsWith('http') ? quickViewProduct.imageUrl : `${import.meta.env.BASE_URL}${quickViewProduct.imageUrl}`}
+                  alt={quickViewProduct.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
+
+                {/* Badges Overlay */}
+                <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
+                  {quickViewProduct.badge && (
+                    <span className="px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md backdrop-blur-xs">
+                      {quickViewProduct.badge}
+                    </span>
+                  )}
+                  <span className="px-3 py-1 rounded-md text-xs font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
+                    {quickViewProduct.collection}
+                  </span>
+                </div>
+
+                <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between text-xs text-zinc-300 backdrop-blur-xs bg-zinc-950/70 p-3 rounded-xl border border-zinc-800">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                    Hand-Inspected & Calibrated Fit
+                  </span>
+                  <span className="text-zinc-400 text-[11px]">Direct Maker Build</span>
+                </div>
+              </div>
+
+              {/* Product Information & Action (Right) */}
+              <div className="p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                <div className="space-y-4">
+                  {/* Collection Label */}
+                  <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                    {quickViewProduct.collection} Collection
+                  </div>
+
+                  {/* Title */}
+                  <h3 id="quickview-title" className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white leading-tight">
+                    {quickViewProduct.name}
+                  </h3>
+
+                  {/* Amazon-Style Rating & Review Count */}
+                  <div className="flex items-center gap-2 pt-1 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
+                    <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">
+                      {quickViewProduct.rating.toFixed(1)}
+                    </span>
+                    <div className="flex items-center text-amber-400" aria-label={`${quickViewProduct.rating} out of 5 stars`}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${
+                            star <= Math.round(quickViewProduct.rating)
+                              ? 'fill-amber-400 text-amber-400'
+                              : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
+                          }`}
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                      ({quickViewProduct.reviewsCount.toLocaleString()} customer reviews)
+                    </span>
+                  </div>
+
+                  {/* Price */}
+                  <div className="space-y-0.5">
+                    <span className="text-[11px] uppercase font-bold text-zinc-400 tracking-wider">Base Price</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-black text-zinc-900 dark:text-white">
+                        ${quickViewProduct.basePrice.toFixed(2)}
+                      </span>
+                      <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                        • Customize filament & infill next
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* In-depth Description */}
+                  <div className="space-y-1.5">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                      Overview
+                    </h4>
+                    <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed max-h-36 overflow-y-auto pr-1">
+                      {quickViewProduct.description}
+                    </p>
+                  </div>
+
+                  {/* Key Features */}
+                  {quickViewProduct.features && quickViewProduct.features.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Key Features
+                      </h4>
+                      <ul className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">
+                        {quickViewProduct.features.map((feature, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Actions */}
+                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      const prod = quickViewProduct
+                      setQuickViewProduct(null)
+                      handleOpenCustomizer(prod)
+                    }}
+                    className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${COLLECTION_THEMES[quickViewProduct.collection].cardCta}`}
+                  >
+                    <ShoppingCart className="w-4 h-4" aria-hidden="true" />
+                    <span>Configure & Order (${quickViewProduct.basePrice.toFixed(2)})</span>
+                  </button>
+                  <button
+                    onClick={() => setQuickViewProduct(null)}
+                    className="py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ======================================================== */}
       {/* MODAL 1: 3D PRINT CUSTOMIZER & ORDER BUILDER             */}
