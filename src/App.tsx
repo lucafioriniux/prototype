@@ -17,7 +17,6 @@ import {
   Minus,
   ShoppingCart,
   CreditCard,
-  ArrowRight,
   FileText,
   CheckCircle2,
   Box,
@@ -1254,26 +1253,6 @@ export function App() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Section Call to Action Banner */}
-          <div className="rounded-3xl bg-zinc-900 border border-zinc-800 p-8 sm:p-10 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-            <div className="space-y-1 text-center sm:text-left">
-              <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Experience the Solo Maker Difference
-              </h3>
-              <p className="text-base text-zinc-400 max-w-xl font-medium">
-                Every Dyson mount, dock, and adapter is designed, printed on-demand, and hand-inspected by an independent maker who genuinely cares about fit and finish.
-              </p>
-            </div>
-            <a
-              href="#catalog-collections"
-              className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02]"
-            >
-              <ShoppingBag className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-              Explore Handcrafted Catalog
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </a>
           </div>
         </section>
         </div>
