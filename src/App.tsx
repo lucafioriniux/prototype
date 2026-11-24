@@ -506,35 +506,16 @@ export function App() {
 
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-10">
             {/* Hero Header & Intro Text */}
-            <div className="w-full space-y-6">
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-wider uppercase shadow-xs">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+            <div className="w-full space-y-4">
+              <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+                Modus 3D
+                <span className="block text-2xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
+                  Thoughtfully Designed. Precisely Made.
                 </span>
-                <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                Independent Solo Maker Workshop • Direct-to-Customer
-              </div>
-
-              <div className="space-y-4">
-                <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
-                  Modus 3D
-                  <span className="block text-2xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
-                    Thoughtfully Designed. Precisely Made.
-                  </span>
-                </h1>
-                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
-                  Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
-                </p>
-              </div>
-
-              {/* Capacity Safeguard & Human Touch Note */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-950/70 border border-zinc-800 text-xs text-zinc-300">
-                  <Gauge className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                  <span><strong>Protected Capacity:</strong> Daily order volume is capped so quality never slips and backorders never occur.</span>
-                </div>
-              </div>
+              </h1>
+              <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
+                Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
+              </p>
             </div>
 
             {/* Cinematic High Quality Hero Image Showcase Container (16:9) */}
@@ -546,35 +527,6 @@ export function App() {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
                   loading="eager"
                 />
-                {/* Cinematic Vignette & Edge Accents */}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/40 via-transparent to-zinc-950/40 pointer-events-none" />
-
-                {/* Interactive Product & 3D Print Callout Badges */}
-                <div className="absolute top-4 left-4 z-10 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-xs font-medium backdrop-blur-md shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                  <span>Active Print Bed • In-House CAD & Slicing</span>
-                </div>
-
-                <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-xs font-medium backdrop-blur-md shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span>Custom Additive Tooling & Storage</span>
-                </div>
-
-                <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-2 text-xs">
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 font-medium backdrop-blur-md shadow-md flex items-center gap-1.5">
-                    <span className="text-cyan-400 font-bold">⚡</span>
-                    <span>0.16mm - 0.20mm Micro-Layer FDM</span>
-                  </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-emerald-400 font-semibold backdrop-blur-md shadow-md flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>±0.15mm Hand-Verified Tolerances</span>
-                  </span>
-                </div>
-
-                <div className="absolute bottom-4 right-4 z-10 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300 text-xs backdrop-blur-md shadow-md">
-                  <span>Materials: High-Flow PLA • Impact PLA+ • 75°C PETG</span>
-                </div>
               </div>
             </div>
           </div>
@@ -584,7 +536,7 @@ export function App() {
         {/* Full-Width 4-Pillar Engineering & Trust Stripe Directly Below Hero */}
         <section
           aria-label="Engineering guarantees and customer trust"
-          className="w-full bg-zinc-100/90 dark:bg-zinc-900 border-y border-zinc-200/90 dark:border-zinc-800 relative overflow-hidden py-4 sm:py-5 shadow-xs dark:shadow-inner transition-colors duration-200"
+          className="w-full bg-zinc-100/90 dark:bg-zinc-900 border-y border-zinc-200/90 dark:border-zinc-800 relative overflow-hidden py-8 sm:py-10 shadow-xs dark:shadow-inner transition-colors duration-200"
         >
           {/* Subtle Industrial Background Grid & Radial Glow */}
           <div
@@ -595,44 +547,44 @@ export function App() {
           <div className="absolute -bottom-12 right-1/4 w-72 h-36 bg-purple-400/10 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
-                <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
-                  <ShieldCheck className="w-5 h-5" aria-hidden="true" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20 shrink-0">
+                  <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">±0.15mm Hand-Fit Check</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Every piece is physically test-fit on authentic Dyson wands before shipping.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
-                <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
-                  <Layers className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">PLA, PLA+ & PETG</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">From cost-efficient home docks to 75°C heat-resistant utility prints.</p>
+                <div className="space-y-1.5">
+                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">±0.15mm Hand-Fit Check</h4>
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Every piece is physically test-fit on authentic Dyson wands before shipping.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
-                <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20">
-                  <Gauge className="w-5 h-5" aria-hidden="true" />
+              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20 shrink-0">
+                  <Layers className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">Protected Order Queue</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">Orders are capped at workshop capacity to prevent massive backorders.</p>
+                <div className="space-y-1.5">
+                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">PLA, PLA+ & PETG</h4>
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">From cost-efficient home docks to 75°C heat-resistant utility prints.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none transition-colors">
-                <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-200/60 dark:border-amber-500/20">
-                  <HeartHandshake className="w-5 h-5 text-amber-500 dark:text-amber-400" aria-hidden="true" />
+              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20 shrink-0">
+                  <Gauge className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">100% Direct Maker Care</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">No bots, ticket queues, or phone trees. Work directly with the person who built it.</p>
+                <div className="space-y-1.5">
+                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">Protected Order Queue</h4>
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Orders are capped at workshop capacity to prevent massive backorders.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-200/60 dark:border-amber-500/20 shrink-0">
+                  <HeartHandshake className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
+                </div>
+                <div className="space-y-1.5">
+                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">100% Direct Maker Care</h4>
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">No bots, ticket queues, or phone trees. Work directly with the person who built it.</p>
                 </div>
               </div>
             </div>
