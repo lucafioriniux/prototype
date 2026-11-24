@@ -29,8 +29,11 @@ import {
   Compass,
   Star,
   Eye,
-  Pencil
+  Pencil,
+  ArrowDown,
+  Sparkles
 } from 'lucide-react'
+import { Hero3DViewer } from './components/Hero3DViewer'
 import type {
   DysonModel,
   Product,
@@ -562,41 +565,54 @@ export function App() {
       <main id="main-content" className="flex-1 w-full space-y-8">
         {/* Hero Section Container */}
         <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
-          {/* Hero Section */}
-        {/* Hero Section with Cinematic Showcase, Rich Intro & Top Selling CTA */}
+          {/* Hero Section with Asymmetric 50/50 Split & Interactive 3D Viewport */}
         <section
           aria-labelledby="hero-heading"
           className="relative rounded-3xl bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden text-white"
         >
           {/* Subtle Industrial Background Grid & Radial Glow */}
           <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" aria-hidden="true" />
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
           <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
-          <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-10">
-            {/* Hero Header & Intro Text */}
-            <div className="w-full space-y-4">
-              <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
-                Modus 3D
-                <span className="block text-2xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
-                  Thoughtfully Designed. Precisely Made.
-                </span>
-              </h1>
-              <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
-                Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
-              </p>
+          <div className="relative z-10 p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            {/* Left Column: Brand Headline, Broadened Value Prop & Primary CTAs */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="space-y-4">
+                <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.08]">
+                  Modus 3D
+                  <span className="block text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
+                    Thoughtfully Designed. Precisely Made.
+                  </span>
+                </h1>
+                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
+                  Functional 3D printed hardware for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong>, <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>, crafted on-demand in <strong>PLA, PLA+, or 75°C PETG</strong>.
+                </p>
+              </div>
+
+              {/* Primary Hero CTAs */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <a
+                  href="#catalog-collections"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm shadow-lg shadow-cyan-500/25 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
+                >
+                  <span>Explore Collections</span>
+                  <ArrowDown className="w-4 h-4" aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => handleOpenCustomizer(PRODUCTS[0])}
+                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-white font-bold text-sm border border-zinc-700 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                >
+                  <Sparkles className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                  <span>Quick Customize</span>
+                </button>
+              </div>
             </div>
 
-            {/* Cinematic High Quality Hero Image Showcase Container (16:9) */}
-            <div className="relative rounded-2xl overflow-hidden border border-zinc-700/80 shadow-2xl bg-zinc-950 group">
-              <div className="relative aspect-[16/9] w-full overflow-hidden">
-                <img
-                  src={`${import.meta.env.BASE_URL}hero.jpg`}
-                  alt="Independent precision 3D printing workshop with active CoreXY printers, CAD slicer workstation, and custom additive tool wall"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
-                  loading="eager"
-                />
-              </div>
+            {/* Right Column: Interactive 3D Orbitable Model & Slicer Showcase */}
+            <div className="lg:col-span-6">
+              <Hero3DViewer onQuickCustomize={() => handleOpenCustomizer(PRODUCTS[0])} />
             </div>
           </div>
         </section>
@@ -623,7 +639,7 @@ export function App() {
                 </div>
                 <div className="space-y-1.5">
                   <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">±0.15mm Hand-Fit Check</h4>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Every piece is physically test-fit on authentic Dyson wands before shipping.</p>
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Every piece is physically test-fit on authentic hardware & precision gauges before shipping.</p>
                 </div>
               </div>
 
@@ -1102,179 +1118,139 @@ export function App() {
         </div>
 
         {/* ======================================================== */}
-        {/* SNAPSHOT STAGGERED SECTION: SOLO MAKER & ADDITIVE CRAFT */}
+        {/* 2x2 BENTO GRID: SOLO MAKER & ADDITIVE CRAFT              */}
         {/* ======================================================== */}
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-8">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8">
           <section aria-labelledby="why-additive-heading" className="space-y-8 py-6">
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-wider uppercase">
-              <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
-              Human Craftsmanship • Additive Precision
+            {/* Section Header */}
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-wider uppercase">
+                <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                Human Craftsmanship • Additive Precision
+              </div>
+              <h2 id="why-additive-heading" className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
+                Crafted by a Human. Not a Mass Factory.
+              </h2>
+              <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 font-medium">
+                Why working directly with an independent solo maker beats faceless injection molders and automated drop-shippers.
+              </p>
             </div>
-            <h2 id="why-additive-heading" className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
-              Crafted by a Human. Not a Mass Factory.
-            </h2>
-            <p className="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 font-medium">
-              Why working directly with an independent solo maker beats faceless injection molders and automated drop-shippers.
-            </p>
-          </div>
 
-          {/* Burst 1: Mechanical Snap-Fit Precision (Text Left, Stat Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-cyan-500/40 transition">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-4">
-                <span className="text-xs font-bold tracking-widest uppercase text-cyan-500 dark:text-cyan-400">
-                  01 • Micro-Precision
-                </span>
-                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  ±0.15mm Hand-Fit. <span className="text-cyan-500 dark:text-cyan-400">Zero Wand Wobble.</span>
-                </h3>
-                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  Mass molders accept loose ±0.50mm tolerances because retooling costs tens of thousands. Because I personally slice, print, and physically test-fit every piece, every detent clicks with factory Dyson tactility and zero suction leaks.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Factory Tactile Snap
+            {/* Compact 2x2 Bento Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Bento 1: Micro-Precision */}
+              <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-8 shadow-xs hover:border-cyan-500/50 transition flex flex-col justify-between gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-xs font-bold tracking-widest uppercase text-cyan-500 dark:text-cyan-400">
+                      01 • Micro-Precision
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-cyan-500">
+                      ±0.15mm
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    Hand-Verified Fit. <span className="text-cyan-500 dark:text-cyan-400">Zero Wobble.</span>
+                  </h3>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                    Mass molders accept loose ±0.50mm tolerances because retooling costs tens of thousands. Every mount, dock, and organizer is personally sliced, printed, and test-fit against authentic hardware and precision gauges.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Tactile Snap Detents
                   </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Physically Test-Fitted
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Gauge-Checked Fit
                   </span>
                 </div>
               </div>
 
-              {/* Big Stat Snapshot Card */}
-              <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
-                <span className="text-5xl sm:text-7xl font-black tracking-tight text-cyan-500">
-                  ±0.15<span className="text-3xl sm:text-4xl">mm</span>
-                </span>
-                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  Laser & Hand Verified Fit
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  vs ±0.50mm loose injection mold slop
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Burst 2: Quality-Capped Queue & Zero Backorders (Stat Left, Text Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-pink-500/40 transition">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Big Stat Snapshot Card (Left on Desktop) */}
-              <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
-                <span className="text-5xl sm:text-7xl font-black tracking-tight text-pink-500">
-                  48 <span className="text-3xl sm:text-4xl">Hours</span>
-                </span>
-                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  Print Bed to Mailbox Dispatch
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  vs months of overseas backorders
-                </span>
-              </div>
-
-              <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
-                <span className="text-xs font-bold tracking-widest uppercase text-pink-500 dark:text-pink-400">
-                  02 • Capacity Protection
-                </span>
-                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  Quality-Capped Queue. <span className="text-pink-500 dark:text-pink-400">Zero Backorder Limbo.</span>
-                </h3>
-                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  I refuse to run an order sweatshop where backorders spiral out of control. When my print capacity is reached, new orders temporarily pause so every piece gets the attention it deserves and ships within 48 hours. Small batch buffers keep top sellers ready to go.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+              {/* Bento 2: Capacity Protection */}
+              <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-8 shadow-xs hover:border-pink-500/50 transition flex flex-col justify-between gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-xs font-bold tracking-widest uppercase text-pink-500 dark:text-pink-400">
+                      02 • Capacity Protection
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-pink-500">
+                      48 Hours
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    Quality-Capped Queue. <span className="text-pink-500 dark:text-pink-400">Zero Backorders.</span>
+                  </h3>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                    When workshop print capacity is reached, new orders pause automatically so every piece gets full inspection and ships within 48 hours—never stuck in overseas backorder limbo.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
                     ✓ Protected 48h Turnaround
                   </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ Small Batch Buffer Inventory
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Small-Batch Buffers
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Burst 3: Purpose-Engineered Polymers (Text Left, Stat Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-purple-500/40 transition">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-4">
-                <span className="text-xs font-bold tracking-widest uppercase text-purple-500 dark:text-purple-400">
-                  03 • Polymer Science
-                </span>
-                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  Engineered Polymers. <span className="text-purple-500 dark:text-purple-400">Not Brittle Plastic.</span>
-                </h3>
-                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  Big box sellers use brittle commodity plastic that snaps after a few months of tool swapping. I print in cost-efficient <strong>PLA</strong> for home docks, impact-modified <strong>PLA+</strong> for daily tool swapping, and industrial heat-resistant <strong>PETG</strong> (rated to 75°C) for utility vans, garages, and heavy mechanical strain.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ PLA • Cost-Efficient
-                  </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+              {/* Bento 3: Polymer Science */}
+              <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-8 shadow-xs hover:border-purple-500/50 transition flex flex-col justify-between gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-xs font-bold tracking-widest uppercase text-purple-500 dark:text-purple-400">
+                      03 • Polymer Science
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-purple-500">
+                      75°C
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    Engineered Polymers. <span className="text-purple-500 dark:text-purple-400">Not Brittle Plastic.</span>
+                  </h3>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                    Choose cost-efficient <strong>PLA</strong> for everyday organizers, impact-modified <strong>PLA+</strong> for daily ergonomics, or industrial <strong>PETG</strong> rated to 75°C for hot cars, garages, and heavy tool loads.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
                     ✓ PLA+ • 3x Impact Toughness
                   </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
                     ✓ PETG • 75°C Heat Resistance
                   </span>
                 </div>
               </div>
 
-              {/* Big Stat Snapshot Card */}
-              <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
-                <span className="text-5xl sm:text-7xl font-black tracking-tight text-purple-500">
-                  75°<span className="text-3xl sm:text-4xl">C</span>
-                </span>
-                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  PETG Heat Deflection Ceiling
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  Resists hot vans, garages & heavy structural strain
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Burst 4: The Human Connection Over Automated Bots (Stat Left, Text Right) */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-10 shadow-xs hover:border-emerald-500/40 transition">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Big Stat Snapshot Card (Left on Desktop) */}
-              <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/80 text-center space-y-2">
-                <span className="text-5xl sm:text-7xl font-black tracking-tight text-emerald-500">
-                  1 : 1
-                </span>
-                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                  Direct Human Connection
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  Zero bots, outsourced tiers, or automated phone trees
-                </span>
-              </div>
-
-              <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
-                <span className="text-xs font-bold tracking-widest uppercase text-emerald-500 dark:text-emerald-400">
-                  04 • Direct Craftsmanship
-                </span>
-                <h3 className="text-2xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  A Real Human Maker. <span className="text-emerald-500 dark:text-emerald-400">Zero Automated Bots.</span>
-                </h3>
-                <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
-                  While large organizations replace their people with generative chatbots and ticket trees, I run this as an authentic human craft. When you have a question, need a custom fit, or request a tweak, you talk directly to the person who designed the CAD, calibrated the machine, and boxed your order.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+              {/* Bento 4: Direct Craftsmanship */}
+              <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-8 shadow-xs hover:border-emerald-500/50 transition flex flex-col justify-between gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-xs font-bold tracking-widest uppercase text-emerald-500 dark:text-emerald-400">
+                      04 • Direct Craftsmanship
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-emerald-500">
+                      1 : 1
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    A Real Human Maker. <span className="text-emerald-500 dark:text-emerald-400">Zero Bots.</span>
+                  </h3>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                    No chatbots, outsourced ticket tiers, or automated phone trees. When you need a custom tolerance tweak or fit check, you talk directly to the person who designed the CAD and boxed your order.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
                     ✓ Direct Maker Support
                   </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                    ✓ 100% Personal Accountability
+                  <span className="px-3 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    ✓ Personal Accountability
                   </span>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
         </div>
       </main>
 

@@ -306,7 +306,7 @@ export const PRODUCTS: Product[] = [
       'Non-slip silicone foot wells prevent sliding on drawer open/close',
     ],
     iconType: 'carousel',
-    imageUrl: 'products/accessory-storage-wall-mount.jpg',
+    imageUrl: 'products/hex-drawer-organizer.jpg',
   },
   {
     id: 'dual-magnetic-paper-towel-mount',
@@ -334,7 +334,7 @@ export const PRODUCTS: Product[] = [
       'Non-marring silicone backer protects appliance finishes',
     ],
     iconType: 'mount',
-    imageUrl: 'products/car-cleaning-nozzle-kit-v15.jpg',
+    imageUrl: 'products/magnetic-paper-towel-mount.jpg',
   },
 
   // ==========================================
@@ -364,7 +364,7 @@ export const PRODUCTS: Product[] = [
       '75°C heat deflection for hot workshops',
     ],
     iconType: 'mount',
-    imageUrl: 'products/accessory-storage-wall-mount.jpg',
+    imageUrl: 'products/tool-battery-wall-mount.jpg',
   },
   {
     id: 'magnetic-bit-hex-carousel',
@@ -390,7 +390,7 @@ export const PRODUCTS: Product[] = [
       'Weighted anti-skid base ring',
     ],
     iconType: 'carousel',
-    imageUrl: 'products/car-cleaning-nozzle-kit-v15.jpg',
+    imageUrl: 'products/magnetic-bit-hex-carousel.jpg',
   },
   {
     id: 'shopvac-universal-coupler',
@@ -416,7 +416,7 @@ export const PRODUCTS: Product[] = [
       'Airtight internal taper',
     ],
     iconType: 'adapter',
-    imageUrl: 'products/zero-fatigue-trigger-lock.jpg',
+    imageUrl: 'products/shopvac-universal-coupler.jpg',
   },
 
   // ==========================================
@@ -446,7 +446,7 @@ export const PRODUCTS: Product[] = [
       'Includes pre-drilled screw points and heavy-duty 3M VHB tape',
     ],
     iconType: 'clip',
-    imageUrl: 'products/on-wand-carrying-caddy-4-tools.jpg',
+    imageUrl: 'products/underdesk-dual-cradle.jpg',
   },
   {
     id: 'low-friction-mouse-bungee',
@@ -472,7 +472,7 @@ export const PRODUCTS: Product[] = [
       'Compact non-slip desk footprint',
     ],
     iconType: 'nozzle',
-    imageUrl: 'products/zero-fatigue-trigger-lock.jpg',
+    imageUrl: 'products/low-friction-mouse-bungee.jpg',
   },
 
   // ==========================================
@@ -502,7 +502,7 @@ export const PRODUCTS: Product[] = [
       'Concealed channel routes USB-C cord cleanly behind dash',
     ],
     iconType: 'mount',
-    imageUrl: 'products/car-cleaning-nozzle-kit-v15.jpg',
+    imageUrl: 'products/magsafe-vent-mount.jpg',
   },
   {
     id: 'modular-center-console-divider',
@@ -528,6 +528,6 @@ export const PRODUCTS: Product[] = [
       'Heat resistant to prevent warping',
     ],
     iconType: 'carousel',
-    imageUrl: 'products/accessory-storage-wall-mount.jpg',
+    imageUrl: 'products/modular-console-divider.jpg',
   },
 ]
