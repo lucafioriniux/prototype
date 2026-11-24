@@ -176,9 +176,9 @@ export function App() {
   // Collection and Dyson Model Filter state
   const [activeCollection, setActiveCollection] = useState<ProductCollection>('Household')
   const activeTheme = COLLECTION_THEMES[activeCollection]
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all')
   const [selectedModel, setSelectedModel] = useState<DysonModel>('Dyson V15 Detect')
   const [onlyCompatible, setOnlyCompatible] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<'recommended' | 'price-asc' | 'price-desc' | 'time'>('recommended')
 
@@ -429,20 +429,31 @@ export function App() {
   const shippingCost = cartTotalItems === 0 ? 0 : freeShippingMet ? 0 : 4.99
   const orderTotal = cartSubtotal + shippingCost
 
+  // Household subcategories
+  const HOUSEHOLD_SUBCATEGORIES = [
+    { id: 'all', label: 'All Household' },
+    { id: 'dyson', label: 'Dyson Accessories' },
+    { id: 'home', label: 'Home Essentials' },
+  ] as const
+
   // Filter products by active collection
   const collectionProducts = PRODUCTS.filter((p) => p.collection === activeCollection)
-  const categories = ['All', ...Array.from(new Set(collectionProducts.map((p) => p.category)))]
 
   const filteredProducts = collectionProducts.filter(product => {
-    // Model compatibility check (active only when in Household)
-    if (activeCollection === 'Household' && selectedModel !== 'All Models') {
-      const isCompatible = product.compatibleModels.includes(selectedModel)
-      if (onlyCompatible && !isCompatible) return false
-    }
+    // Household subcategory filtering
+    if (activeCollection === 'Household') {
+      if (selectedSubcategory === 'dyson' && product.subCollection !== 'Dyson Precision') {
+        return false
+      }
+      if (selectedSubcategory === 'home' && product.subCollection === 'Dyson Precision') {
+        return false
+      }
 
-    // Category filter
-    if (selectedCategory !== 'All' && product.category !== selectedCategory) {
-      return false
+      // Dyson Model compatibility check (revealed & active only when in Household and in Dyson Accessories subcategory)
+      if (selectedSubcategory === 'dyson' && selectedModel !== 'All Models') {
+        const isCompatible = product.compatibleModels.includes(selectedModel)
+        if (onlyCompatible && !isCompatible) return false
+      }
     }
 
     // Search query
@@ -450,8 +461,9 @@ export function App() {
       const q = searchQuery.toLowerCase()
       const matchName = product.name.toLowerCase().includes(q)
       const matchDesc = product.description.toLowerCase().includes(q)
+      const matchSummary = product.summary?.toLowerCase().includes(q) || false
       const matchCat = product.category.toLowerCase().includes(q)
-      if (!matchName && !matchDesc && !matchCat) return false
+      if (!matchName && !matchDesc && !matchSummary && !matchCat) return false
     }
 
     return true
@@ -679,22 +691,16 @@ export function App() {
             <div className="relative z-10 space-y-8">
               {/* Catalog Section Header: Title & Subtitle + Active Collection Status */}
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div className="space-y-2">
-                  <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase border transition-colors duration-300 shadow-xs ${activeTheme.badgePill}`}>
-                    <span className="w-2 h-2 rounded-full bg-current opacity-80" aria-hidden="true" />
-                    <span>{activeTheme.badgeLabel}</span>
-                  </div>
-                  <div>
-                    <h2
-                      id="catalog-collections-heading"
-                      className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-zinc-900 dark:text-white"
-                    >
-                      Catalog collections
-                    </h2>
-                    <p className="mt-1 text-base sm:text-lg text-zinc-600 dark:text-zinc-300 font-medium">
-                      Explore items by collection
-                    </p>
-                  </div>
+                <div>
+                  <h2
+                    id="catalog-collections-heading"
+                    className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-zinc-900 dark:text-white"
+                  >
+                    Catalog collections
+                  </h2>
+                  <p className="mt-1 text-base sm:text-lg text-zinc-600 dark:text-zinc-300 font-medium">
+                    Explore items by collection
+                  </p>
                 </div>
 
                 <div className="text-left sm:text-right text-xs text-zinc-500 dark:text-zinc-400">
@@ -730,7 +736,7 @@ export function App() {
                       aria-selected={isActive}
                       onClick={() => {
                         setActiveCollection(col.id)
-                        setSelectedCategory('All')
+                        setSelectedSubcategory('all')
                       }}
                       className={`group relative flex items-center gap-3 p-3 sm:p-3.5 rounded-xl transition-all duration-200 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                         isActive
@@ -763,7 +769,7 @@ export function App() {
                           </span>
                         </div>
                         <p className="text-[11px] opacity-80 truncate hidden sm:block">
-                          {col.id === 'Household' ? 'Dyson Upgrades' : col.headline.replace(/^Rugged |^Battlestation & |^Automotive & /, '')}
+                          {col.id === 'Household' ? 'Home & Living' : col.headline.replace(/^Rugged |^Battlestation & |^Automotive & /, '')}
                         </p>
                       </div>
                     </button>
@@ -803,7 +809,7 @@ export function App() {
                     )}
                   </div>
 
-                  {/* Quick Sort & Model Helper */}
+                  {/* Quick Sort */}
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <label htmlFor={sortSelectId} className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -821,23 +827,40 @@ export function App() {
                         <option value="time">Fastest Print Time</option>
                       </select>
                     </div>
-
-                    {activeCollection === 'Household' && (
-                      <button
-                        type="button"
-                        onClick={() => setIsModelFinderOpen(true)}
-                        className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
-                        title="Don't know your model? Take the quick 2-step diagnostic"
-                      >
-                        <HelpCircle className={`w-3.5 h-3.5 ${activeTheme.accentText}`} aria-hidden="true" />
-                        <span>Find My Model</span>
-                      </button>
-                    )}
                   </div>
                 </div>
 
-                {/* Middle Row: Filter by Dyson Model (Conditional when Household is active) */}
-                {activeCollection === 'Household' ? (
+                {/* Subcategory Row: Rendered when Household is active */}
+                {activeCollection === 'Household' && (
+                  <div className="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/80 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Household subcategories">
+                      <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider hidden sm:inline mr-1">
+                        Subcategory:
+                      </span>
+                      {HOUSEHOLD_SUBCATEGORIES.map((subcat) => {
+                        const isActive = selectedSubcategory === subcat.id
+                        return (
+                          <button
+                            key={subcat.id}
+                            role="tab"
+                            aria-selected={isActive}
+                            onClick={() => setSelectedSubcategory(subcat.id)}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${
+                              isActive
+                                ? activeTheme.categoryActive
+                                : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                            }`}
+                          >
+                            {subcat.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Filter by Dyson Model: Revealed ONLY when Household is active AND Dyson Accessories subcategory is selected */}
+                {activeCollection === 'Household' && selectedSubcategory === 'dyson' && (
                   <div className="pt-4 border-t border-zinc-200/60 dark:border-zinc-800/80 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -850,28 +873,41 @@ export function App() {
                         </span>
                       </div>
 
-                      {selectedModel !== 'All Models' && (
-                        <div className="flex items-center gap-3">
-                          <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                            <input
-                              type="checkbox"
-                              checked={onlyCompatible}
-                              onChange={(e) => setOnlyCompatible(e.target.checked)}
-                              className="w-3.5 h-3.5 rounded text-zinc-900 dark:text-white border-zinc-400"
-                            />
-                            <span>Only 100% Fit for {selectedModel}</span>
-                          </label>
-                          <button
-                            onClick={() => {
-                              setSelectedModel('All Models')
-                              setOnlyCompatible(false)
-                            }}
-                            className={`text-xs ${activeTheme.accentText} hover:underline cursor-pointer font-medium`}
-                          >
-                            Reset
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsModelFinderOpen(true)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
+                          title="Don't know your model? Take the quick 2-step diagnostic"
+                        >
+                          <HelpCircle className={`w-3.5 h-3.5 ${activeTheme.accentText}`} aria-hidden="true" />
+                          <span>Find My Model</span>
+                        </button>
+
+                        {selectedModel !== 'All Models' && (
+                          <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 dark:border-zinc-700">
+                            <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                              <input
+                                type="checkbox"
+                                checked={onlyCompatible}
+                                onChange={(e) => setOnlyCompatible(e.target.checked)}
+                                className="w-3.5 h-3.5 rounded text-zinc-900 dark:text-white border-zinc-400"
+                              />
+                              <span className="hidden sm:inline">Only 100% Fit for {selectedModel}</span>
+                              <span className="sm:hidden">100% Fit</span>
+                            </label>
+                            <button
+                              onClick={() => {
+                                setSelectedModel('All Models')
+                                setOnlyCompatible(false)
+                              }}
+                              className={`text-xs ${activeTheme.accentText} hover:underline cursor-pointer font-medium`}
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Model Filter Pills */}
@@ -897,7 +933,10 @@ export function App() {
                       })}
                     </div>
                   </div>
-                ) : (
+                )}
+
+                {/* For non-household collections: concise description line */}
+                {activeCollection !== 'Household' && (
                   <div className="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
                       <span className="font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
@@ -910,33 +949,6 @@ export function App() {
                     </div>
                   </div>
                 )}
-
-                {/* Bottom Row: Category Tabs */}
-                <div className="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/80 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Product categories">
-                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider hidden sm:inline mr-1">
-                      Category:
-                    </span>
-                    {categories.map((cat) => {
-                      const isActive = selectedCategory === cat
-                      return (
-                        <button
-                          key={cat}
-                          role="tab"
-                          aria-selected={isActive}
-                          onClick={() => setSelectedCategory(cat)}
-                          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${
-                            isActive
-                              ? activeTheme.categoryActive
-                              : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                          }`}
-                        >
-                          {cat}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
               </div>
 
               {/* Product Grid */}
@@ -949,7 +961,7 @@ export function App() {
                     </span>
                   </h3>
 
-                  {activeCollection === 'Household' && selectedModel !== 'All Models' && (
+                  {activeCollection === 'Household' && selectedSubcategory === 'dyson' && selectedModel !== 'All Models' && (
                     <span className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
                       <CheckCircle2 className={`w-3.5 h-3.5 ${activeTheme.accentText}`} aria-hidden="true" />
                       Active Model Filter: <strong className="text-zinc-800 dark:text-zinc-200">{selectedModel}</strong>
@@ -968,7 +980,8 @@ export function App() {
                     </p>
                     <button
                       onClick={() => {
-                        setSelectedCategory('All')
+                        setSelectedSubcategory('all')
+                        setSelectedModel('All Models')
                         setSearchQuery('')
                         setOnlyCompatible(false)
                       }}

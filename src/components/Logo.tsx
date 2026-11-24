@@ -61,9 +61,6 @@ export function Logo({ className = '', showTagline = true, size = 'md' }: LogoPr
           <span className={`${titleSize} font-extrabold tracking-tight text-zinc-900 dark:text-white leading-none`}>
             MODUS<span className="text-cyan-500 ml-1">3D</span>
           </span>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Precision
-          </span>
         </div>
         {showTagline && (
           <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium leading-tight mt-0.5">
