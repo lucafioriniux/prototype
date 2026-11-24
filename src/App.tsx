@@ -34,6 +34,7 @@ import {
   Sparkles
 } from 'lucide-react'
 import { Hero3DViewer } from './components/Hero3DViewer'
+import { InteractiveTiltCard } from './components/InteractiveTiltCard'
 import type {
   DysonModel,
   Product,
@@ -562,66 +563,111 @@ export function App() {
       </header>
 
       {/* Main Content Landmark */}
-      <main id="main-content" className="flex-1 w-full space-y-8">
-        {/* Hero Section Container */}
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
-          {/* Hero Section with Asymmetric 50/50 Split & Interactive 3D Viewport */}
-        <section
-          aria-labelledby="hero-heading"
-          className="relative rounded-3xl bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden text-white"
+      <main id="main-content" className="flex-1 w-full">
+        {/* 3D Metal Print Plate Zone Behind Hero */}
+        <div
+          className="w-full relative overflow-hidden py-6 sm:py-10 border-b border-zinc-700/70 shadow-inner"
+          style={{
+            backgroundColor: '#161920',
+            backgroundImage: [
+              'radial-gradient(ellipse at 50% 0%, rgba(34, 211, 238, 0.12), transparent 65%)',
+              'repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.018) 0px, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 3px)',
+              'linear-gradient(to right, rgba(34, 211, 238, 0.09) 1px, transparent 1px)',
+              'linear-gradient(to bottom, rgba(34, 211, 238, 0.09) 1px, transparent 1px)',
+              'linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px)',
+              'linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px)',
+              'linear-gradient(135deg, #1b1f27 0%, #242934 28%, #15181f 55%, #222731 82%, #13161c 100%)',
+            ].join(', '),
+            backgroundSize: '100% 100%, 100% 100%, 120px 120px, 120px 120px, 24px 24px, 24px 24px, 100% 100%',
+          }}
         >
-          {/* Subtle Industrial Background Grid & Radial Glow */}
-          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" aria-hidden="true" />
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-
-          <div className="relative z-10 p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            {/* Left Column: Brand Headline, Broadened Value Prop & Primary CTAs */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="space-y-4">
-                <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.08]">
-                  Modus 3D
-                  <span className="block text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
-                    Thoughtfully Designed. Precisely Made.
-                  </span>
-                </h1>
-                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
-                  Functional 3D printed hardware for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong>, <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>, crafted on-demand in <strong>PLA, PLA+, or 75°C PETG</strong>.
-                </p>
-              </div>
-
-              {/* Primary Hero CTAs */}
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <a
-                  href="#catalog-collections"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm shadow-lg shadow-cyan-500/25 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
-                >
-                  <span>Explore Collections</span>
-                  <ArrowDown className="w-4 h-4" aria-hidden="true" />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => handleOpenCustomizer(PRODUCTS[0])}
-                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-white font-bold text-sm border border-zinc-700 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-                >
-                  <Sparkles className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                  <span>Quick Customize</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column: Interactive 3D Orbitable Model & Slicer Showcase */}
-            <div className="lg:col-span-6">
-              <Hero3DViewer onQuickCustomize={() => handleOpenCustomizer(PRODUCTS[0])} />
-            </div>
+          {/* Subtle Metallic Edge Chamfer & Build-Plate Alignment Ticks */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-400/30 to-transparent" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" aria-hidden="true" />
+          <div className="pointer-events-none hidden sm:flex items-center gap-2 absolute bottom-2.5 right-6 text-[10px] font-mono tracking-widest uppercase text-zinc-500/80 select-none" aria-hidden="true">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/60" />
+            <span>PEI Textured Spring Steel • 256×256 Build Plate</span>
           </div>
-        </section>
+
+          {/* Hero Section Container */}
+          <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 relative z-10">
+            {/* Hero Section with Asymmetric 50/50 Split & Interactive 3D Viewport */}
+            <section
+              aria-labelledby="hero-heading"
+              className="relative rounded-3xl bg-zinc-900/95 border border-zinc-700/80 shadow-2xl overflow-hidden text-white backdrop-blur-xs"
+            >
+              {/* Subtle Industrial Background Grid & Radial Glow */}
+              <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" aria-hidden="true" />
+              <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+              <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+
+              <div className="relative z-10 p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                {/* Left Column: Brand Headline, Broadened Value Prop & Primary CTAs */}
+                <div className="lg:col-span-6 space-y-6">
+                  <div className="space-y-4">
+                    <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.08]">
+                      Modus 3D
+                      <span className="block text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
+                        Thoughtfully Designed. Precisely Made.
+                      </span>
+                    </h1>
+                    <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
+                      Functional 3D printed hardware for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong>, <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>, crafted on-demand in <strong>PLA, PLA+, or 75°C PETG</strong>.
+                    </p>
+                  </div>
+
+                  {/* Primary Hero CTAs */}
+                  <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <a
+                      href="#catalog-collections"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        const target = document.getElementById('catalog-collections')
+                        if (!target) return
+                        const headerOffset = 96
+                        const startY = window.scrollY
+                        const targetY = target.getBoundingClientRect().top + startY - headerOffset
+                        const distance = targetY - startY
+                        const duration = 560
+                        const startTime = performance.now()
+                        const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4)
+                        const step = (now: number) => {
+                          const elapsed = now - startTime
+                          const progress = Math.min(elapsed / duration, 1)
+                          window.scrollTo(0, startY + distance * easeOutQuart(progress))
+                          if (progress < 1) requestAnimationFrame(step)
+                        }
+                        requestAnimationFrame(step)
+                      }}
+                      className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-extrabold text-sm shadow-lg shadow-cyan-500/25 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
+                    >
+                      <span>Explore Collections</span>
+                      <ArrowDown className="w-4 h-4" aria-hidden="true" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenCustomizer(PRODUCTS[0])}
+                      className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-white font-bold text-sm border border-zinc-700 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                    >
+                      <Sparkles className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                      <span>Quick Customize</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Column: Interactive 3D Orbitable Model & Slicer Showcase */}
+                <div className="lg:col-span-6">
+                  <Hero3DViewer onQuickCustomize={() => handleOpenCustomizer(PRODUCTS[0])} />
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
 
         {/* Full-Width 4-Pillar Engineering & Trust Stripe Directly Below Hero */}
         <section
           aria-label="Engineering guarantees and customer trust"
-          className="w-full bg-zinc-100/90 dark:bg-zinc-900 border-y border-zinc-200/90 dark:border-zinc-800 relative overflow-hidden py-8 sm:py-10 shadow-xs dark:shadow-inner transition-colors duration-200"
+          className="w-full bg-zinc-100/90 dark:bg-zinc-900 border-b border-zinc-200/90 dark:border-zinc-800 relative overflow-hidden py-8 sm:py-10 mb-8 shadow-xs dark:shadow-inner transition-colors duration-200"
         >
           {/* Subtle Industrial Background Grid & Radial Glow */}
           <div
@@ -633,45 +679,30 @@ export function App() {
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20 shrink-0">
-                  <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
-                </div>
-                <div className="space-y-1.5">
-                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">±0.15mm Hand-Fit Check</h4>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Every piece is physically test-fit on authentic hardware & precision gauges before shipping.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20 shrink-0">
-                  <Layers className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
-                </div>
-                <div className="space-y-1.5">
-                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">PLA, PLA+ & PETG</h4>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">From cost-efficient home docks to 75°C heat-resistant utility prints.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-500/20 shrink-0">
-                  <Gauge className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
-                </div>
-                <div className="space-y-1.5">
-                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">Protected Order Queue</h4>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Orders are capped at workshop capacity to prevent massive backorders.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800/60 shadow-xs dark:shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-200/60 dark:border-amber-500/20 shrink-0">
-                  <HeartHandshake className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
-                </div>
-                <div className="space-y-1.5">
-                  <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug">100% Direct Maker Care</h4>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">No bots, ticket queues, or phone trees. Work directly with the person who built it.</p>
-                </div>
-              </div>
+              <InteractiveTiltCard
+                accent="cyan"
+                icon={<ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />}
+                title="±0.15mm Hand-Fit Check"
+                description="Every piece is physically test-fit on authentic hardware & precision gauges before shipping."
+              />
+              <InteractiveTiltCard
+                accent="fuchsia"
+                icon={<Layers className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />}
+                title="PLA, PLA+ & PETG"
+                description="From cost-efficient home docks to 75°C heat-resistant utility prints."
+              />
+              <InteractiveTiltCard
+                accent="violet"
+                icon={<Gauge className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />}
+                title="Protected Order Queue"
+                description="Orders are capped at workshop capacity to prevent massive backorders."
+              />
+              <InteractiveTiltCard
+                accent="amber"
+                icon={<HeartHandshake className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />}
+                title="100% Direct Maker Care"
+                description="No bots, ticket queues, or phone trees. Work directly with the person who built it."
+              />
             </div>
           </div>
         </section>
