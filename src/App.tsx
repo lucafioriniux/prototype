@@ -30,8 +30,7 @@ import {
   Star,
   Eye,
   Pencil,
-  ArrowDown,
-  Sparkles
+  ArrowDown
 } from 'lucide-react'
 import { Hero3DViewer } from './components/Hero3DViewer'
 import { InteractiveTiltCard } from './components/InteractiveTiltCard'
@@ -644,14 +643,6 @@ export function App() {
                       <span>Explore Collections</span>
                       <ArrowDown className="w-4 h-4" aria-hidden="true" />
                     </a>
-                    <button
-                      type="button"
-                      onClick={() => handleOpenCustomizer(PRODUCTS[0])}
-                      className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-white font-bold text-sm border border-zinc-700 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-                    >
-                      <Sparkles className="w-4 h-4 text-cyan-400" aria-hidden="true" />
-                      <span>Quick Customize</span>
-                    </button>
                   </div>
                 </div>
 
