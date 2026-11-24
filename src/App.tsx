@@ -28,7 +28,8 @@ import {
   Gamepad2,
   Compass,
   Star,
-  Eye
+  Eye,
+  Pencil
 } from 'lucide-react'
 import type {
   DysonModel,
@@ -184,6 +185,7 @@ export function App() {
   // Modals & Drawers state
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
   const [customizingProduct, setCustomizingProduct] = useState<Product | null>(null)
+  const [editingCartItemId, setEditingCartItemId] = useState<string | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isModelFinderOpen, setIsModelFinderOpen] = useState(false)
   const [isGuidelinesOpen, setIsGuidelinesOpen] = useState(false)
@@ -285,7 +287,13 @@ export function App() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (quickViewProduct) setQuickViewProduct(null)
-        else if (customizingProduct) setCustomizingProduct(null)
+        else if (customizingProduct) {
+          setCustomizingProduct(null)
+          if (editingCartItemId) {
+            setEditingCartItemId(null)
+            setIsCartOpen(true)
+          }
+        }
         else if (isCartOpen) setIsCartOpen(false)
         else if (isModelFinderOpen) setIsModelFinderOpen(false)
         else if (isGuidelinesOpen) setIsGuidelinesOpen(false)
@@ -294,10 +302,11 @@ export function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [quickViewProduct, customizingProduct, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
+  }, [quickViewProduct, customizingProduct, editingCartItemId, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
 
   // Open customizer for a specific product
   const handleOpenCustomizer = (product: Product) => {
+    setEditingCartItemId(null)
     setCustomizingProduct(product)
     // Preset recommended material
     const matchedMat = MATERIALS.find(m => m.name === product.printSpecs.recommendedMaterial) || MATERIALS[0]
@@ -305,6 +314,30 @@ export function App() {
     setSelectedColor(FILAMENT_COLORS[0])
     setSelectedInfill(INFILL_OPTIONS[0])
     setCustomQuantity(1)
+  }
+
+  // Open customizer to re-configure an existing cart item
+  const handleEditCartItem = (item: CartItem) => {
+    setEditingCartItemId(item.cartId)
+    setCustomizingProduct(item.product)
+    setSelectedMaterial(item.material)
+    setSelectedColor(item.color)
+    setSelectedInfill(item.infill)
+    setCustomQuantity(item.quantity)
+    if (item.product.collection === 'Household' && DYSON_MODELS.includes(item.selectedModel as any)) {
+      setSelectedModel(item.selectedModel as DysonModel)
+    }
+    setIsCartOpen(false)
+  }
+
+  // Close customizer modal, restoring cart if editing
+  const handleCloseCustomizer = () => {
+    const wasEditing = editingCartItemId !== null
+    setCustomizingProduct(null)
+    setEditingCartItemId(null)
+    if (wasEditing) {
+      setIsCartOpen(true)
+    }
   }
 
   // Calculate live price for customizer
@@ -326,7 +359,7 @@ export function App() {
     }
   }
 
-  // Add customized item to cart
+  // Add customized item to cart or update existing cart item
   const handleAddToCart = () => {
     if (!customizingProduct) return
     const unitPrice = calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill)
@@ -335,18 +368,40 @@ export function App() {
         ? (selectedModel === 'All Models' ? 'Dyson V15 Detect' : selectedModel)
         : (customizingProduct.compatibleModels[0] || 'Universal Standard')
 
-    const newItem: CartItem = {
-      cartId: `cart-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-      productId: customizingProduct.id,
-      product: customizingProduct,
-      material: selectedMaterial,
-      color: selectedColor,
-      infill: selectedInfill,
-      selectedModel: modelForCart,
-      quantity: customQuantity,
-      unitPrice,
+    if (editingCartItemId) {
+      // Update existing item in cart
+      setCart(prev =>
+        prev.map(item => {
+          if (item.cartId === editingCartItemId) {
+            return {
+              ...item,
+              material: selectedMaterial,
+              color: selectedColor,
+              infill: selectedInfill,
+              selectedModel: modelForCart,
+              quantity: customQuantity,
+              unitPrice,
+            }
+          }
+          return item
+        })
+      )
+      setEditingCartItemId(null)
+    } else {
+      // Add new item to cart
+      const newItem: CartItem = {
+        cartId: `cart-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        productId: customizingProduct.id,
+        product: customizingProduct,
+        material: selectedMaterial,
+        color: selectedColor,
+        infill: selectedInfill,
+        selectedModel: modelForCart,
+        quantity: customQuantity,
+        unitPrice,
+      }
+      setCart(prev => [newItem, ...prev])
     }
-    setCart(prev => [newItem, ...prev])
     setCustomizingProduct(null)
     setIsCartOpen(true)
   }
@@ -1415,17 +1470,18 @@ export function App() {
             {/* Modal Header */}
             <div className="px-6 py-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
-                  Custom 3D Print Configurator
+                <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                  {editingCartItemId && <Pencil className="w-3 h-3" />}
+                  {editingCartItemId ? 'Edit Cart Configuration' : 'Custom 3D Print Configurator'}
                 </span>
                 <h2 id="customizer-title" className="text-xl font-bold text-zinc-900 dark:text-white">
                   {customizingProduct.name}
                 </h2>
               </div>
               <button
-                onClick={() => setCustomizingProduct(null)}
+                onClick={handleCloseCustomizer}
                 aria-label="Close customizer"
-                className="p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                className="p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 cursor-pointer"
               >
                 <X className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -1658,13 +1714,22 @@ export function App() {
                 </div>
               </div>
 
-              {/* Add to Cart button */}
+              {/* Add or Update Cart button */}
               <button
                 onClick={handleAddToCart}
-                className="px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
+                className="px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
               >
-                <ShoppingBag className="w-4 h-4" aria-hidden="true" />
-                Add to Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
+                {editingCartItemId ? (
+                  <>
+                    <Check className="w-4 h-4" aria-hidden="true" />
+                    Update Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-4 h-4" aria-hidden="true" />
+                    Add to Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -1722,6 +1787,14 @@ export function App() {
               </div>
             </div>
 
+            {/* Click to Edit Hint */}
+            {cart.length > 0 && (
+              <div className="px-6 py-2 bg-cyan-50/60 dark:bg-cyan-950/20 border-b border-cyan-100 dark:border-cyan-900/30 text-[11px] text-cyan-800 dark:text-cyan-300 flex items-center gap-1.5">
+                <Pencil className="w-3 h-3 text-cyan-500 shrink-0" aria-hidden="true" />
+                <span>Tip: Click any item below to edit its material, color, or infill</span>
+              </div>
+            )}
+
             {/* Cart Items List */}
             <div className="flex-1 p-6 space-y-4 overflow-y-auto">
               {cart.length === 0 ? (
@@ -1734,21 +1807,32 @@ export function App() {
                 cart.map((item) => (
                   <div
                     key={item.cartId}
-                    className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 space-y-2 shadow-xs"
+                    onClick={() => handleEditCartItem(item)}
+                    className="group/cartitem p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 space-y-2.5 shadow-xs hover:border-cyan-500/60 dark:hover:border-cyan-500/50 hover:shadow-md transition cursor-pointer"
+                    title={`Click to edit configuration for ${item.product.name}`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="font-bold text-sm text-zinc-900 dark:text-white leading-tight">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-sm text-zinc-900 dark:text-white leading-tight group-hover/cartitem:text-cyan-600 dark:group-hover/cartitem:text-cyan-400 transition-colors">
                           {item.product.name}
                         </h3>
-                        <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                          <Check className="w-3 h-3" aria-hidden="true" /> Fit: {item.selectedModel}
-                        </span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                            <Check className="w-3 h-3" aria-hidden="true" /> Fit: {item.selectedModel}
+                          </span>
+                          <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-600 dark:text-cyan-400">
+                            <Pencil className="w-2.5 h-2.5" aria-hidden="true" /> Edit
+                          </span>
+                        </div>
                       </div>
                       <button
-                        onClick={() => updateQuantity(item.cartId, -item.quantity)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          updateQuantity(item.cartId, -item.quantity)
+                        }}
                         aria-label={`Remove ${item.product.name} from cart`}
-                        className="text-zinc-400 hover:text-rose-500 p-1 rounded transition"
+                        className="text-zinc-400 hover:text-rose-500 p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700/60 transition cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
@@ -1756,29 +1840,32 @@ export function App() {
 
                     {/* Material & Color Specs Chips */}
                     <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
-                      <span className="px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 font-medium text-zinc-700 dark:text-zinc-300">
+                      <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-700/80 font-medium text-zinc-700 dark:text-zinc-300">
                         {item.material.name}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-700/80 font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1">
                         <span
-                          className="w-2.5 h-2.5 rounded-full inline-block"
+                          className="w-2.5 h-2.5 rounded-full inline-block border border-black/10"
                           style={{ backgroundColor: item.color.hex }}
                           aria-hidden="true"
                         />
                         {item.color.name}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 font-medium text-zinc-700 dark:text-zinc-300">
+                      <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-700/80 font-medium text-zinc-700 dark:text-zinc-300">
                         {item.infill.name}
                       </span>
                     </div>
 
                     {/* Quantity & Subtotal */}
-                    <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-700/60">
+                    <div
+                      className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-700/60"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="flex items-center border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden bg-zinc-50 dark:bg-zinc-900">
                         <button
                           onClick={() => updateQuantity(item.cartId, -1)}
                           aria-label="Decrease quantity"
-                          className="px-2 py-1 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                          className="px-2 py-1 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 cursor-pointer"
                         >
                           <Minus className="w-3 h-3" aria-hidden="true" />
                         </button>
@@ -1788,15 +1875,20 @@ export function App() {
                         <button
                           onClick={() => updateQuantity(item.cartId, 1)}
                           aria-label="Increase quantity"
-                          className="px-2 py-1 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                          className="px-2 py-1 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 cursor-pointer"
                         >
                           <Plus className="w-3 h-3" aria-hidden="true" />
                         </button>
                       </div>
 
-                      <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">
-                        ${(item.unitPrice * item.quantity).toFixed(2)}
-                      </span>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white block">
+                          ${(item.unitPrice * item.quantity).toFixed(2)}
+                        </span>
+                        <span className="text-[10px] text-zinc-400">
+                          ${item.unitPrice.toFixed(2)} each
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))
