@@ -40,7 +40,7 @@ export interface InfillOption {
   priceOffset: number
 }
 
-export type ProductCollection = 'Home & Cleaning' | 'Workshop' | 'Gaming' | 'Car Comfort'
+export type ProductCollection = 'Household' | 'Workshop' | 'Gaming' | 'Travel'
 
 export interface Product {
   id: string

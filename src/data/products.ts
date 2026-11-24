@@ -10,9 +10,9 @@ export interface CollectionInfo {
 
 export const COLLECTIONS: CollectionInfo[] = [
   {
-    id: 'Home & Cleaning',
-    label: 'Home & Cleaning',
-    headline: 'Home & Cleaning Additive Systems',
+    id: 'Household',
+    label: 'Household',
+    headline: 'Household & Living Systems',
     description: 'Precision mounts, docks, and detailing accessories featuring the Dyson Additive Collection.',
     subCollectionName: 'Dyson Precision Upgrades',
   },
@@ -29,9 +29,9 @@ export const COLLECTIONS: CollectionInfo[] = [
     description: 'Under-desk stealth controller cradles, headphone rests, and low-friction cable anchors.',
   },
   {
-    id: 'Car Comfort',
-    label: 'Car Comfort',
-    headline: 'Automotive & Cockpit Mounts',
+    id: 'Travel',
+    label: 'Travel',
+    headline: 'Automotive & Travel Systems',
     description: 'Heat-resistant 75°C PETG MagSafe vent mounts, modular console dividers, and visor cradles.',
   },
 ]
@@ -163,12 +163,12 @@ export const INFILL_OPTIONS: InfillOption[] = [
 
 export const PRODUCTS: Product[] = [
   // ==========================================
-  // COLLECTION 1: HOME & CLEANING (DYSON PRECISION)
+  // COLLECTION 1: HOUSEHOLD (DYSON PRECISION)
   // ==========================================
   {
     id: 'accessory-storage-wall-mount',
     name: 'Quick-Release Accessory Storage Wall Mount',
-    collection: 'Home & Cleaning',
+    collection: 'Household',
     subCollection: 'Dyson Precision',
     category: 'Wall Mounts & Docks',
     basePrice: 16.5,
@@ -197,7 +197,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'v15-car-detailing-nozzle-set',
     name: 'Precision Car Cleaning Nozzle Kit (Dyson V15)',
-    collection: 'Home & Cleaning',
+    collection: 'Household',
     subCollection: 'Dyson Precision',
     category: 'Nozzles & Kits',
     basePrice: 24.0,
@@ -225,7 +225,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'zero-fatigue-trigger-lock',
     name: 'Zero-Fatigue Continuous Power Trigger Lock',
-    collection: 'Home & Cleaning',
+    collection: 'Household',
     subCollection: 'Dyson Precision',
     category: 'Ergonomics',
     basePrice: 9.0,
@@ -254,7 +254,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'on-wand-dual-caddy',
     name: 'On-Wand Dual Accessory Carrying Caddy (Fits 4 Tools)',
-    collection: 'Home & Cleaning',
+    collection: 'Household',
     subCollection: 'Dyson Precision',
     category: 'On-Board Storage',
     basePrice: 16.0,
@@ -420,12 +420,12 @@ export const PRODUCTS: Product[] = [
   },
 
   // ==========================================
-  // COLLECTION 4: CAR COMFORT
+  // COLLECTION 4: TRAVEL
   // ==========================================
   {
     id: 'magsafe-lowprofile-vent-mount',
     name: 'Low-Profile MagSafe Vent Mount & Hidden Cable Guide',
-    collection: 'Car Comfort',
+    collection: 'Travel',
     category: 'Cockpit Mounts',
     basePrice: 18.5,
     rating: 4.9,
@@ -451,7 +451,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'modular-center-console-divider',
     name: 'Modular Center Console Multi-Level Storage Grid',
-    collection: 'Car Comfort',
+    collection: 'Travel',
     category: 'Interior Organization',
     basePrice: 15.0,
     rating: 4.85,

@@ -29,7 +29,7 @@ import {
   Home,
   Wrench,
   Gamepad2,
-  Car
+  Compass
 } from 'lucide-react'
 import type {
   DysonModel,
@@ -51,6 +51,120 @@ import {
 import { Logo } from './components/Logo'
 import { initiateCheckout } from './services/checkout'
 
+interface CollectionThemeConfig {
+  name: ProductCollection
+  badgeLabel: string
+  containerBg: string
+  containerBorder: string
+  gridColor: string
+  glow1: string
+  glow2: string
+  badgePill: string
+  tabActive: string
+  tabActiveIcon: string
+  tabActiveCount: string
+  tabInactive: string
+  controlBg: string
+  controlBorder: string
+  searchFocus: string
+  categoryActive: string
+  modelPillActive: string
+  cardHoverBorder: string
+  cardCta: string
+  accentText: string
+}
+
+const COLLECTION_THEMES: Record<ProductCollection, CollectionThemeConfig> = {
+  Household: {
+    name: 'Household',
+    badgeLabel: 'Sage Living • Calibrated Care',
+    containerBg: 'bg-[#f4f7f4] dark:bg-gradient-to-b dark:from-[#111915] dark:via-[#0c1310] dark:to-[#080d0b]',
+    containerBorder: 'border-[#cbd5cc] dark:border-emerald-900/50',
+    gridColor: '#52796f',
+    glow1: 'bg-emerald-600/15 dark:bg-emerald-500/12',
+    glow2: 'bg-teal-600/10 dark:bg-teal-500/10',
+    badgePill: 'bg-emerald-100/90 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300',
+    tabActive: 'bg-[#3b5e4c] text-white shadow-md ring-2 ring-[#52796f] scale-[1.01]',
+    tabActiveIcon: 'bg-[#284134] text-emerald-200',
+    tabActiveCount: 'bg-white/20 text-white',
+    tabInactive: 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-stone-800/50',
+    controlBg: 'bg-white/95 dark:bg-[#121c17]/90',
+    controlBorder: 'border-emerald-200/80 dark:border-emerald-900/50',
+    searchFocus: 'focus:border-emerald-600 focus:ring-emerald-500',
+    categoryActive: 'bg-[#3b5e4c] text-white shadow-xs',
+    modelPillActive: 'bg-[#3b5e4c] text-white font-bold shadow-xs ring-2 ring-[#709782]',
+    cardHoverBorder: 'hover:border-emerald-600/50 dark:hover:border-emerald-500/50',
+    cardCta: 'bg-[#335645] hover:bg-[#284436] dark:bg-[#3b5e4c] dark:hover:bg-[#48725d] text-white',
+    accentText: 'text-emerald-700 dark:text-emerald-400',
+  },
+  Workshop: {
+    name: 'Workshop',
+    badgeLabel: 'DeWalt-Grade Industrial • High Load PETG',
+    containerBg: 'bg-[#fbfaf3] dark:bg-gradient-to-b dark:from-[#1c180c] dark:via-[#131109] dark:to-[#0a0805]',
+    containerBorder: 'border-amber-300/80 dark:border-amber-600/35',
+    gridColor: '#eab308',
+    glow1: 'bg-yellow-500/15 dark:bg-yellow-500/12',
+    glow2: 'bg-amber-500/12 dark:bg-amber-600/10',
+    badgePill: 'bg-yellow-400/20 dark:bg-yellow-950/80 border-yellow-500/40 dark:border-yellow-600/60 text-yellow-900 dark:text-yellow-300',
+    tabActive: 'bg-yellow-400 text-zinc-950 font-extrabold shadow-md ring-2 ring-yellow-500 scale-[1.01]',
+    tabActiveIcon: 'bg-zinc-950 text-yellow-400 font-black',
+    tabActiveCount: 'bg-zinc-950/20 text-zinc-950',
+    tabInactive: 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-amber-100/50 dark:hover:bg-zinc-800/50',
+    controlBg: 'bg-white/95 dark:bg-[#1a170f]/90',
+    controlBorder: 'border-amber-300/70 dark:border-amber-900/50',
+    searchFocus: 'focus:border-yellow-500 focus:ring-yellow-400',
+    categoryActive: 'bg-yellow-400 text-zinc-950 font-bold shadow-xs',
+    modelPillActive: 'bg-yellow-400 text-zinc-950 font-bold shadow-xs ring-2 ring-yellow-500',
+    cardHoverBorder: 'hover:border-yellow-500/60 dark:hover:border-yellow-400/60',
+    cardCta: 'bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-extrabold shadow-sm',
+    accentText: 'text-amber-700 dark:text-yellow-400',
+  },
+  Gaming: {
+    name: 'Gaming',
+    badgeLabel: 'Battlestation Cyber • Zero-Drag Velocity',
+    containerBg: 'bg-[#fcf7ff] dark:bg-gradient-to-br dark:from-[#1b0c26] dark:via-[#100718] dark:to-[#070e1a]',
+    containerBorder: 'border-fuchsia-200/90 dark:border-fuchsia-800/40',
+    gridColor: '#ec4899',
+    glow1: 'bg-fuchsia-500/18 dark:bg-fuchsia-500/16',
+    glow2: 'bg-cyan-500/16 dark:bg-cyan-500/14',
+    badgePill: 'bg-fuchsia-100/90 dark:bg-fuchsia-950/80 border-fuchsia-300 dark:border-fuchsia-800 text-fuchsia-800 dark:text-fuchsia-300',
+    tabActive: 'bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-extrabold shadow-md shadow-fuchsia-600/25 ring-2 ring-fuchsia-400 scale-[1.01]',
+    tabActiveIcon: 'bg-zinc-950 text-fuchsia-400',
+    tabActiveCount: 'bg-white/20 text-white',
+    tabInactive: 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-fuchsia-100/50 dark:hover:bg-zinc-800/50',
+    controlBg: 'bg-white/95 dark:bg-[#180d22]/90',
+    controlBorder: 'border-fuchsia-200/80 dark:border-fuchsia-900/50',
+    searchFocus: 'focus:border-fuchsia-500 focus:ring-fuchsia-400',
+    categoryActive: 'bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-semibold shadow-xs',
+    modelPillActive: 'bg-fuchsia-600 text-white font-bold shadow-xs ring-2 ring-fuchsia-400',
+    cardHoverBorder: 'hover:border-fuchsia-500/60 dark:hover:border-fuchsia-400/60',
+    cardCta: 'bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold shadow-sm shadow-fuchsia-600/20',
+    accentText: 'text-fuchsia-600 dark:text-fuchsia-400',
+  },
+  Travel: {
+    name: 'Travel',
+    badgeLabel: 'Luxury Cockpit & Transit • 75°C Heat Proof',
+    containerBg: 'bg-[#f9f7fd] dark:bg-gradient-to-b dark:from-[#180f2d] dark:via-[#0e091b] dark:to-[#07050e]',
+    containerBorder: 'border-purple-200/90 dark:border-purple-800/40',
+    gridColor: '#8b5cf6',
+    glow1: 'bg-purple-600/18 dark:bg-purple-600/16',
+    glow2: 'bg-violet-500/14 dark:bg-violet-500/12',
+    badgePill: 'bg-purple-100/90 dark:bg-purple-950/80 border-purple-300 dark:border-purple-800 text-purple-800 dark:text-purple-300',
+    tabActive: 'bg-purple-700 dark:bg-purple-600 text-white font-extrabold shadow-md shadow-purple-700/25 ring-2 ring-purple-400 scale-[1.01]',
+    tabActiveIcon: 'bg-zinc-950 text-purple-300',
+    tabActiveCount: 'bg-white/20 text-white',
+    tabInactive: 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-purple-100/50 dark:hover:bg-zinc-800/50',
+    controlBg: 'bg-white/95 dark:bg-[#160f24]/90',
+    controlBorder: 'border-purple-200/80 dark:border-purple-900/50',
+    searchFocus: 'focus:border-purple-500 focus:ring-purple-400',
+    categoryActive: 'bg-purple-700 dark:bg-purple-600 text-white font-semibold shadow-xs',
+    modelPillActive: 'bg-purple-700 text-white font-bold shadow-xs ring-2 ring-purple-400',
+    cardHoverBorder: 'hover:border-purple-500/60 dark:hover:border-purple-400/60',
+    cardCta: 'bg-purple-700 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-500 text-white font-bold shadow-sm shadow-purple-700/20',
+    accentText: 'text-purple-700 dark:text-purple-400',
+  },
+}
+
 export function App() {
   // Theme state: auto-detect system preference with localStorage persistence
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -60,7 +174,8 @@ export function App() {
   })
 
   // Collection and Dyson Model Filter state
-  const [activeCollection, setActiveCollection] = useState<ProductCollection>('Home & Cleaning')
+  const [activeCollection, setActiveCollection] = useState<ProductCollection>('Household')
+  const activeTheme = COLLECTION_THEMES[activeCollection]
   const [selectedModel, setSelectedModel] = useState<DysonModel>('Dyson V15 Detect')
   const [onlyCompatible, setOnlyCompatible] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
@@ -215,7 +330,7 @@ export function App() {
     if (!customizingProduct) return
     const unitPrice = calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill)
     const modelForCart =
-      customizingProduct.collection === 'Home & Cleaning'
+      customizingProduct.collection === 'Household'
         ? (selectedModel === 'All Models' ? 'Dyson V15 Detect' : selectedModel)
         : (customizingProduct.compatibleModels[0] || 'Universal Standard')
 
@@ -263,8 +378,8 @@ export function App() {
   const categories = ['All', ...Array.from(new Set(collectionProducts.map((p) => p.category)))]
 
   const filteredProducts = collectionProducts.filter(product => {
-    // Model compatibility check (active only when in Home & Cleaning)
-    if (activeCollection === 'Home & Cleaning' && selectedModel !== 'All Models') {
+    // Model compatibility check (active only when in Household)
+    if (activeCollection === 'Household' && selectedModel !== 'All Models') {
       const isCompatible = product.compatibleModels.includes(selectedModel)
       if (onlyCompatible && !isCompatible) return false
     }
@@ -410,7 +525,7 @@ export function App() {
                   </span>
                 </h1>
                 <p className="text-zinc-300 text-base sm:text-lg leading-relaxed">
-                  Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Home & Cleaning</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Car Comfort</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
+                  Functional 3D printed accessories for your daily environment—designed, printed, and hand-inspected in my independent workshop. Explore precision upgrades across <strong>Household</strong> (featuring Dyson), <strong>Workshop</strong>, <strong>Gaming</strong>, and <strong>Travel</strong>. Every upgrade is crafted on-demand in <strong>PLA, PLA+, or heat-resistant PETG</strong> with calibrated snap-fit detents.
                 </p>
               </div>
 
@@ -525,408 +640,453 @@ export function App() {
           </div>
         </section>
 
-        {/* Catalog, Products & Additive Deep-Dive Container */}
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-6">
-          {/* Lifestyle Collections Switcher Bar */}
-          <section aria-labelledby="collections-heading" className="space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1.5 px-1">
-              <div>
-                <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 tracking-wider uppercase">
-                  Lifestyle Collections
-                </span>
-                <h2 id="collections-heading" className="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-white">
-                  Explore Systems by Environment
-                </h2>
-              </div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Click to switch collections • Hand-calibrated for each application
-              </p>
-            </div>
-
-            {/* 4-way tactile segmented button grid */}
+        {/* ======================================================== */}
+        {/* THEMED CATALOG COLLECTIONS SECTION WRAPPER               */}
+        {/* ======================================================== */}
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8">
+          <section
+            id="catalog-collections"
+            aria-labelledby="catalog-collections-heading"
+            className={`relative rounded-3xl border shadow-2xl overflow-hidden transition-all duration-500 ${activeTheme.containerBg} ${activeTheme.containerBorder} p-6 sm:p-10 lg:p-12 space-y-8`}
+          >
+            {/* Ambient Background Grid & Subtle Collection Radial Glows */}
             <div
-              role="tablist"
-              aria-label="Product collections"
-              className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 p-1.5 rounded-2xl bg-zinc-200/80 dark:bg-zinc-900/90 border border-zinc-300/80 dark:border-zinc-800 shadow-inner"
-            >
-              {COLLECTIONS.map((col) => {
-                const isActive = activeCollection === col.id
-                const count = PRODUCTS.filter((p) => p.collection === col.id).length
-                const IconComponent =
-                  col.id === 'Home & Cleaning'
-                    ? Home
-                    : col.id === 'Workshop'
-                    ? Wrench
-                    : col.id === 'Gaming'
-                    ? Gamepad2
-                    : Car
+              className="absolute inset-0 opacity-15 pointer-events-none transition-opacity duration-500"
+              style={{
+                backgroundImage: `radial-gradient(${activeTheme.gridColor} 1px, transparent 1px)`,
+                backgroundSize: '20px 20px',
+              }}
+              aria-hidden="true"
+            />
+            <div
+              className={`absolute top-0 right-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${activeTheme.glow1}`}
+              aria-hidden="true"
+            />
+            <div
+              className={`absolute bottom-0 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${activeTheme.glow2}`}
+              aria-hidden="true"
+            />
 
-                return (
-                  <button
-                    key={col.id}
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => {
-                      setActiveCollection(col.id)
-                      setSelectedCategory('All')
-                    }}
-                    className={`group relative flex items-center gap-3 p-3 sm:p-3.5 rounded-xl transition-all duration-200 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                      isActive
-                        ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-md ring-1 ring-zinc-300 dark:ring-zinc-700/80 scale-[1.01]'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-800/50'
-                    }`}
-                  >
-                    <div
-                      className={`p-2 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-cyan-500 text-zinc-950 font-bold shadow-xs'
-                          : 'bg-zinc-100 dark:bg-zinc-950/60 text-zinc-500 dark:text-zinc-400 group-hover:text-cyan-500'
-                      }`}
+            {/* Content Container */}
+            <div className="relative z-10 space-y-8">
+              {/* Catalog Section Header: Title & Subtitle + Active Collection Status */}
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div className="space-y-2">
+                  <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase border transition-colors duration-300 shadow-xs ${activeTheme.badgePill}`}>
+                    <span className="w-2 h-2 rounded-full bg-current opacity-80" aria-hidden="true" />
+                    <span>{activeTheme.badgeLabel}</span>
+                  </div>
+                  <div>
+                    <h2
+                      id="catalog-collections-heading"
+                      className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-zinc-900 dark:text-white"
                     >
-                      <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="font-bold text-xs sm:text-sm truncate">
-                          {col.label}
-                        </span>
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
-                            isActive
-                              ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
-                              : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
-                          }`}
-                        >
-                          {count}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate hidden sm:block">
-                        {col.id === 'Home & Cleaning' ? 'Dyson Upgrades' : col.headline.replace(/^Rugged |^Ergonomic |^Automotive & /, '')}
-                      </p>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* Filter, Search & Compatibility Control Bar */}
-        <section aria-labelledby="catalog-controls-heading" className="bg-white dark:bg-zinc-900 rounded-2xl p-4 sm:p-6 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
-          <h2 id="catalog-controls-heading" className="sr-only">Product Search and Filter Controls</h2>
-          
-          {/* Top Row: Search Input + Sorting + Help Diagnostic */}
-          <div className="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <label htmlFor={searchInputId} className="sr-only">Search 3D printed accessories</label>
-              <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
-              <input
-                id={searchInputId}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={activeCollection === 'Home & Cleaning' ? 'Search accessories (e.g. wall mount, car nozzle, trigger lock)...' : `Search ${activeCollection} accessories...`}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-sm text-zinc-900 dark:text-zinc-100 border border-transparent focus:border-cyan-500 focus:bg-white dark:focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  aria-label="Clear search text"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-full cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" />
-                </button>
-              )}
-            </div>
-
-            {/* Quick Sort & Model Helper */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <label htmlFor={sortSelectId} className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                  Sort:
-                </label>
-                <select
-                  id={sortSelectId}
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-zinc-100 dark:bg-zinc-800 text-xs font-semibold text-zinc-900 dark:text-zinc-100 rounded-xl px-3 py-2 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
-                >
-                  <option value="recommended">Highest Rated</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="time">Fastest Print Time</option>
-                </select>
-              </div>
-
-              {activeCollection === 'Home & Cleaning' && (
-                <button
-                  type="button"
-                  onClick={() => setIsModelFinderOpen(true)}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
-                  title="Don't know your model? Take the quick 2-step diagnostic"
-                >
-                  <HelpCircle className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
-                  <span>Find My Model</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Middle Row: Filter by Dyson Model (Conditional when Home & Cleaning is active) */}
-          {activeCollection === 'Home & Cleaning' ? (
-            <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
-                    Filter by Your Dyson Model:
-                  </span>
-                  <span className="hidden sm:inline text-xs text-zinc-300 dark:text-zinc-600">•</span>
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                    Guaranteed fit detection & calibration
-                  </span>
+                      Catalog collections
+                    </h2>
+                    <p className="mt-1 text-base sm:text-lg text-zinc-600 dark:text-zinc-300 font-medium">
+                      Explore items by collection
+                    </p>
+                  </div>
                 </div>
 
-                {selectedModel !== 'All Models' && (
-                  <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                      <input
-                        type="checkbox"
-                        checked={onlyCompatible}
-                        onChange={(e) => setOnlyCompatible(e.target.checked)}
-                        className="w-3.5 h-3.5 rounded text-cyan-600 focus:ring-cyan-500 border-zinc-400"
-                      />
-                      <span>Only 100% Fit for {selectedModel}</span>
-                    </label>
-                    <button
-                      onClick={() => {
-                        setSelectedModel('All Models')
-                        setOnlyCompatible(false)
-                      }}
-                      className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer font-medium"
-                    >
-                      Reset
-                    </button>
-                  </div>
-                )}
+                <div className="text-left sm:text-right text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                    {filteredProducts.length} items
+                  </span>{' '}
+                  available in {activeCollection} • Sliced on demand
+                </div>
               </div>
 
-              {/* Model Filter Pills */}
-              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
-                {DYSON_MODELS.map((model) => {
-                  const isSelected = selectedModel === model
+              {/* 4-way Tactile Collection Switcher Tabs */}
+              <div
+                role="tablist"
+                aria-label="Product collections"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 p-2 rounded-2xl bg-white/70 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/80 dark:border-zinc-800/80 shadow-inner"
+              >
+                {COLLECTIONS.map((col) => {
+                  const isActive = activeCollection === col.id
+                  const count = PRODUCTS.filter((p) => p.collection === col.id).length
+                  const IconComponent =
+                    col.id === 'Household'
+                      ? Home
+                      : col.id === 'Workshop'
+                      ? Wrench
+                      : col.id === 'Gaming'
+                      ? Gamepad2
+                      : Compass
+
                   return (
                     <button
-                      key={model}
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => setSelectedModel(model)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                        isSelected
-                          ? 'bg-cyan-500 text-zinc-950 font-bold shadow-xs ring-2 ring-cyan-400'
-                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/60'
+                      key={col.id}
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => {
+                        setActiveCollection(col.id)
+                        setSelectedCategory('All')
+                      }}
+                      className={`group relative flex items-center gap-3 p-3 sm:p-3.5 rounded-xl transition-all duration-200 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                        isActive
+                          ? activeTheme.tabActive
+                          : activeTheme.tabInactive
                       }`}
                     >
-                      {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
-                      {model}
+                      <div
+                        className={`p-2 rounded-lg transition-colors ${
+                          isActive
+                            ? activeTheme.tabActiveIcon
+                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white'
+                        }`}
+                      >
+                        <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-bold text-xs sm:text-sm truncate">
+                            {col.label}
+                          </span>
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                              isActive
+                                ? activeTheme.tabActiveCount
+                                : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
+                            }`}
+                          >
+                            {count}
+                          </span>
+                        </div>
+                        <p className="text-[11px] opacity-80 truncate hidden sm:block">
+                          {col.id === 'Household' ? 'Dyson Upgrades' : col.headline.replace(/^Rugged |^Battlestation & |^Automotive & /, '')}
+                        </p>
+                      </div>
                     </button>
                   )
                 })}
               </div>
-            </div>
-          ) : (
-            <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-                <span className="font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
-                  {COLLECTIONS.find((c) => c.id === activeCollection)?.headline}
-                </span>
-                <span className="hidden sm:inline text-zinc-300 dark:text-zinc-600">•</span>
-                <span className="hidden sm:inline">
-                  {COLLECTIONS.find((c) => c.id === activeCollection)?.description}
-                </span>
-              </div>
-            </div>
-          )}
 
-          {/* Bottom Row: Category Tabs */}
-          <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Product categories">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider hidden sm:inline mr-1">
-                Category:
-              </span>
-              {categories.map((cat) => {
-                const isActive = selectedCategory === cat
-                return (
-                  <button
-                    key={cat}
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                      isActive
-                        ? 'bg-zinc-900 text-white dark:bg-cyan-500 dark:text-zinc-950 shadow-xs'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Product Grid */}
-        <section aria-labelledby="products-heading" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 id="products-heading" className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <span>{activeCollection} Catalog</span>
-              <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">
-                ({filteredProducts.length} items available)
-              </span>
-            </h2>
-
-            {activeCollection === 'Home & Cleaning' && selectedModel !== 'All Models' && (
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
-                Active Model Filter: <strong className="text-zinc-800 dark:text-zinc-200">{selectedModel}</strong>
-              </span>
-            )}
-          </div>
-
-          {filteredProducts.length === 0 ? (
-            <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-12 text-center space-y-4">
-              <Box className="w-12 h-12 text-zinc-400 mx-auto" aria-hidden="true" />
-              <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
-                No matching accessories found
-              </h3>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
-                No parts match your current search and compatibility criteria. Try turning off "Only 100% Fit" or selecting "All Models".
-              </p>
-              <button
-                onClick={() => {
-                  setSelectedCategory('All')
-                  setSearchQuery('')
-                  setOnlyCompatible(false)
-                }}
-                className="px-4 py-2 text-xs font-semibold rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+              {/* Filter, Search & Compatibility Control Bar */}
+              <div
+                aria-labelledby="catalog-controls-heading"
+                className={`rounded-2xl p-4 sm:p-6 border backdrop-blur-sm shadow-xs space-y-4 transition-colors duration-300 ${activeTheme.controlBg} ${activeTheme.controlBorder}`}
               >
-                Reset Filters
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => {
-                const isCompatible = selectedModel === 'All Models' || product.compatibleModels.includes(selectedModel)
+                <h3 id="catalog-controls-heading" className="sr-only">Product Search and Filter Controls</h3>
 
-                return (
-                  <article
-                    key={product.id}
-                    className="flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-lg transition-all duration-200"
-                  >
-                    <div>
-                      {/* Product Preview Header Image */}
-                      <div className="relative h-48 bg-zinc-900 overflow-hidden group/img">
-                        <img
-                          src={product.imageUrl.startsWith('http') ? product.imageUrl : `${import.meta.env.BASE_URL}${product.imageUrl}`}
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-zinc-950/30 pointer-events-none" />
+                {/* Top Row: Search Input + Sorting + Help Diagnostic */}
+                <div className="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
+                  {/* Search Input */}
+                  <div className="relative flex-1">
+                    <label htmlFor={searchInputId} className="sr-only">Search 3D printed accessories</label>
+                    <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+                    <input
+                      id={searchInputId}
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={activeCollection === 'Household' ? 'Search accessories (e.g. wall mount, car nozzle, trigger lock)...' : `Search ${activeCollection} accessories...`}
+                      className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-zinc-100/90 dark:bg-zinc-800/80 text-sm text-zinc-900 dark:text-zinc-100 border border-transparent ${activeTheme.searchFocus} focus:bg-white dark:focus:bg-zinc-900 focus:outline-none focus:ring-2 transition`}
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search text"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-full cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" aria-hidden="true" />
+                      </button>
+                    )}
+                  </div>
 
-                        {/* Badges */}
-                        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                          {product.badge && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs backdrop-blur-xs">
-                              {product.badge}
-                            </span>
-                          )}
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
-                            {product.category}
-                          </span>
-                        </div>
-
-                        {/* Model Compatibility Badge */}
-                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
-                          {activeCollection === 'Home & Cleaning' && selectedModel !== 'All Models' ? (
-                            isCompatible ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700 text-[11px] font-semibold backdrop-blur-xs">
-                                <Check className="w-3.5 h-3.5" aria-hidden="true" /> Guaranteed Fit
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700 text-[11px] font-semibold backdrop-blur-xs">
-                                <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" /> Incompatible with {selectedModel}
-                              </span>
-                            )
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-950/80 text-zinc-300 border border-zinc-700 text-[11px] font-medium backdrop-blur-xs">
-                              {product.compatibleModels[0]}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Product Body */}
-                      <div className="p-5 space-y-3">
-                        <div>
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="font-bold text-base text-zinc-900 dark:text-white leading-snug">
-                              {product.name}
-                            </h3>
-                          </div>
-                          <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2">
-                            {product.summary}
-                          </p>
-                        </div>
-
-                        {/* Technical Print Spec chips */}
-                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-[11px]">
-                          <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
-                            <Clock className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
-                            <span>~{Math.floor(product.printSpecs.printTimeMinutes / 60)}h {product.printSpecs.printTimeMinutes % 60}m print</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
-                            <Cpu className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
-                            <span>{product.printSpecs.weightGrams}g filament</span>
-                          </div>
-                        </div>
-
-                        {/* Compatible Models list hint */}
-                        <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                          <strong>Fits:</strong> {product.compatibleModels.join(', ')}
-                        </div>
-                      </div>
+                  {/* Quick Sort & Model Helper */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <label htmlFor={sortSelectId} className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                        Sort:
+                      </label>
+                      <select
+                        id={sortSelectId}
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as any)}
+                        className={`bg-zinc-100 dark:bg-zinc-800 text-xs font-semibold text-zinc-900 dark:text-zinc-100 rounded-xl px-3 py-2 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 ${activeTheme.searchFocus} cursor-pointer`}
+                      >
+                        <option value="recommended">Highest Rated</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="time">Fastest Print Time</option>
+                      </select>
                     </div>
 
-                    {/* Product Card Footer */}
-                    <div className="p-5 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
-                      <div>
-                        <span className="text-[10px] text-zinc-500 uppercase font-semibold block">Base Price</span>
-                        <span className="text-lg font-extrabold text-zinc-900 dark:text-white">
-                          ${product.basePrice.toFixed(2)}
+                    {activeCollection === 'Household' && (
+                      <button
+                        type="button"
+                        onClick={() => setIsModelFinderOpen(true)}
+                        className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
+                        title="Don't know your model? Take the quick 2-step diagnostic"
+                      >
+                        <HelpCircle className={`w-3.5 h-3.5 ${activeTheme.accentText}`} aria-hidden="true" />
+                        <span>Find My Model</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Middle Row: Filter by Dyson Model (Conditional when Household is active) */}
+                {activeCollection === 'Household' ? (
+                  <div className="pt-4 border-t border-zinc-200/60 dark:border-zinc-800/80 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+                          Filter by Your Dyson Model:
+                        </span>
+                        <span className="hidden sm:inline text-xs text-zinc-300 dark:text-zinc-600">•</span>
+                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                          Guaranteed fit detection & calibration
                         </span>
                       </div>
 
-                      <button
-                        onClick={() => handleOpenCustomizer(product)}
-                        className="flex-1 py-2.5 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 text-xs font-bold flex items-center justify-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                        aria-label={`Configure and order ${product.name}`}
-                      >
-                        <ShoppingCart className="w-3.5 h-3.5 text-cyan-400 dark:text-cyan-600" aria-hidden="true" />
-                        Configure & Order
-                      </button>
+                      {selectedModel !== 'All Models' && (
+                        <div className="flex items-center gap-3">
+                          <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                            <input
+                              type="checkbox"
+                              checked={onlyCompatible}
+                              onChange={(e) => setOnlyCompatible(e.target.checked)}
+                              className="w-3.5 h-3.5 rounded text-zinc-900 dark:text-white border-zinc-400"
+                            />
+                            <span>Only 100% Fit for {selectedModel}</span>
+                          </label>
+                          <button
+                            onClick={() => {
+                              setSelectedModel('All Models')
+                              setOnlyCompatible(false)
+                            }}
+                            className={`text-xs ${activeTheme.accentText} hover:underline cursor-pointer font-medium`}
+                          >
+                            Reset
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  </article>
-                )
-              })}
+
+                    {/* Model Filter Pills */}
+                    <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select Dyson model">
+                      {DYSON_MODELS.map((model) => {
+                        const isSelected = selectedModel === model
+                        return (
+                          <button
+                            key={model}
+                            role="radio"
+                            aria-checked={isSelected}
+                            onClick={() => setSelectedModel(model)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${
+                              isSelected
+                                ? activeTheme.modelPillActive
+                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/60'
+                            }`}
+                          >
+                            {isSelected && <Check className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
+                            {model}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                      <span className="font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+                        {COLLECTIONS.find((c) => c.id === activeCollection)?.headline}
+                      </span>
+                      <span className="hidden sm:inline text-zinc-300 dark:text-zinc-600">•</span>
+                      <span className="hidden sm:inline">
+                        {COLLECTIONS.find((c) => c.id === activeCollection)?.description}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom Row: Category Tabs */}
+                <div className="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/80 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Product categories">
+                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider hidden sm:inline mr-1">
+                      Category:
+                    </span>
+                    {categories.map((cat) => {
+                      const isActive = selectedCategory === cat
+                      return (
+                        <button
+                          key={cat}
+                          role="tab"
+                          aria-selected={isActive}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${
+                            isActive
+                              ? activeTheme.categoryActive
+                              : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Grid */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 id="products-heading" className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <span>{activeCollection} Catalog</span>
+                    <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">
+                      ({filteredProducts.length} items available)
+                    </span>
+                  </h3>
+
+                  {activeCollection === 'Household' && selectedModel !== 'All Models' && (
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                      <CheckCircle2 className={`w-3.5 h-3.5 ${activeTheme.accentText}`} aria-hidden="true" />
+                      Active Model Filter: <strong className="text-zinc-800 dark:text-zinc-200">{selectedModel}</strong>
+                    </span>
+                  )}
+                </div>
+
+                {filteredProducts.length === 0 ? (
+                  <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-12 text-center space-y-4">
+                    <Box className="w-12 h-12 text-zinc-400 mx-auto" aria-hidden="true" />
+                    <h4 className="text-base font-semibold text-zinc-900 dark:text-white">
+                      No matching accessories found
+                    </h4>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+                      No parts match your current search and compatibility criteria. Try turning off "Only 100% Fit" or selecting "All Models".
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSelectedCategory('All')
+                        setSearchQuery('')
+                        setOnlyCompatible(false)
+                      }}
+                      className="px-4 py-2 text-xs font-semibold rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                    >
+                      Reset Filters
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredProducts.map((product) => {
+                      const isCompatible = selectedModel === 'All Models' || product.compatibleModels.includes(selectedModel)
+
+                      return (
+                        <article
+                          key={product.id}
+                          className={`flex flex-col justify-between rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200 ${activeTheme.cardHoverBorder}`}
+                        >
+                          <div>
+                            {/* Product Preview Header Image */}
+                            <div className="relative h-48 bg-zinc-900 overflow-hidden group/img">
+                              <img
+                                src={product.imageUrl.startsWith('http') ? product.imageUrl : `${import.meta.env.BASE_URL}${product.imageUrl}`}
+                                alt={product.name}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-zinc-950/30 pointer-events-none" />
+
+                              {/* Badges */}
+                              <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
+                                {product.badge && (
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs backdrop-blur-xs">
+                                    {product.badge}
+                                  </span>
+                                )}
+                                <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
+                                  {product.category}
+                                </span>
+                              </div>
+
+                              {/* Model Compatibility Badge */}
+                              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
+                                {activeCollection === 'Household' && selectedModel !== 'All Models' ? (
+                                  isCompatible ? (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700 text-[11px] font-semibold backdrop-blur-xs">
+                                      <Check className="w-3.5 h-3.5" aria-hidden="true" /> Guaranteed Fit
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700 text-[11px] font-semibold backdrop-blur-xs">
+                                      <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" /> Incompatible with {selectedModel}
+                                    </span>
+                                  )
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-950/80 text-zinc-300 border border-zinc-700 text-[11px] font-medium backdrop-blur-xs">
+                                    {product.compatibleModels[0]}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Product Body */}
+                            <div className="p-5 space-y-3">
+                              <div>
+                                <div className="flex items-center justify-between gap-2">
+                                  <h4 className="font-bold text-base text-zinc-900 dark:text-white leading-snug">
+                                    {product.name}
+                                  </h4>
+                                </div>
+                                <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2">
+                                  {product.summary}
+                                </p>
+                              </div>
+
+                              {/* Technical Print Spec chips */}
+                              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-[11px]">
+                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+                                  <Clock className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
+                                  <span>~{Math.floor(product.printSpecs.printTimeMinutes / 60)}h {product.printSpecs.printTimeMinutes % 60}m print</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+                                  <Cpu className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
+                                  <span>{product.printSpecs.weightGrams}g filament</span>
+                                </div>
+                              </div>
+
+                              {/* Compatible Models list hint */}
+                              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                                <strong>Fits:</strong> {product.compatibleModels.join(', ')}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Product Card Footer */}
+                          <div className="p-5 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-[10px] text-zinc-500 uppercase font-semibold block">Base Price</span>
+                              <span className="text-lg font-extrabold text-zinc-900 dark:text-white">
+                                ${product.basePrice.toFixed(2)}
+                              </span>
+                            </div>
+
+                            <button
+                              onClick={() => handleOpenCustomizer(product)}
+                              className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 ${activeTheme.cardCta}`}
+                              aria-label={`Configure and order ${product.name}`}
+                            >
+                              <ShoppingCart className="w-3.5 h-3.5" aria-hidden="true" />
+                              Configure & Order
+                            </button>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </section>
+          </section>
+        </div>
 
         {/* ======================================================== */}
         {/* SNAPSHOT STAGGERED SECTION: SOLO MAKER & ADDITIVE CRAFT */}
         {/* ======================================================== */}
-        <section aria-labelledby="why-additive-heading" className="space-y-8 py-6">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 space-y-8">
+          <section aria-labelledby="why-additive-heading" className="space-y-8 py-6">
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-wider uppercase">
@@ -1107,7 +1267,7 @@ export function App() {
               </p>
             </div>
             <a
-              href="#products-heading"
+              href="#catalog-collections"
               className="px-7 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 hover:scale-[1.02]"
             >
               <ShoppingBag className="w-4 h-4 text-zinc-950" aria-hidden="true" />
