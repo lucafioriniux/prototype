@@ -1,4 +1,5 @@
-import type { CartItem } from '../types'
+import type { CartItem, QueueBatch } from '../types'
+import { savePendingCheckoutCart } from './printQueue'
 
 export interface CheckoutSessionResult {
   success: boolean
@@ -40,10 +41,15 @@ export function getStripeSecretKey(): string {
  * Initiates live Stripe Checkout Session and redirects directly to Stripe Hosted Checkout,
  * ensuring full payment methods, shipping address collection, and line item specs render.
  */
-export async function initiateCheckout(cart: CartItem[]): Promise<CheckoutSessionResult> {
+export async function initiateCheckout(
+  cart: CartItem[],
+  batch: QueueBatch = 'batch_1'
+): Promise<CheckoutSessionResult> {
   if (!cart || cart.length === 0) {
     return { success: false, error: 'Your cart is empty' }
   }
+
+  savePendingCheckoutCart(cart, batch)
 
   const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
   const isFreeShipping = subtotal >= 35
@@ -56,6 +62,8 @@ export async function initiateCheckout(cart: CartItem[]): Promise<CheckoutSessio
     const params = new URLSearchParams()
     params.append('mode', 'payment')
     params.append('billing_address_collection', 'auto')
+    params.append('metadata[batch]', batch)
+    params.append('metadata[dispatch_sla]', batch === 'batch_2_24h' ? '+24h Overflow Batch' : '48h Standard Batch')
 
     // Shipping Countries
     params.append('shipping_address_collection[allowed_countries][0]', 'US')

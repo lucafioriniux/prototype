@@ -78,3 +78,49 @@ export interface CartItem {
   quantity: number
   unitPrice: number
 }
+
+export type QueueBatch = 'batch_1' | 'batch_2_24h'
+export type WorkshopQueueState = 'open' | 'overflow_24h' | 'paused'
+export type PrintJobStatus = 'queued' | 'printing' | 'fit_checked' | 'shipped'
+
+export interface PrintQueueItem {
+  productId: string
+  productName: string
+  materialName: string
+  colorName: string
+  colorHex: string
+  infillName: string
+  selectedModel: string
+  quantity: number
+  unitPrice: number
+  printTimeMinutes: number
+}
+
+export interface PrintQueueOrder {
+  id: string
+  stripeSessionId?: string
+  createdAt: string
+  customerName: string
+  customerEmail: string
+  shippingAddress: string
+  batch: QueueBatch
+  status: PrintJobStatus
+  trackingNumber?: string
+  subtotal: number
+  shippingCost: number
+  total: number
+  items: PrintQueueItem[]
+}
+
+export interface QueueStatusSummary {
+  state: WorkshopQueueState
+  manualPause: boolean
+  batch1Count: number
+  batch2Count: number
+  batch1Cap: number
+  batch2Cap: number
+  totalActiveCount: number
+  totalCap: number
+  batch1Minutes: number
+  batch2Minutes: number
+}

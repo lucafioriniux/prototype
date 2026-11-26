@@ -34,6 +34,7 @@ import {
 } from 'lucide-react'
 import { Hero3DViewer } from './components/Hero3DViewer'
 import { InteractiveTiltCard } from './components/InteractiveTiltCard'
+import { AdminPrintQueue } from './components/AdminPrintQueue'
 import type {
   DysonModel,
   Product,
@@ -41,7 +42,9 @@ import type {
   FilamentColor,
   InfillOption,
   CartItem,
-  ProductCollection
+  ProductCollection,
+  PrintJobStatus,
+  PrintQueueOrder
 } from './types'
 import {
   DYSON_MODELS,
@@ -53,6 +56,18 @@ import {
 } from './data/products'
 import { Logo } from './components/Logo'
 import { initiateCheckout } from './services/checkout'
+import {
+  computeQueueStatus,
+  consumePendingCheckoutCart,
+  createOrderFromCart,
+  generateSimulatedOrder,
+  getNextAvailableBatch,
+  loadManualPause,
+  loadQueueOrders,
+  saveManualPause,
+  saveQueueOrders,
+  updateOrderInList
+} from './services/printQueue'
 
 interface CollectionThemeConfig {
   name: ProductCollection
@@ -203,6 +218,27 @@ export function App() {
   const [showStripePayload, setShowStripePayload] = useState(false)
   const [isCheckingOut, setIsCheckingOut] = useState(false)
 
+  // Print Queue, Rolling 24h Batch Cap & /admin View state
+  const [isAdminView, setIsAdminView] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return (
+      window.location.pathname.endsWith('/admin') ||
+      window.location.search.includes('admin=1') ||
+      window.location.hash === '#/admin'
+    )
+  })
+  const [queueOrders, setQueueOrders] = useState<PrintQueueOrder[]>(() => loadQueueOrders())
+  const [manualQueuePause, setManualQueuePause] = useState<boolean>(() => loadManualPause())
+  const queueStatus = computeQueueStatus(queueOrders, manualQueuePause)
+
+  useEffect(() => {
+    saveQueueOrders(queueOrders)
+  }, [queueOrders])
+
+  useEffect(() => {
+    saveManualPause(manualQueuePause)
+  }, [manualQueuePause])
+
   // Customizer form state
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption>(MATERIALS[0])
   const [selectedColor, setSelectedColor] = useState<FilamentColor>(FILAMENT_COLORS[0])
@@ -267,15 +303,28 @@ export function App() {
 
     if (orderStatus === 'success') {
       const shortId = sessionId ? `STRIPE-${sessionId.slice(-6).toUpperCase()}` : `MOD-${Math.floor(10000 + Math.random() * 90000)}`
+      const pending = consumePendingCheckoutCart()
+      if (pending) {
+        const newOrder = createOrderFromCart(pending.cart, {
+          orderId: shortId,
+          stripeSessionId: sessionId || undefined,
+          batch: pending.batch,
+        })
+        setQueueOrders((prev) => {
+          if (prev.some((o) => o.id === newOrder.id)) return prev
+          return [newOrder, ...prev]
+        })
+      }
       setOrderConfirmed({
         id: shortId,
         total: 0,
-        count: 1,
+        count: pending?.cart.reduce((s, i) => s + i.quantity, 0) || 1,
         shipping: 0,
         subtotal: 0,
         payload: {
           status: 'paid_verified',
           stripeSessionId: sessionId,
+          batch: pending?.batch || 'batch_1',
           note: 'Payment successfully processed through Stripe Checkout.',
         },
       })
@@ -490,6 +539,34 @@ export function App() {
     setDiagnosticStep(1)
   }
 
+  if (isAdminView) {
+    return (
+      <AdminPrintQueue
+        orders={queueOrders}
+        queueStatus={queueStatus}
+        onUpdateStatus={(orderId: string, status: PrintJobStatus, trackingNumber?: string) =>
+          setQueueOrders((prev) => updateOrderInList(prev, orderId, status, trackingNumber))
+        }
+        onToggleManualPause={() => setManualQueuePause((prev) => !prev)}
+        onSimulateOrder={() => {
+          const nextBatch = getNextAvailableBatch(queueStatus)
+          if (!nextBatch) return
+          const sim = generateSimulatedOrder(nextBatch)
+          setQueueOrders((prev) => [sim, ...prev])
+        }}
+        onClearShipped={() =>
+          setQueueOrders((prev) => prev.filter((o) => o.status !== 'shipped'))
+        }
+        onExitAdmin={() => {
+          setIsAdminView(false)
+          if (window.location.search.includes('admin=1') || window.location.hash === '#/admin') {
+            window.history.replaceState({}, document.title, window.location.pathname)
+          }
+        }}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
       {/* WCAG Skip to Main Content Link */}
@@ -513,10 +590,22 @@ export function App() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-            Workshop Queue: Open (Orders Capped Daily for Quality)
-          </span>
+          {queueStatus.state === 'paused' ? (
+            <span className="inline-flex items-center gap-1.5 text-rose-400 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-rose-400" aria-hidden="true" />
+              Workshop Queue: Paused for Quality (Reopens Tomorrow)
+            </span>
+          ) : queueStatus.state === 'overflow_24h' ? (
+            <span className="inline-flex items-center gap-1.5 text-amber-400 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
+              Today&apos;s Batch Full • New Orders Enter Tomorrow&apos;s Queue (+24h)
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-emerald-400 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+              Workshop Queue: Open ({queueStatus.batch1Count}/{queueStatus.batch1Cap} Today • 48h Dispatch)
+            </span>
+          )}
           <span className="hidden sm:inline text-zinc-600">|</span>
           <button
             onClick={() => setIsGuidelinesOpen(true)}
@@ -1291,8 +1380,16 @@ export function App() {
 
           <div className="flex items-center gap-4">
             <button
+              onClick={() => setIsAdminView(true)}
+              className="hover:underline flex items-center gap-1 text-cyan-600 dark:text-cyan-400 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer"
+            >
+              <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+              Print Queue Admin
+            </button>
+            <span aria-hidden="true">•</span>
+            <button
               onClick={() => setIsGuidelinesOpen(true)}
-              className="hover:underline flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1"
+              className="hover:underline flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5" aria-hidden="true" />
               Design & Accessibility Guidelines
@@ -1930,44 +2027,73 @@ export function App() {
                   </div>
                 </div>
 
-                <button
-                  disabled={isCheckingOut}
-                  onClick={async () => {
-                    setIsCheckingOut(true)
-                    try {
-                      const result = await initiateCheckout(cart)
-                      if (result.url) {
-                        window.location.href = result.url
-                        return
+                {queueStatus.state === 'overflow_24h' && (
+                  <div className="rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/70 p-3 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+                    <strong className="font-bold">Today&apos;s Print Batch is Full:</strong> Ordering now
+                    reserves your spot in <strong>Tomorrow&apos;s Batch (+24h dispatch)</strong>.
+                  </div>
+                )}
+
+                {queueStatus.state === 'paused' ? (
+                  <div className="rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-700/70 p-4 space-y-2 text-xs text-rose-900 dark:text-rose-200">
+                    <p className="font-extrabold text-sm text-rose-700 dark:text-rose-300">
+                      Checkout Paused — Quality Over Quantity
+                    </p>
+                    <p className="leading-relaxed">
+                      Modus 3D is a <strong>one-person workshop</strong> focused on quality over quantity. Every part is personally printed and hand-inspected to ±0.15mm before shipping. Today and tomorrow&apos;s print batches are completely full—checkout will reopen tomorrow morning.
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    disabled={isCheckingOut}
+                    onClick={async () => {
+                      const nextBatch = getNextAvailableBatch(queueStatus)
+                      if (!nextBatch) return
+                      setIsCheckingOut(true)
+                      try {
+                        const result = await initiateCheckout(cart, nextBatch)
+                        if (result.url) {
+                          window.location.href = result.url
+                          return
+                        }
+                        if (result.error) {
+                          alert(`Stripe Checkout note: ${result.error}`)
+                          return
+                        }
+                        if (result.orderSummary) {
+                          const simOrder = createOrderFromCart(cart, {
+                            orderId: result.orderSummary.orderId,
+                            batch: nextBatch,
+                          })
+                          setQueueOrders((prev) => [simOrder, ...prev])
+                          setOrderConfirmed({
+                            id: result.orderSummary.orderId,
+                            total: result.orderSummary.total,
+                            count: result.orderSummary.itemCount,
+                            subtotal: result.orderSummary.subtotal,
+                            shipping: result.orderSummary.shipping,
+                            payload: result.orderSummary.payload,
+                          })
+                          setCart([])
+                          setIsCartOpen(false)
+                        }
+                      } catch (err: any) {
+                        console.error('Checkout error:', err)
+                        alert(`Checkout error: ${err.message || err}`)
+                      } finally {
+                        setIsCheckingOut(false)
                       }
-                      if (result.error) {
-                        alert(`Stripe Checkout note: ${result.error}`)
-                        return
-                      }
-                      if (result.orderSummary) {
-                        setOrderConfirmed({
-                          id: result.orderSummary.orderId,
-                          total: result.orderSummary.total,
-                          count: result.orderSummary.itemCount,
-                          subtotal: result.orderSummary.subtotal,
-                          shipping: result.orderSummary.shipping,
-                          payload: result.orderSummary.payload,
-                        })
-                        setCart([])
-                        setIsCartOpen(false)
-                      }
-                    } catch (err: any) {
-                      console.error('Checkout error:', err)
-                      alert(`Checkout error: ${err.message || err}`)
-                    } finally {
-                      setIsCheckingOut(false)
-                    }
-                  }}
-                  className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-zinc-950 font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
-                >
-                  <CreditCard className="w-4 h-4 text-zinc-950" aria-hidden="true" />
-                  {isCheckingOut ? 'Opening Stripe Checkout...' : 'Proceed to Stripe Checkout'}
-                </button>
+                    }}
+                    className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-zinc-950 font-bold text-sm shadow-md transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
+                  >
+                    <CreditCard className="w-4 h-4 text-zinc-950" aria-hidden="true" />
+                    {isCheckingOut
+                      ? 'Opening Stripe Checkout...'
+                      : queueStatus.state === 'overflow_24h'
+                      ? 'Checkout for Tomorrow’s Batch (+24h)'
+                      : 'Proceed to Stripe Checkout'}
+                  </button>
+                )}
               </div>
             )}
           </div>
