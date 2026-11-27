@@ -651,14 +651,6 @@ export function App() {
               Workshop Queue: Open ({queueStatus.batch1Count}/{queueStatus.batch1Cap} Today • 48h Dispatch)
             </span>
           )}
-          <span className="hidden sm:inline text-zinc-600">|</span>
-          <button
-            onClick={() => setIsGuidelinesOpen(true)}
-            className="text-zinc-400 hover:text-white flex items-center gap-1 underline underline-offset-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded px-1"
-          >
-            <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-            View Design Guidelines
-          </button>
         </div>
       </div>
 
