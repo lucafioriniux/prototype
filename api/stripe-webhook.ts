@@ -42,9 +42,12 @@ export default async function handler(req: any, res: any) {
   }
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-  const stripeSecret = process.env.STRIPE_SECRET_KEY
-  if (!webhookSecret || !stripeSecret) {
-    return res.status(500).json({ error: 'Missing STRIPE_WEBHOOK_SECRET or STRIPE_SECRET_KEY' })
+  const stripeSecret = process.env.STRIPE_SECRET_KEY || process.env.VITE_STRIPE_SECRET_KEY
+  if (!webhookSecret) {
+    return res.status(500).json({ error: 'Missing STRIPE_WEBHOOK_SECRET' })
+  }
+  if (!stripeSecret) {
+    return res.status(500).json({ error: 'Missing STRIPE_SECRET_KEY' })
   }
 
   const chunks: Buffer[] = []

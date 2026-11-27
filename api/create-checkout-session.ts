@@ -11,7 +11,7 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: 'Method Not Allowed' })
   }
 
-  const stripeSecret = process.env.STRIPE_SECRET_KEY
+  const stripeSecret = process.env.STRIPE_SECRET_KEY || process.env.VITE_STRIPE_SECRET_KEY
   if (!stripeSecret) {
     return res.status(500).json({ error: 'STRIPE_SECRET_KEY not configured on server' })
   }
