@@ -1570,7 +1570,7 @@ export function App() {
               <div className="flex justify-center pt-2.5 pb-1">
                 <span className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" aria-hidden="true" />
               </div>
-              <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-3.5 pt-1 flex items-center justify-between gap-4">
+              <div className="max-w-7xl mx-auto px-4 sm:px-8 pb-3.5 pt-1 flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
                     {quickViewProduct.collection} Collection
@@ -2086,7 +2086,7 @@ export function App() {
               <div className="flex justify-center pt-2.5 pb-1">
                 <span className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" aria-hidden="true" />
               </div>
-              <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-3.5 pt-1 flex items-center justify-between gap-4">
+              <div className="max-w-7xl mx-auto px-4 sm:px-8 pb-3.5 pt-1 flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <span className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
                     {editingCartItemId && <Pencil className="w-3 h-3" />}
@@ -2108,37 +2108,37 @@ export function App() {
 
             {/* Locally Scrollable Drawer Body */}
             <div className="flex-1 overflow-y-auto overscroll-contain">
-              <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left Column: Sticky Visual & Live Config Summary */}
-                <div className="lg:col-span-5 lg:sticky lg:top-0 space-y-4">
+              <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Left Column (3/12): Compact Sticky Visual & Live Config Summary */}
+                <div className="lg:col-span-3 lg:sticky lg:top-0 space-y-4">
                   <div className="relative aspect-[16/10] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-zinc-900 shadow-lg">
                     <img
                       src={customizingProduct.imageUrl.startsWith('http') ? customizingProduct.imageUrl : `${import.meta.env.BASE_URL}${customizingProduct.imageUrl}`}
                       alt={customizingProduct.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
-                    <span className="absolute bottom-3 left-4 text-xs font-semibold text-white/90">
-                      {customizingProduct.collection} • Hand-Inspected ±0.15mm
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/75 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-semibold text-white/95">
+                      {customizingProduct.collection} • ±0.15mm
                     </span>
                   </div>
 
                   {/* Live Filament & Build Preview Card */}
-                  <div className="p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex items-center gap-4">
+                  <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex items-center gap-3.5">
                     <div
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-colors duration-300 flex-shrink-0 border border-white/15"
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md transition-colors duration-300 flex-shrink-0 border border-white/15"
                       style={{ backgroundColor: selectedColor.hex }}
                     >
-                      <Layers className="w-8 h-8 text-white/90 drop-shadow" aria-hidden="true" />
+                      <Layers className="w-6 h-6 text-white/90 drop-shadow" aria-hidden="true" />
                     </div>
-                    <div className="min-w-0 space-y-1">
-                      <span className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-400 block">
-                        Live Configuration Preview
+                    <div className="min-w-0 space-y-0.5">
+                      <span className="text-[10px] uppercase font-bold text-zinc-700 dark:text-zinc-300 block">
+                        Live Preview
                       </span>
-                      <h4 className="font-extrabold text-sm text-zinc-900 dark:text-white truncate">
+                      <h4 className="font-extrabold text-xs text-zinc-900 dark:text-white truncate">
                         {selectedColor.name}
                       </h4>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-300 truncate">
+                      <p className="text-[11px] font-medium text-zinc-700 dark:text-zinc-200 truncate">
                         {selectedMaterial.name} ({selectedMaterial.code}) • {selectedInfill.name}
                       </p>
                     </div>
@@ -2149,33 +2149,33 @@ export function App() {
                     const telem = calculateTelemetry(customizingProduct, selectedMaterial, selectedInfill)
                     const unitPrice = calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill)
                     return (
-                      <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 grid grid-cols-3 gap-4 text-center">
+                      <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 grid grid-cols-3 gap-2 text-center">
                         <div>
-                          <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Est. Print Time</span>
-                          <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">{telem.timeFormatted}</span>
+                          <span className="text-[10px] uppercase font-semibold text-zinc-700 dark:text-zinc-300 block">Time</span>
+                          <span className="font-mono font-bold text-xs text-zinc-900 dark:text-white">{telem.timeFormatted}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Weight</span>
-                          <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">{telem.weightGrams}g</span>
+                          <span className="text-[10px] uppercase font-semibold text-zinc-700 dark:text-zinc-300 block">Weight</span>
+                          <span className="font-mono font-bold text-xs text-zinc-900 dark:text-white">{telem.weightGrams}g</span>
                         </div>
                         <div>
-                          <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Unit Price</span>
-                          <span className="font-mono font-extrabold text-sm text-cyan-600 dark:text-cyan-400">${unitPrice.toFixed(2)}</span>
+                          <span className="text-[10px] uppercase font-semibold text-zinc-700 dark:text-zinc-300 block">Unit</span>
+                          <span className="font-mono font-extrabold text-xs text-cyan-600 dark:text-cyan-400">${unitPrice.toFixed(2)}</span>
                         </div>
                       </div>
                     )
                   })()}
                 </div>
 
-                {/* Right Column: Spacious Configuration Steps */}
-                <div className="lg:col-span-7 space-y-7">
+                {/* Right Column (9/12): Spacious Configuration Steps */}
+                <div className="lg:col-span-9 space-y-7">
                   {/* 1. Color Selection */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                      <label className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">
                         1. Select Filament Color Match
                       </label>
-                      <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400">
+                      <span className="text-xs font-semibold text-cyan-700 dark:text-cyan-400">
                         {selectedColor.name}
                       </span>
                     </div>
@@ -2187,7 +2187,7 @@ export function App() {
                             key={col.id}
                             type="button"
                             onClick={() => setSelectedColor(col)}
-                            className={`p-3 rounded-xl border flex items-center gap-3 text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                            className={`p-3.5 rounded-xl border flex items-center gap-3 text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
                               isSelected
                                 ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 shadow-xs'
                                 : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-800/40'
@@ -2202,7 +2202,7 @@ export function App() {
                               <span className="text-xs font-bold block truncate text-zinc-900 dark:text-white">
                                 {col.name}
                               </span>
-                              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate">
+                              <span className="text-[11px] text-zinc-700 dark:text-zinc-300 block truncate">
                                 {col.dysonMatch}
                               </span>
                             </div>
@@ -2215,14 +2215,14 @@ export function App() {
                   {/* 2. Environment & Material Choice (Indoor PLA, Indoor+ PLA+, Outdoor PETG) */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                      <label className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">
                         2. Where Will You Use It? (Material)
                       </label>
-                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                      <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                         Indoor (PLA) → Outdoor 75°C (PETG)
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                       {MATERIALS.map((mat) => {
                         const isSelected = selectedMaterial.id === mat.id
                         const badgeText =
@@ -2233,10 +2233,10 @@ export function App() {
                             : 'All-Weather • 75°C PETG'
                         const badgeColor =
                           mat.id === 'pla'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
                             : mat.id === 'pla_plus'
-                            ? 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800'
-                            : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800'
+                            ? 'bg-cyan-50 text-cyan-800 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800'
+                            : 'bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800'
 
                         return (
                           <button
@@ -2246,7 +2246,7 @@ export function App() {
                             className={`p-4 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
                               isSelected
                                 ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 text-zinc-900 dark:text-white shadow-xs'
-                                : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
+                                : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 text-zinc-800 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                           >
                             <div>
@@ -2255,18 +2255,18 @@ export function App() {
                                 {isSelected && <Check className="w-4 h-4 text-cyan-500" aria-hidden="true" />}
                               </div>
 
-                              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-2 ${badgeColor}`}>
+                              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-2.5 ${badgeColor}`}>
                                 {badgeText}
                               </span>
 
-                              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug">
+                              <p className="text-xs text-zinc-700 dark:text-zinc-200 leading-relaxed">
                                 {mat.description}
                               </p>
                             </div>
 
-                            <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-[10px] font-medium text-zinc-500 flex justify-between">
+                            <div className="mt-3 pt-2.5 border-t border-zinc-200/80 dark:border-zinc-800 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 flex justify-between">
                               <span>Durability</span>
-                              <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                              <span className="font-bold text-zinc-900 dark:text-white">
                                 {'★'.repeat(mat.durabilityRating)}{'☆'.repeat(5 - mat.durabilityRating)}
                               </span>
                             </div>
@@ -2278,10 +2278,10 @@ export function App() {
 
                   {/* 3. Strength & Build Density */}
                   <div className="space-y-3">
-                    <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                    <label className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">
                       3. Select Strength Level
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                       {INFILL_OPTIONS.map((inf) => {
                         const isSelected = selectedInfill.id === inf.id
                         return (
@@ -2297,11 +2297,11 @@ export function App() {
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-sm text-zinc-900 dark:text-white">{inf.name}</span>
-                              <span className="text-[11px] font-semibold text-zinc-500">
+                              <span className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300">
                                 {inf.priceOffset === 0 ? 'Included' : `+$${inf.priceOffset.toFixed(2)}`}
                               </span>
                             </div>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-snug">
+                            <p className="text-xs text-zinc-700 dark:text-zinc-200 mt-1.5 leading-relaxed">
                               {inf.description}
                             </p>
                           </button>
@@ -2315,7 +2315,7 @@ export function App() {
 
             {/* Sticky Drawer Footer */}
             <div className="shrink-0 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 px-4 sm:px-8 py-4">
-              <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+              <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
                 {/* Quantity */}
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-semibold text-zinc-500">Qty:</span>
