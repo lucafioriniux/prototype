@@ -697,7 +697,7 @@ export function App() {
                 <div className="lg:col-span-6 space-y-6">
                   <div className="space-y-4">
                     <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.08]">
-                      Modus 3D
+                      FORMA
                       <span className="block text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-200 mt-2">
                         Thoughtfully Designed. Precisely Made.
                       </span>
@@ -2043,7 +2043,7 @@ export function App() {
                       Checkout Paused — Quality Over Quantity
                     </p>
                     <p className="leading-relaxed">
-                      Modus 3D is a <strong>one-person workshop</strong> focused on quality over quantity. Every part is personally printed and hand-inspected to ±0.15mm before shipping. Today and tomorrow&apos;s print batches are completely full—checkout will reopen tomorrow morning.
+                      Forma is a <strong>one-person workshop</strong> focused on quality over quantity. Every part is personally printed and hand-inspected to ±0.15mm before shipping. Today and tomorrow&apos;s print batches are completely full—checkout will reopen tomorrow morning.
                     </p>
                   </div>
                 ) : (

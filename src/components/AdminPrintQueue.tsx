@@ -111,7 +111,7 @@ export function AdminPrintQueue({
             <div className="flex items-center gap-2">
               <Printer className="w-5 h-5 text-cyan-400" aria-hidden="true" />
               <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-white">
-                Modus 3D • Print Queue
+                FORMA • Print Queue
               </h1>
             </div>
             <span className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${stateBadge.classes}`}>
@@ -312,11 +312,11 @@ export function AdminPrintQueue({
                 (s, i) => s + i.printTimeMinutes * i.quantity,
                 0
               )
-              const mailtoSubject = encodeURIComponent(`Your Modus 3D Order ${order.id} Has Shipped!`)
+              const mailtoSubject = encodeURIComponent(`Your Forma Order ${order.id} Has Shipped!`)
               const mailtoBody = encodeURIComponent(
                 `Hi ${order.customerName},\n\nYour custom 3D-printed order (${order.id}) passed our ±0.15mm hand-fit inspection and has been dispatched via USPS Ground Advantage.${
                   order.trackingNumber ? `\n\nTracking Number: ${order.trackingNumber}` : ''
-                }\n\nThank you for supporting an independent solo workshop!\n— Luca, Modus 3D`
+                }\n\nThank you for supporting an independent solo workshop!\n— Luca, Forma`
               )
 
               return (

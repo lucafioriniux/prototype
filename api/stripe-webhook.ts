@@ -102,7 +102,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // Persist `enqueuedOrder` to your database (e.g., Supabase, Cloudflare D1, or Postgres)
-    console.log('[Modus 3D Webhook] Enqueued paid print order:', enqueuedOrder.id, enqueuedOrder.batch)
+    console.log('[Forma Webhook] Enqueued paid print order:', enqueuedOrder.id, enqueuedOrder.batch)
 
     return res.status(200).json({ received: true, orderId: enqueuedOrder.id, batch: enqueuedOrder.batch })
   }
