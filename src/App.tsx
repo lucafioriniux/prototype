@@ -260,7 +260,6 @@ export function App() {
   const [reviewAuthor, setReviewAuthor] = useState('')
   const [reviewTitle, setReviewTitle] = useState('')
   const [reviewComment, setReviewComment] = useState('')
-  const [reviewConfig, setReviewConfig] = useState('')
   const [reviewSubmitted, setReviewSubmitted] = useState(false)
 
   useEffect(() => {
@@ -1609,7 +1608,7 @@ export function App() {
                                 : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                             }`}
                           >
-                            Reviews & Write One ({productReviews.length})
+                            Review ({productReviews.length})
                           </button>
                         </div>
 
@@ -1669,7 +1668,6 @@ export function App() {
                                   rating: reviewRating,
                                   title: reviewTitle.trim(),
                                   comment: reviewComment.trim(),
-                                  configSummary: reviewConfig.trim() || undefined,
                                   createdAt: new Date().toISOString(),
                                   verified: false,
                                 }
@@ -1677,7 +1675,6 @@ export function App() {
                                 setReviewAuthor('')
                                 setReviewTitle('')
                                 setReviewComment('')
-                                setReviewConfig('')
                                 setReviewRating(5)
                                 setReviewSubmitted(true)
                               }}
@@ -1714,23 +1711,14 @@ export function App() {
                                 </p>
                               )}
 
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <input
-                                  type="text"
-                                  required
-                                  value={reviewAuthor}
-                                  onChange={(e) => setReviewAuthor(e.target.value)}
-                                  placeholder="Your name *"
-                                  className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                />
-                                <input
-                                  type="text"
-                                  value={reviewConfig}
-                                  onChange={(e) => setReviewConfig(e.target.value)}
-                                  placeholder="Material/Model (optional)"
-                                  className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                />
-                              </div>
+                              <input
+                                type="text"
+                                required
+                                value={reviewAuthor}
+                                onChange={(e) => setReviewAuthor(e.target.value)}
+                                placeholder="Your name *"
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                              />
                               <input
                                 type="text"
                                 required
