@@ -6,4 +6,5 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: process.env.VERCEL ? '/' : '/prototype/',
+  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
 })
