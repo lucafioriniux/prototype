@@ -52,7 +52,8 @@ import type {
   PrintJobStatus,
   PrintQueueOrder,
   ProductReview,
-  MakerFeedback
+  MakerFeedback,
+  QueueStatusSummary
 } from './types'
 import {
   DYSON_MODELS,
@@ -74,12 +75,18 @@ import {
   loadQueueOrders,
   saveManualPause,
   saveQueueOrders,
-  updateOrderInList
+  updateOrderInList,
+  fetchPublicQueueStatus,
+  fetchAdminQueueData,
+  postAdminQueueAction
 } from './services/printQueue'
 import {
   compressReviewPhoto,
+  fetchReviewsFromSupabase,
   getLiveProductRating,
   getReviewsForProduct,
+  insertFeedbackToSupabase,
+  insertReviewToSupabase,
   loadMakerFeedback,
   loadUserReviews,
   saveMakerFeedback,
@@ -246,7 +253,43 @@ export function App() {
   })
   const [queueOrders, setQueueOrders] = useState<PrintQueueOrder[]>(() => loadQueueOrders())
   const [manualQueuePause, setManualQueuePause] = useState<boolean>(() => loadManualPause())
-  const queueStatus = computeQueueStatus(queueOrders, manualQueuePause)
+  const [remoteQueueStatus, setRemoteQueueStatus] = useState<QueueStatusSummary | null>(null)
+  const [adminPasscode, setAdminPasscode] = useState<string>(() =>
+    typeof window !== 'undefined' ? localStorage.getItem('forma_admin_passcode') || '' : ''
+  )
+  const queueStatus = remoteQueueStatus || computeQueueStatus(queueOrders, manualQueuePause)
+
+  // Hydrate live public queue status & Supabase reviews on initial mount
+  useEffect(() => {
+    fetchPublicQueueStatus().then((status) => {
+      if (status) setRemoteQueueStatus(status)
+    })
+    fetchReviewsFromSupabase().then((remoteReviews) => {
+      if (remoteReviews && remoteReviews.length > 0) {
+        setUserReviews(remoteReviews)
+      }
+    })
+  }, [])
+
+  // Hydrate /admin orders & Maker Inbox from Supabase via Vercel /api/queue?admin=1
+  useEffect(() => {
+    if (!isAdminView) return
+    fetchAdminQueueData(adminPasscode).then((data) => {
+      if (data.unauthorized && typeof window !== 'undefined') {
+        const entered = window.prompt('Enter Admin Passcode for Forma Print Queue:')
+        if (entered !== null) {
+          localStorage.setItem('forma_admin_passcode', entered)
+          setAdminPasscode(entered)
+        }
+        return
+      }
+      if (data.configured) {
+        if (data.orders) setQueueOrders(data.orders)
+        if (data.feedbackItems) setMakerFeedback(data.feedbackItems)
+        if (data.queueStatus) setRemoteQueueStatus(data.queueStatus)
+      }
+    })
+  }, [isAdminView, adminPasscode])
 
   useEffect(() => {
     saveQueueOrders(queueOrders)
@@ -620,28 +663,47 @@ export function App() {
         orders={queueOrders}
         queueStatus={queueStatus}
         feedbackItems={makerFeedback}
-        onToggleFeedbackStatus={(feedbackId: string) =>
+        onToggleFeedbackStatus={(feedbackId: string) => {
+          const current = makerFeedback.find((f) => f.id === feedbackId)
+          const nextStatus = current?.status === 'unread' ? 'resolved' : 'unread'
           setMakerFeedback((prev) =>
-            prev.map((f) =>
-              f.id === feedbackId
-                ? { ...f, status: f.status === 'unread' ? 'resolved' : 'unread' }
-                : f
-            )
+            prev.map((f) => (f.id === feedbackId ? { ...f, status: nextStatus } : f))
           )
-        }
-        onUpdateStatus={(orderId: string, status: PrintJobStatus, trackingNumber?: string) =>
-          setQueueOrders((prev) => updateOrderInList(prev, orderId, status, trackingNumber))
-        }
-        onToggleManualPause={() => setManualQueuePause((prev) => !prev)}
+          postAdminQueueAction({ action: 'toggle_feedback_status', feedbackId, status: nextStatus }, adminPasscode)
+        }}
+        onUpdateStatus={(orderId: string, status: PrintJobStatus, trackingNumber?: string) => {
+          setQueueOrders((prev) => {
+            const next = updateOrderInList(prev, orderId, status, trackingNumber)
+            setRemoteQueueStatus(computeQueueStatus(next, manualQueuePause))
+            return next
+          })
+          postAdminQueueAction({ action: 'update_status', orderId, status, trackingNumber }, adminPasscode)
+        }}
+        onToggleManualPause={() => {
+          const nextPause = !manualQueuePause
+          setManualQueuePause(nextPause)
+          setRemoteQueueStatus(computeQueueStatus(queueOrders, nextPause))
+          postAdminQueueAction({ action: 'toggle_manual_pause', manualPause: nextPause }, adminPasscode)
+        }}
         onSimulateOrder={() => {
           const nextBatch = getNextAvailableBatch(queueStatus)
           if (!nextBatch) return
           const sim = generateSimulatedOrder(nextBatch)
-          setQueueOrders((prev) => [sim, ...prev])
+          setQueueOrders((prev) => {
+            const next = [sim, ...prev]
+            setRemoteQueueStatus(computeQueueStatus(next, manualQueuePause))
+            return next
+          })
+          postAdminQueueAction({ action: 'insert_order', order: sim }, adminPasscode)
         }}
-        onClearShipped={() =>
-          setQueueOrders((prev) => prev.filter((o) => o.status !== 'shipped'))
-        }
+        onClearShipped={() => {
+          setQueueOrders((prev) => {
+            const next = prev.filter((o) => o.status !== 'shipped')
+            setRemoteQueueStatus(computeQueueStatus(next, manualQueuePause))
+            return next
+          })
+          postAdminQueueAction({ action: 'clear_shipped' }, adminPasscode)
+        }}
         onExitAdmin={() => {
           setIsAdminView(false)
           if (window.location.search.includes('admin=1') || window.location.hash === '#/admin') {
@@ -1823,6 +1885,7 @@ export function App() {
                                   verified: false,
                                 }
                                 setUserReviews((prev) => [newRev, ...prev])
+                                insertReviewToSupabase(newRev)
                                 setReviewAuthor('')
                                 setReviewTitle('')
                                 setReviewComment('')
@@ -2898,7 +2961,10 @@ export function App() {
         isOpen={isFeedbackOpen}
         onClose={() => setIsFeedbackOpen(false)}
         products={PRODUCTS}
-        onSubmitFeedback={(item) => setMakerFeedback((prev) => [item, ...prev])}
+        onSubmitFeedback={(item) => {
+          setMakerFeedback((prev) => [item, ...prev])
+          insertFeedbackToSupabase(item)
+        }}
       />
 
       {/* Fullscreen Photo Lightbox (Product Gallery & Customer Review Photos) */}

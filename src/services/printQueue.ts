@@ -259,3 +259,53 @@ export function generateSimulatedOrder(batch: QueueBatch): PrintQueueOrder {
     ],
   }
 }
+
+export async function fetchPublicQueueStatus(): Promise<QueueStatusSummary | null> {
+  try {
+    const res = await fetch('/api/queue')
+    if (!res.ok) return null
+    const data = await res.json()
+    if (data?.configured && data.queueStatus) return data.queueStatus
+    return null
+  } catch {
+    return null
+  }
+}
+
+export async function fetchAdminQueueData(passcode = ''): Promise<{
+  configured: boolean
+  unauthorized?: boolean
+  queueStatus?: QueueStatusSummary
+  orders?: PrintQueueOrder[]
+  feedbackItems?: any[]
+}> {
+  try {
+    const res = await fetch('/api/queue?admin=1', {
+      headers: passcode ? { 'x-admin-passcode': passcode } : {},
+    })
+    if (res.status === 401) return { configured: true, unauthorized: true }
+    if (!res.ok) return { configured: false }
+    return await res.json()
+  } catch {
+    return { configured: false }
+  }
+}
+
+export async function postAdminQueueAction(
+  payload: Record<string, any>,
+  passcode = ''
+): Promise<boolean> {
+  try {
+    const res = await fetch('/api/queue', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(passcode ? { 'x-admin-passcode': passcode } : {}),
+      },
+      body: JSON.stringify(payload),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}

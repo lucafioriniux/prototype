@@ -51,6 +51,28 @@ export async function initiateCheckout(
 
   savePendingCheckoutCart(cart, batch)
 
+  // Prefer secure Vercel serverless checkout endpoint (checks live Supabase queue cap)
+  try {
+    const baseUrl = `${window.location.origin}${import.meta.env.BASE_URL}`.replace(/\/+$/, '')
+    const apiRes = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cart, originUrl: baseUrl }),
+    })
+    if (apiRes.ok) {
+      const data = await apiRes.json()
+      if (data.url) {
+        window.location.href = data.url
+        return { success: true, url: data.url }
+      }
+    } else if (apiRes.status === 409) {
+      const errData = await apiRes.json().catch(() => ({}))
+      return { success: false, error: errData.error || 'Workshop queue is full.' }
+    }
+  } catch {
+    // Fallback to client-side Stripe test mode on static hosts (GitHub Pages)
+  }
+
   const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
   const isFreeShipping = subtotal >= 35
   const shipping = isFreeShipping ? 0 : 4.99

@@ -1,4 +1,5 @@
 import type { MakerFeedback, Product, ProductReview } from '../types'
+import { supabase } from '../lib/supabase'
 
 const REVIEWS_STORAGE_KEY = 'forma_product_reviews_v1'
 const FEEDBACK_STORAGE_KEY = 'forma_maker_feedback_v1'
@@ -159,4 +160,65 @@ export function compressReviewPhoto(file: File, maxWidth = 800, quality = 0.78):
     }
     reader.readAsDataURL(file)
   })
+}
+
+export async function fetchReviewsFromSupabase(): Promise<ProductReview[] | null> {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error || !data) return null
+    return data.map((row: any) => ({
+      id: row.id,
+      productId: row.product_id,
+      author: row.author,
+      rating: row.rating,
+      title: row.title,
+      comment: row.comment,
+      configSummary: row.config_summary || undefined,
+      photos: Array.isArray(row.photos) ? row.photos : undefined,
+      createdAt: row.created_at,
+      verified: Boolean(row.verified),
+    }))
+  } catch {
+    return null
+  }
+}
+
+export async function insertReviewToSupabase(review: ProductReview): Promise<void> {
+  if (!supabase) return
+  try {
+    await supabase.from('product_reviews').insert({
+      id: review.id,
+      product_id: review.productId,
+      author: review.author,
+      rating: review.rating,
+      title: review.title,
+      comment: review.comment,
+      config_summary: review.configSummary || null,
+      photos: review.photos || [],
+      verified: Boolean(review.verified),
+    })
+  } catch (err) {
+    console.error('[Forma] Failed to sync review to Supabase:', err)
+  }
+}
+
+export async function insertFeedbackToSupabase(item: MakerFeedback): Promise<void> {
+  if (!supabase) return
+  try {
+    await supabase.from('maker_feedback').insert({
+      id: item.id,
+      category: item.category,
+      name: item.name,
+      email: item.email,
+      product_name: item.productName || null,
+      message: item.message,
+      status: item.status,
+    })
+  } catch (err) {
+    console.error('[Forma] Failed to sync feedback to Supabase:', err)
+  }
 }
