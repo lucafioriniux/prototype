@@ -13,7 +13,7 @@ export function Logo({ className = '', showTagline = true, size = 'md' }: LogoPr
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      {/* Brand Icon SVG */}
+      {/* Brand Icon SVG: Intentional 3D Form & Function Interlocking Mark */}
       <div className={`relative ${iconSize} flex-shrink-0 rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-950 p-1.5 border border-zinc-700/80 shadow-md group transition-transform duration-200 hover:scale-105`}>
         <svg
           viewBox="0 0 48 48"
@@ -23,38 +23,36 @@ export function Logo({ className = '', showTagline = true, size = 'md' }: LogoPr
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="logoCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`iconForm-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#22d3ee" />
               <stop offset="100%" stopColor="#0891b2" />
             </linearGradient>
-            <linearGradient id="logoPink" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f472b6" />
-              <stop offset="100%" stopColor="#db2777" />
+            <linearGradient id={`iconFunction-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#3b82f6" />
+              <stop offset="100%" stopColor="#ec4899" />
             </linearGradient>
           </defs>
 
-          {/* 3D Slicing Stratum Lines */}
-          <line x1="8" y1="36" x2="40" y2="36" stroke="#3f3f46" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
-          <line x1="12" y1="31" x2="36" y2="31" stroke="#52525b" strokeWidth="1.75" strokeLinecap="round" opacity="0.8" />
-
-          {/* Left Cyclone Curve (Cyan) */}
+          {/* Subtle Isometric Blueprint Boundary */}
           <path
-            d="M24 7 C15 7 9 13 9 20 C9 27 15 32 23 35 C19 33 15 28 15 22 C15 16 18 12 24 10 Z"
-            fill="url(#logoCyan)"
+            d="M24 4.5 L41 14 V34 L24 43.5 L7 34 V14 Z"
+            stroke="#52525b"
+            strokeWidth="1.2"
+            strokeOpacity="0.45"
+            strokeLinejoin="round"
           />
 
-          {/* Right Cyclone Curve (Fuchsia) */}
+          {/* Form Piece: Structural Top & Spine (Cyan) */}
           <path
-            d="M24 41 C33 41 39 35 39 28 C39 21 33 16 25 13 C29 15 33 20 33 26 C33 32 30 36 24 38 Z"
-            fill="url(#logoPink)"
+            d="M24 7.5 L38.5 15.5 L33 18.5 L24 13.5 L14.5 18.8 V36.5 L9.5 33.8 V15.5 Z"
+            fill={`url(#iconForm-${uid})`}
           />
 
-          {/* Center Precision Quick-Release Core & Nozzle Point */}
-          <circle cx="24" cy="24" r="5" fill="#09090b" stroke="url(#logoCyan)" strokeWidth="2.2" />
-          <circle cx="24" cy="24" r="2" fill="#db2777" />
-
-          {/* Calibrated Snap Detent Marker */}
-          <line x1="24" y1="3" x2="24" y2="6.5" stroke="#22d3ee" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Function Piece: Interlocking Cantilever & Base Key (Blue -> Fuchsia) */}
+          <path
+            d="M18 23.5 L31.5 16 L37 19 L23.5 26.5 V32 L35 25.5 L38.5 27.5 V33.5 L24 41.5 L18 38.2 Z"
+            fill={`url(#iconFunction-${uid})`}
+          />
         </svg>
       </div>
 
