@@ -361,7 +361,10 @@ export function App() {
     setEditingCartItemId(null)
     setCustomizingProduct(product)
     // Preset recommended material
-    const matchedMat = MATERIALS.find(m => m.name === product.printSpecs.recommendedMaterial) || MATERIALS[0]
+    const matchedMat =
+      MATERIALS.find(
+        (m) => m.code === product.printSpecs.recommendedMaterial || m.name === product.printSpecs.recommendedMaterial
+      ) || MATERIALS[0]
     setSelectedMaterial(matchedMat)
     setSelectedColor(FILAMENT_COLORS[0])
     setSelectedInfill(INFILL_OPTIONS[0])
@@ -1675,14 +1678,14 @@ export function App() {
                 </div>
               </div>
 
-              {/* 2. Print Material Choice (PLA, PLA+, PETG) */}
+              {/* 2. Environment & Material Choice (Indoor PLA, Indoor+ PLA+, Outdoor PETG) */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                    2. Select Print Material
+                    2. Where Will You Use It? (Material)
                   </label>
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                    PLA (Most Cost-Efficient) → PETG (Strongest)
+                    Indoor (PLA) → Outdoor 75°C (PETG)
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1690,10 +1693,10 @@ export function App() {
                     const isSelected = selectedMaterial.id === mat.id
                     const badgeText =
                       mat.id === 'pla'
-                        ? 'Most Cost-Efficient'
+                        ? 'Everyday Indoor • PLA'
                         : mat.id === 'pla_plus'
-                        ? 'Reinforced & Balanced'
-                        : 'Strongest • Industrial'
+                        ? 'Heavy-Use Indoor • PLA+'
+                        : 'All-Weather • 75°C PETG'
                     const badgeColor =
                       mat.id === 'pla'
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
@@ -1739,10 +1742,10 @@ export function App() {
                 </div>
               </div>
 
-              {/* 3. Infill & Density Profile */}
+              {/* 3. Strength & Build Density */}
               <div className="space-y-3">
                 <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                  3. Infill Density & Strength
+                  3. Select Strength Level
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                   {INFILL_OPTIONS.map((inf) => {
