@@ -31,7 +31,10 @@ import {
   Eye,
   Pencil,
   ArrowDown,
-  MessageSquare
+  MessageSquare,
+  Camera,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import { Hero3DViewer } from './components/Hero3DViewer'
 import { InteractiveTiltCard } from './components/InteractiveTiltCard'
@@ -73,6 +76,7 @@ import {
   updateOrderInList
 } from './services/printQueue'
 import {
+  compressReviewPhoto,
   getLiveProductRating,
   getReviewsForProduct,
   loadMakerFeedback,
@@ -256,11 +260,15 @@ export function App() {
   const [makerFeedback, setMakerFeedback] = useState<MakerFeedback[]>(() => loadMakerFeedback())
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
   const [quickViewTab, setQuickViewTab] = useState<'overview' | 'reviews'>('overview')
+  const [quickViewImageIndex, setQuickViewImageIndex] = useState(0)
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewAuthor, setReviewAuthor] = useState('')
   const [reviewTitle, setReviewTitle] = useState('')
   const [reviewComment, setReviewComment] = useState('')
+  const [reviewPhotos, setReviewPhotos] = useState<string[]>([])
+  const [isCompressingPhotos, setIsCompressingPhotos] = useState(false)
   const [reviewSubmitted, setReviewSubmitted] = useState(false)
+  const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null)
 
   useEffect(() => {
     saveUserReviews(userReviews)
@@ -369,7 +377,8 @@ export function App() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isFeedbackOpen) setIsFeedbackOpen(false)
+        if (lightboxPhoto) setLightboxPhoto(null)
+        else if (isFeedbackOpen) setIsFeedbackOpen(false)
         else if (quickViewProduct) setQuickViewProduct(null)
         else if (customizingProduct) {
           setCustomizingProduct(null)
@@ -386,7 +395,7 @@ export function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isFeedbackOpen, quickViewProduct, customizingProduct, editingCartItemId, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
+  }, [lightboxPhoto, isFeedbackOpen, quickViewProduct, customizingProduct, editingCartItemId, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
 
   // Lock background page scroll when bottom drawers are open so scroll stays local to the drawer
   useEffect(() => {
@@ -1190,6 +1199,8 @@ export function App() {
                             <div
                               onClick={() => {
                                 setQuickViewTab('overview')
+                                setQuickViewImageIndex(0)
+                                setReviewPhotos([])
                                 setReviewSubmitted(false)
                                 setQuickViewProduct(product)
                               }}
@@ -1239,6 +1250,8 @@ export function App() {
                                 type="button"
                                 onClick={() => {
                                   setQuickViewTab('reviews')
+                                  setQuickViewImageIndex(0)
+                                  setReviewPhotos([])
                                   setReviewSubmitted(false)
                                   setQuickViewProduct(product)
                                 }}
@@ -1529,38 +1542,115 @@ export function App() {
             {/* Locally Scrollable Drawer Body */}
             <div className="flex-1 overflow-y-auto overscroll-contain">
               <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left Column: Product Visual Showcase (Sticky on Desktop) */}
-                <div className="lg:col-span-5 lg:sticky lg:top-0 space-y-4">
-                  <div className="relative aspect-[4/3] rounded-2xl bg-zinc-950 overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg">
-                    <img
-                      src={quickViewProduct.imageUrl.startsWith('http') ? quickViewProduct.imageUrl : `${import.meta.env.BASE_URL}${quickViewProduct.imageUrl}`}
-                      alt={quickViewProduct.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent pointer-events-none" />
+                {/* Left Column: Scrollable Multi-Image Product Gallery (Sticky on Desktop) */}
+                {(() => {
+                  const gallery =
+                    quickViewProduct.images && quickViewProduct.images.length > 0
+                      ? quickViewProduct.images
+                      : [quickViewProduct.imageUrl]
+                  const safeIndex = Math.min(quickViewImageIndex, gallery.length - 1)
+                  const activeSrc = gallery[safeIndex]
+                  const resolveImg = (url: string) =>
+                    url.startsWith('http') || url.startsWith('data:')
+                      ? url
+                      : `${import.meta.env.BASE_URL}${url}`
 
-                    {/* Badges Overlay */}
-                    <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2 z-10">
-                      {quickViewProduct.badge && (
-                        <span className="px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md backdrop-blur-xs">
-                          {quickViewProduct.badge}
-                        </span>
+                  return (
+                    <div className="lg:col-span-5 lg:sticky lg:top-0 space-y-3">
+                      <div className="relative aspect-[4/3] rounded-2xl bg-zinc-950 overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg group/gallery">
+                        <img
+                          src={resolveImg(activeSrc)}
+                          alt={`${quickViewProduct.name} — view ${safeIndex + 1}`}
+                          onClick={() => setLightboxPhoto(resolveImg(activeSrc))}
+                          className="w-full h-full object-cover cursor-zoom-in transition-transform duration-300 group-hover/gallery:scale-[1.02]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent pointer-events-none" />
+
+                        {/* Badges Overlay */}
+                        <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2 z-10 pointer-events-none">
+                          {quickViewProduct.badge && (
+                            <span className="px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md backdrop-blur-xs">
+                              {quickViewProduct.badge}
+                            </span>
+                          )}
+                          <span className="px-3 py-1 rounded-md text-xs font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
+                            {quickViewProduct.collection}
+                          </span>
+                        </div>
+
+                        {/* Image Counter Pill */}
+                        {gallery.length > 1 && (
+                          <span className="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full bg-zinc-950/80 border border-zinc-700/70 text-[11px] font-mono font-bold text-white backdrop-blur-xs pointer-events-none">
+                            {safeIndex + 1} / {gallery.length}
+                          </span>
+                        )}
+
+                        {/* Prev / Next Arrows */}
+                        {gallery.length > 1 && (
+                          <>
+                            <button
+                              type="button"
+                              aria-label="Previous product image"
+                              onClick={() =>
+                                setQuickViewImageIndex((prev) => (prev - 1 + gallery.length) % gallery.length)
+                              }
+                              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-zinc-950/75 hover:bg-zinc-900 text-white border border-white/15 backdrop-blur-xs transition cursor-pointer shadow-md"
+                            >
+                              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Next product image"
+                              onClick={() =>
+                                setQuickViewImageIndex((prev) => (prev + 1) % gallery.length)
+                              }
+                              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-zinc-950/75 hover:bg-zinc-900 text-white border border-white/15 backdrop-blur-xs transition cursor-pointer shadow-md"
+                            >
+                              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Horizontally Scrollable Thumbnail Strip */}
+                      {gallery.length > 1 && (
+                        <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
+                          {gallery.map((imgUrl, idx) => {
+                            const isSelected = idx === safeIndex
+                            return (
+                              <button
+                                key={`${imgUrl}-${idx}`}
+                                type="button"
+                                onClick={() => setQuickViewImageIndex(idx)}
+                                aria-label={`View image ${idx + 1}`}
+                                className={`relative w-20 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition cursor-pointer ${
+                                  isSelected
+                                    ? 'border-cyan-500 ring-2 ring-cyan-500/30 opacity-100'
+                                    : 'border-zinc-200 dark:border-zinc-800 opacity-65 hover:opacity-100'
+                                }`}
+                              >
+                                <img
+                                  src={resolveImg(imgUrl)}
+                                  alt=""
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
+                            )
+                          })}
+                        </div>
                       )}
-                      <span className="px-3 py-1 rounded-md text-xs font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
-                        {quickViewProduct.collection}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Craftsmanship Assurance Strip */}
-                  <div className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-950/50 p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800">
-                    <span className="flex items-center gap-2 font-semibold">
-                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" aria-hidden="true" />
-                      ±0.15mm Hand-Inspected Fit
-                    </span>
-                    <span className="text-zinc-400 text-[11px] font-medium">48h Solo-Workshop Dispatch</span>
-                  </div>
-                </div>
+                      {/* Craftsmanship Assurance Strip */}
+                      <div className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-950/50 p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800">
+                        <span className="flex items-center gap-2 font-semibold">
+                          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" aria-hidden="true" />
+                          ±0.15mm Hand-Inspected Fit
+                        </span>
+                        <span className="text-zinc-400 text-[11px] font-medium">48h Solo-Workshop Dispatch</span>
+                      </div>
+                    </div>
+                  )
+                })()}
 
                 {/* Right Column: Overview & Reviews */}
                 <div className="lg:col-span-7 space-y-6">
@@ -1678,6 +1768,7 @@ export function App() {
                                   rating: reviewRating,
                                   title: reviewTitle.trim(),
                                   comment: reviewComment.trim(),
+                                  photos: reviewPhotos.length > 0 ? reviewPhotos : undefined,
                                   createdAt: new Date().toISOString(),
                                   verified: false,
                                 }
@@ -1685,6 +1776,7 @@ export function App() {
                                 setReviewAuthor('')
                                 setReviewTitle('')
                                 setReviewComment('')
+                                setReviewPhotos([])
                                 setReviewRating(5)
                                 setReviewSubmitted(true)
                               }}
@@ -1747,9 +1839,76 @@ export function App() {
                                 placeholder="Share how it fits and performs... *"
                                 className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
                               />
+
+                              {/* Take / Upload Customer Review Photos */}
+                              <div className="space-y-2.5">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                  <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 hover:border-cyan-500 text-xs font-semibold text-zinc-700 dark:text-zinc-200 transition cursor-pointer">
+                                    <Camera className="w-4 h-4 text-cyan-500" aria-hidden="true" />
+                                    <span>
+                                      {isCompressingPhotos
+                                        ? 'Processing photo...'
+                                        : 'Take or Upload Photos (Optional)'}
+                                    </span>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      capture="environment"
+                                      multiple
+                                      disabled={isCompressingPhotos || reviewPhotos.length >= 4}
+                                      onChange={async (e) => {
+                                        const files = Array.from(e.target.files || [])
+                                        if (files.length === 0) return
+                                        setIsCompressingPhotos(true)
+                                        try {
+                                          const remaining = 4 - reviewPhotos.length
+                                          const compressed = await Promise.all(
+                                            files.slice(0, remaining).map((f) => compressReviewPhoto(f))
+                                          )
+                                          setReviewPhotos((prev) => [...prev, ...compressed].slice(0, 4))
+                                        } catch (err) {
+                                          console.error('Photo upload error:', err)
+                                        } finally {
+                                          setIsCompressingPhotos(false)
+                                          e.target.value = ''
+                                        }
+                                      }}
+                                      className="sr-only"
+                                    />
+                                  </label>
+                                  <span className="text-[11px] text-zinc-400">
+                                    {reviewPhotos.length}/4 photos attached
+                                  </span>
+                                </div>
+
+                                {reviewPhotos.length > 0 && (
+                                  <div className="flex flex-wrap gap-2.5">
+                                    {reviewPhotos.map((src, idx) => (
+                                      <div
+                                        key={idx}
+                                        className="relative w-16 h-16 rounded-xl overflow-hidden border border-zinc-300 dark:border-zinc-700 group/photo"
+                                      >
+                                        <img src={src} alt={`Review upload ${idx + 1}`} className="w-full h-full object-cover" />
+                                        <button
+                                          type="button"
+                                          aria-label={`Remove photo ${idx + 1}`}
+                                          onClick={() =>
+                                            setReviewPhotos((prev) => prev.filter((_, i) => i !== idx))
+                                          }
+                                          className="absolute top-1 right-1 p-0.5 rounded-full bg-zinc-950/80 text-white hover:bg-rose-500 transition cursor-pointer"
+                                        >
+                                          <X className="w-3 h-3" aria-hidden="true" />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
                               <button
                                 type="submit"
-                                className="px-5 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-xs font-bold transition cursor-pointer"
+                                disabled={isCompressingPhotos}
+                                className="px-5 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 disabled:opacity-50 text-xs font-bold transition cursor-pointer"
                               >
                                 Post Review
                               </button>
@@ -1760,7 +1919,7 @@ export function App() {
                               {productReviews.map((rev) => (
                                 <div
                                   key={rev.id}
-                                  className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 p-4 space-y-2 bg-white dark:bg-zinc-900/60"
+                                  className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 p-4 space-y-2.5 bg-white dark:bg-zinc-900/60"
                                 >
                                   <div className="flex items-center justify-between gap-2">
                                     <div className="flex items-center gap-2">
@@ -1789,6 +1948,25 @@ export function App() {
                                   <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                                     {rev.comment}
                                   </p>
+                                  {rev.photos && rev.photos.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 pt-1">
+                                      {rev.photos.map((photoSrc, pIdx) => (
+                                        <button
+                                          key={pIdx}
+                                          type="button"
+                                          onClick={() => setLightboxPhoto(photoSrc)}
+                                          className="w-20 h-20 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 hover:border-cyan-500 transition cursor-zoom-in"
+                                          title="Click to enlarge photo"
+                                        >
+                                          <img
+                                            src={photoSrc}
+                                            alt={`Customer photo ${pIdx + 1}`}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
                                   <p className="text-[11px] text-zinc-400">
                                     {rev.author}
                                     {rev.configSummary ? ` • ${rev.configSummary}` : ''}
@@ -2672,6 +2850,32 @@ export function App() {
         products={PRODUCTS}
         onSubmitFeedback={(item) => setMakerFeedback((prev) => [item, ...prev])}
       />
+
+      {/* Fullscreen Photo Lightbox (Product Gallery & Customer Review Photos) */}
+      {lightboxPhoto && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Enlarged photo preview"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-zinc-950/90 backdrop-blur-sm animate-backdrop-fade"
+          onClick={() => setLightboxPhoto(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxPhoto(null)}
+            aria-label="Close photo preview"
+            className="absolute top-4 right-4 p-2.5 rounded-full bg-zinc-800/90 hover:bg-zinc-700 text-white transition cursor-pointer"
+          >
+            <X className="w-5 h-5" aria-hidden="true" />
+          </button>
+          <img
+            src={lightboxPhoto}
+            alt="Enlarged preview"
+            className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   )
 }

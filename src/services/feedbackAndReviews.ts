@@ -127,3 +127,36 @@ export function saveMakerFeedback(items: MakerFeedback[]): void {
   if (typeof window === 'undefined') return
   localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(items))
 }
+
+/**
+ * Resizes and compresses a user-uploaded or camera-captured photo into a compact JPEG data URL
+ * so customer review photos render crisply and fit comfortably in localStorage.
+ */
+export function compressReviewPhoto(file: File, maxWidth = 800, quality = 0.78): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Failed to read image file'))
+    reader.onload = () => {
+      const img = new Image()
+      img.onerror = () => reject(new Error('Invalid image file'))
+      img.onload = () => {
+        const scale = img.width > maxWidth ? maxWidth / img.width : 1
+        const width = Math.round(img.width * scale)
+        const height = Math.round(img.height * scale)
+
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          reject(new Error('Canvas unavailable'))
+          return
+        }
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', quality))
+      }
+      img.src = String(reader.result)
+    }
+    reader.readAsDataURL(file)
+  })
+}

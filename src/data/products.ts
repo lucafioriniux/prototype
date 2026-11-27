@@ -193,6 +193,12 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'mount',
     imageUrl: 'products/accessory-storage-wall-mount.jpg',
+    images: [
+      'products/accessory-storage-wall-mount.jpg',
+      'products/gallery-household-lifestyle.jpg',
+      'products/dyson_dual_dock_clean_1795370758579.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'v15-car-detailing-nozzle-set',
@@ -221,6 +227,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'nozzle',
     imageUrl: 'products/car-cleaning-nozzle-kit-v15.jpg',
+    images: [
+      'products/car-cleaning-nozzle-kit-v15.jpg',
+      'products/gallery-household-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'zero-fatigue-trigger-lock',
@@ -250,6 +261,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'trigger',
     imageUrl: 'products/zero-fatigue-trigger-lock.jpg',
+    images: [
+      'products/zero-fatigue-trigger-lock.jpg',
+      'products/gallery-household-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'on-wand-dual-caddy',
@@ -279,6 +295,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'clip',
     imageUrl: 'products/on-wand-carrying-caddy-4-tools.jpg',
+    images: [
+      'products/on-wand-carrying-caddy-4-tools.jpg',
+      'products/gallery-household-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'modular-honeycomb-drawer-organizer',
@@ -307,6 +328,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'carousel',
     imageUrl: 'products/hex-drawer-organizer.jpg',
+    images: [
+      'products/hex-drawer-organizer.jpg',
+      'products/gallery-precision-calipers.jpg',
+      'products/gallery-household-lifestyle.jpg',
+    ],
   },
   {
     id: 'dual-magnetic-paper-towel-mount',
@@ -335,6 +361,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'mount',
     imageUrl: 'products/magnetic-paper-towel-mount.jpg',
+    images: [
+      'products/magnetic-paper-towel-mount.jpg',
+      'products/gallery-precision-calipers.jpg',
+      'products/gallery-household-lifestyle.jpg',
+    ],
   },
 
   // ==========================================
@@ -365,6 +396,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'mount',
     imageUrl: 'products/tool-battery-wall-mount.jpg',
+    images: [
+      'products/tool-battery-wall-mount.jpg',
+      'products/gallery-workshop-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'magnetic-bit-hex-carousel',
@@ -391,6 +427,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'carousel',
     imageUrl: 'products/magnetic-bit-hex-carousel.jpg',
+    images: [
+      'products/magnetic-bit-hex-carousel.jpg',
+      'products/gallery-workshop-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'shopvac-universal-coupler',
@@ -417,6 +458,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'adapter',
     imageUrl: 'products/shopvac-universal-coupler.jpg',
+    images: [
+      'products/shopvac-universal-coupler.jpg',
+      'products/gallery-workshop-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
 
   // ==========================================
@@ -447,6 +493,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'clip',
     imageUrl: 'products/underdesk-dual-cradle.jpg',
+    images: [
+      'products/underdesk-dual-cradle.jpg',
+      'products/gallery-gaming-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'low-friction-mouse-bungee',
@@ -473,6 +524,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'nozzle',
     imageUrl: 'products/low-friction-mouse-bungee.jpg',
+    images: [
+      'products/low-friction-mouse-bungee.jpg',
+      'products/gallery-gaming-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
 
   // ==========================================
@@ -503,6 +559,11 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'mount',
     imageUrl: 'products/magsafe-vent-mount.jpg',
+    images: [
+      'products/magsafe-vent-mount.jpg',
+      'products/gallery-travel-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
   {
     id: 'modular-center-console-divider',
@@ -529,5 +590,10 @@ export const PRODUCTS: Product[] = [
     ],
     iconType: 'carousel',
     imageUrl: 'products/modular-console-divider.jpg',
+    images: [
+      'products/modular-console-divider.jpg',
+      'products/gallery-travel-lifestyle.jpg',
+      'products/gallery-precision-calipers.jpg',
+    ],
   },
 ]

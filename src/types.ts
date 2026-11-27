@@ -65,6 +65,7 @@ export interface Product {
   features: string[]
   iconType: string
   imageUrl: string
+  images?: string[]
 }
 
 export interface CartItem {
@@ -133,6 +134,7 @@ export interface ProductReview {
   title: string
   comment: string
   configSummary?: string
+  photos?: string[]
   createdAt: string
   verified?: boolean
 }
