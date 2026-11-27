@@ -40,6 +40,7 @@ import { Hero3DViewer } from './components/Hero3DViewer'
 import { InteractiveTiltCard } from './components/InteractiveTiltCard'
 import { AdminPrintQueue } from './components/AdminPrintQueue'
 import { DirectFeedbackModal } from './components/DirectFeedbackModal'
+import { PolicyPages, type PolicyPageId } from './components/PolicyPages'
 import type {
   DysonModel,
   Product,
@@ -259,6 +260,25 @@ export function App() {
   const [userReviews, setUserReviews] = useState<ProductReview[]>(() => loadUserReviews())
   const [makerFeedback, setMakerFeedback] = useState<MakerFeedback[]>(() => loadMakerFeedback())
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
+  const [activePolicyPage, setActivePolicyPage] = useState<PolicyPageId | null>(() => {
+    if (typeof window === 'undefined') return null
+    const h = window.location.hash
+    if (h === '#/pages/contact') return 'contact'
+    if (h === '#/policies/privacy-policy') return 'privacy-policy'
+    if (h === '#/policies/refund-policy') return 'refund-policy'
+    if (h === '#/policies/terms-of-service') return 'terms-of-service'
+    return null
+  })
+
+  const navigateToPolicyPage = (page: PolicyPageId | null) => {
+    setActivePolicyPage(page)
+    if (typeof window !== 'undefined') {
+      if (page === 'contact') window.location.hash = '#/pages/contact'
+      else if (page) window.location.hash = `#/policies/${page}`
+      else window.history.replaceState({}, document.title, window.location.pathname + window.location.search)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
   const [quickViewTab, setQuickViewTab] = useState<'overview' | 'reviews'>('overview')
   const [quickViewImageIndex, setQuickViewImageIndex] = useState(0)
   const [reviewRating, setReviewRating] = useState(5)
@@ -629,6 +649,25 @@ export function App() {
           }
         }}
       />
+    )
+  }
+
+  if (activePolicyPage) {
+    return (
+      <>
+        <PolicyPages
+          activePage={activePolicyPage}
+          onNavigatePage={(page) => navigateToPolicyPage(page)}
+          onBackToStore={() => navigateToPolicyPage(null)}
+          onOpenFeedbackModal={() => setIsFeedbackOpen(true)}
+        />
+        <DirectFeedbackModal
+          isOpen={isFeedbackOpen}
+          onClose={() => setIsFeedbackOpen(false)}
+          products={PRODUCTS}
+          onSubmitFeedback={(item) => setMakerFeedback((prev) => [item, ...prev])}
+        />
+      </>
     )
   }
 
@@ -1464,7 +1503,35 @@ export function App() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <button
+              onClick={() => navigateToPolicyPage('contact')}
+              className="hover:text-zinc-900 dark:hover:text-white hover:underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer font-medium"
+            >
+              Contact
+            </button>
+            <span aria-hidden="true">•</span>
+            <button
+              onClick={() => navigateToPolicyPage('privacy-policy')}
+              className="hover:text-zinc-900 dark:hover:text-white hover:underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer font-medium"
+            >
+              Privacy Policy
+            </button>
+            <span aria-hidden="true">•</span>
+            <button
+              onClick={() => navigateToPolicyPage('refund-policy')}
+              className="hover:text-zinc-900 dark:hover:text-white hover:underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer font-medium"
+            >
+              Refund Policy
+            </button>
+            <span aria-hidden="true">•</span>
+            <button
+              onClick={() => navigateToPolicyPage('terms-of-service')}
+              className="hover:text-zinc-900 dark:hover:text-white hover:underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer font-medium"
+            >
+              Terms of Service
+            </button>
+            <span aria-hidden="true">•</span>
             <button
               onClick={() => setIsFeedbackOpen(true)}
               className="hover:underline flex items-center gap-1 text-zinc-700 dark:text-zinc-200 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer"
@@ -1480,23 +1547,6 @@ export function App() {
               <Layers className="w-3.5 h-3.5" aria-hidden="true" />
               Print Queue Admin
             </button>
-            <span aria-hidden="true">•</span>
-            <button
-              onClick={() => setIsGuidelinesOpen(true)}
-              className="hover:underline flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer"
-            >
-              <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-              Design & Accessibility Guidelines
-            </button>
-            <span aria-hidden="true">•</span>
-            <a
-              href="https://github.com/lucafioriniux/prototype"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1"
-            >
-              GitHub Repository
-            </a>
           </div>
         </div>
       </footer>
