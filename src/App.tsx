@@ -386,7 +386,18 @@ export function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [quickViewProduct, customizingProduct, editingCartItemId, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
+  }, [isFeedbackOpen, quickViewProduct, customizingProduct, editingCartItemId, isCartOpen, isModelFinderOpen, isGuidelinesOpen, orderConfirmed])
+
+  // Lock background page scroll when bottom drawers are open so scroll stays local to the drawer
+  useEffect(() => {
+    if (quickViewProduct || customizingProduct) {
+      const prevOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prevOverflow
+      }
+    }
+  }, [quickViewProduct, customizingProduct])
 
   // Open customizer for a specific product
   const handleOpenCustomizer = (product: Product) => {
@@ -1478,71 +1489,81 @@ export function App() {
       </footer>
 
       {/* ======================================================== */}
-      {/* QUICK VIEW PREVIEW MODAL                                 */}
+      {/* BOTTOM DRAWER: PRODUCT DETAIL & REVIEWS (75% VIEWPORT)   */}
       {/* ======================================================== */}
       {quickViewProduct && (
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="quickview-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/75 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-end bg-zinc-950/75 backdrop-blur-xs animate-backdrop-fade"
           onClick={(e) => {
             if (e.target === e.currentTarget) setQuickViewProduct(null)
           }}
         >
-          <div className="relative w-full max-w-5xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden my-8">
-            {/* Close Button Top Right */}
-            <button
-              onClick={() => setQuickViewProduct(null)}
-              aria-label="Close product preview"
-              className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-zinc-100/90 dark:bg-zinc-800/90 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer backdrop-blur-xs shadow-xs"
-            >
-              <X className="w-5 h-5" aria-hidden="true" />
-            </button>
-
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              {/* Product Visual Showcase (Left) */}
-              <div className="relative bg-zinc-950 flex flex-col justify-between overflow-hidden min-h-[320px] md:min-h-[540px]">
-                <img
-                  src={quickViewProduct.imageUrl.startsWith('http') ? quickViewProduct.imageUrl : `${import.meta.env.BASE_URL}${quickViewProduct.imageUrl}`}
-                  alt={quickViewProduct.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
-
-                {/* Badges Overlay */}
-                <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
-                  {quickViewProduct.badge && (
-                    <span className="px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md backdrop-blur-xs">
-                      {quickViewProduct.badge}
-                    </span>
-                  )}
-                  <span className="px-3 py-1 rounded-md text-xs font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
-                    {quickViewProduct.collection}
-                  </span>
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between text-xs text-zinc-300 backdrop-blur-xs bg-zinc-950/70 p-3 rounded-xl border border-zinc-800">
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
-                    Hand-Inspected & Calibrated Fit
-                  </span>
-                  <span className="text-zinc-400 text-[11px]">Direct Maker Build</span>
-                </div>
+          <div className="w-full h-[78vh] sm:h-[75vh] bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden animate-drawer-up">
+            {/* Subtle Grab Handle + Sticky Drawer Header */}
+            <div className="shrink-0 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md">
+              <div className="flex justify-center pt-2.5 pb-1">
+                <span className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" aria-hidden="true" />
               </div>
-
-              {/* Product Information & Action (Right) */}
-              <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  {/* Collection Label */}
-                  <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+              <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-3.5 pt-1 flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
                     {quickViewProduct.collection} Collection
-                  </div>
-
-                  {/* Title */}
-                  <h3 id="quickview-title" className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white leading-tight">
+                  </span>
+                  <h3 id="quickview-title" className="text-lg sm:text-2xl font-black text-zinc-900 dark:text-white truncate">
                     {quickViewProduct.name}
                   </h3>
+                </div>
+                <button
+                  onClick={() => setQuickViewProduct(null)}
+                  aria-label="Close product drawer"
+                  className="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer shrink-0"
+                >
+                  <X className="w-5 h-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Locally Scrollable Drawer Body */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Left Column: Product Visual Showcase (Sticky on Desktop) */}
+                <div className="lg:col-span-5 lg:sticky lg:top-0 space-y-4">
+                  <div className="relative aspect-[4/3] rounded-2xl bg-zinc-950 overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg">
+                    <img
+                      src={quickViewProduct.imageUrl.startsWith('http') ? quickViewProduct.imageUrl : `${import.meta.env.BASE_URL}${quickViewProduct.imageUrl}`}
+                      alt={quickViewProduct.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent pointer-events-none" />
+
+                    {/* Badges Overlay */}
+                    <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2 z-10">
+                      {quickViewProduct.badge && (
+                        <span className="px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase bg-zinc-900/90 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md backdrop-blur-xs">
+                          {quickViewProduct.badge}
+                        </span>
+                      )}
+                      <span className="px-3 py-1 rounded-md text-xs font-semibold bg-zinc-900/80 text-zinc-200 border border-zinc-700/60 backdrop-blur-xs">
+                        {quickViewProduct.collection}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Craftsmanship Assurance Strip */}
+                  <div className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-950/50 p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800">
+                    <span className="flex items-center gap-2 font-semibold">
+                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" aria-hidden="true" />
+                      ±0.15mm Hand-Inspected Fit
+                    </span>
+                    <span className="text-zinc-400 text-[11px] font-medium">48h Solo-Workshop Dispatch</span>
+                  </div>
+                </div>
+
+                {/* Right Column: Overview & Reviews */}
+                <div className="lg:col-span-7 space-y-6">
 
                   {/* Amazon-Style Rating & Review Count + Tab Switcher */}
                   {(() => {
@@ -1605,49 +1626,46 @@ export function App() {
                         </div>
 
                         {quickViewTab === 'overview' ? (
-                          <>
+                          <div className="space-y-6">
                             {/* Price */}
-                            <div className="space-y-0.5">
-                              <span className="text-[11px] uppercase font-bold text-zinc-400 tracking-wider">Base Price</span>
-                              <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-black text-zinc-900 dark:text-white">
-                                  ${quickViewProduct.basePrice.toFixed(2)}
-                                </span>
-                                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                                  • Customize environment & strength next
-                                </span>
-                              </div>
+                            <div className="flex items-baseline gap-3">
+                              <span className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-white">
+                                ${quickViewProduct.basePrice.toFixed(2)}
+                              </span>
+                              <span className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                                Base price • Choose color, environment & strength next
+                              </span>
                             </div>
 
-                            {/* In-depth Description */}
-                            <div className="space-y-1.5">
+                            {/* Full Description */}
+                            <div className="space-y-2">
                               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                                Overview
+                                Product Overview
                               </h4>
-                              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed max-h-44 overflow-y-auto pr-1">
+                              <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
                                 {quickViewProduct.description}
                               </p>
                             </div>
 
-                            {/* Key Features */}
+                            {/* Key Features (2-Column Grid) */}
                             {quickViewProduct.features && quickViewProduct.features.length > 0 && (
-                              <div className="space-y-1.5 pt-1">
+                              <div className="space-y-3 pt-2">
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                                  Key Features
+                                  Key Features & Engineering
                                 </h4>
-                                <ul className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
                                   {quickViewProduct.features.map((feature, i) => (
-                                    <li key={i} className="flex items-start gap-2">
-                                      <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
+                                    <li key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800">
+                                      <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
                                       <span>{feature}</span>
                                     </li>
                                   ))}
                                 </ul>
                               </div>
                             )}
-                          </>
+                          </div>
                         ) : (
-                          <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+                          <div className="space-y-6">
                             {/* Write a Review Form */}
                             <form
                               onSubmit={(e) => {
@@ -1670,10 +1688,10 @@ export function App() {
                                 setReviewRating(5)
                                 setReviewSubmitted(true)
                               }}
-                              className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 p-3.5 space-y-2.5"
+                              className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 p-5 space-y-3.5"
                             >
                               <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-zinc-900 dark:text-white">
+                                <span className="text-sm font-bold text-zinc-900 dark:text-white">
                                   Write a Product Review
                                 </span>
                                 <div className="flex items-center gap-1" role="radiogroup" aria-label="Select star rating">
@@ -1686,7 +1704,7 @@ export function App() {
                                       className="p-0.5 cursor-pointer hover:scale-110 transition"
                                     >
                                       <Star
-                                        className={`w-4 h-4 ${
+                                        className={`w-5 h-5 ${
                                           star <= reviewRating
                                             ? 'fill-amber-400 text-amber-400'
                                             : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
@@ -1698,57 +1716,59 @@ export function App() {
                               </div>
 
                               {reviewSubmitted && (
-                                <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                                   ✓ Thanks! Your review is live below.
                                 </p>
                               )}
 
-                              <input
-                                type="text"
-                                required
-                                value={reviewAuthor}
-                                onChange={(e) => setReviewAuthor(e.target.value)}
-                                placeholder="Your name *"
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                              />
-                              <input
-                                type="text"
-                                required
-                                value={reviewTitle}
-                                onChange={(e) => setReviewTitle(e.target.value)}
-                                placeholder="Headline (e.g. Snaps right on with zero wobble) *"
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                              />
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input
+                                  type="text"
+                                  required
+                                  value={reviewAuthor}
+                                  onChange={(e) => setReviewAuthor(e.target.value)}
+                                  placeholder="Your name *"
+                                  className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                />
+                                <input
+                                  type="text"
+                                  required
+                                  value={reviewTitle}
+                                  onChange={(e) => setReviewTitle(e.target.value)}
+                                  placeholder="Headline (e.g. Zero wobble) *"
+                                  className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                />
+                              </div>
                               <textarea
                                 required
-                                rows={2}
+                                rows={3}
                                 value={reviewComment}
                                 onChange={(e) => setReviewComment(e.target.value)}
                                 placeholder="Share how it fits and performs... *"
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
                               />
                               <button
                                 type="submit"
-                                className="w-full py-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-xs font-bold transition cursor-pointer"
+                                className="px-5 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-xs font-bold transition cursor-pointer"
                               >
                                 Post Review
                               </button>
                             </form>
 
                             {/* Existing Reviews List */}
-                            <div className="space-y-2.5">
+                            <div className="space-y-3">
                               {productReviews.map((rev) => (
                                 <div
                                   key={rev.id}
-                                  className="rounded-xl border border-zinc-200/80 dark:border-zinc-800 p-3 space-y-1 bg-white dark:bg-zinc-900/60"
+                                  className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 p-4 space-y-2 bg-white dark:bg-zinc-900/60"
                                 >
                                   <div className="flex items-center justify-between gap-2">
-                                    <div className="flex items-center gap-1.5">
+                                    <div className="flex items-center gap-2">
                                       <div className="flex text-amber-400">
                                         {[1, 2, 3, 4, 5].map((s) => (
                                           <Star
                                             key={s}
-                                            className={`w-3 h-3 ${
+                                            className={`w-3.5 h-3.5 ${
                                               s <= rev.rating
                                                 ? 'fill-amber-400 text-amber-400'
                                                 : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300'
@@ -1756,20 +1776,20 @@ export function App() {
                                           />
                                         ))}
                                       </div>
-                                      <span className="text-xs font-bold text-zinc-900 dark:text-white">
+                                      <span className="text-sm font-bold text-zinc-900 dark:text-white">
                                         {rev.title}
                                       </span>
                                     </div>
                                     {rev.verified && (
-                                      <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                                        Verified
+                                      <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Verified Buyer
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                                     {rev.comment}
                                   </p>
-                                  <p className="text-[10px] text-zinc-400">
+                                  <p className="text-[11px] text-zinc-400">
                                     {rev.author}
                                     {rev.configSummary ? ` • ${rev.configSummary}` : ''}
                                   </p>
@@ -1782,25 +1802,35 @@ export function App() {
                     )
                   })()}
                 </div>
+              </div>
+            </div>
 
-                {/* Bottom Actions */}
-                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center gap-3">
+            {/* Sticky Drawer Footer */}
+            <div className="shrink-0 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 px-4 sm:px-8 py-4">
+              <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-zinc-500 block">Base Price</span>
+                  <span className="text-xl font-black text-zinc-900 dark:text-white">
+                    ${quickViewProduct.basePrice.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setQuickViewProduct(null)}
+                    className="py-3 px-5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                  >
+                    Close
+                  </button>
                   <button
                     onClick={() => {
                       const prod = quickViewProduct
                       setQuickViewProduct(null)
                       handleOpenCustomizer(prod)
                     }}
-                    className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${COLLECTION_THEMES[quickViewProduct.collection].cardCta}`}
+                    className={`py-3 px-6 sm:px-8 rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${COLLECTION_THEMES[quickViewProduct.collection].cardCta}`}
                   >
                     <ShoppingCart className="w-4 h-4" aria-hidden="true" />
-                    <span>Configure & Order (${quickViewProduct.basePrice.toFixed(2)})</span>
-                  </button>
-                  <button
-                    onClick={() => setQuickViewProduct(null)}
-                    className="py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
-                  >
-                    Close
+                    <span>Configure & Order</span>
                   </button>
                 </div>
               </div>
@@ -1810,280 +1840,296 @@ export function App() {
       )}
 
       {/* ======================================================== */}
-      {/* MODAL 1: 3D PRINT CUSTOMIZER & ORDER BUILDER             */}
+      {/* BOTTOM DRAWER: 3D PRINT CUSTOMIZER (75% VIEWPORT)        */}
       {/* ======================================================== */}
       {customizingProduct && (
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="customizer-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/70 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-end bg-zinc-950/75 backdrop-blur-xs animate-backdrop-fade"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleCloseCustomizer()
+          }}
         >
-          <div className="relative w-full max-w-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden my-8">
-            {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-              <div>
-                <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
-                  {editingCartItemId && <Pencil className="w-3 h-3" />}
-                  {editingCartItemId ? 'Edit Cart Configuration' : 'Custom 3D Print Configurator'}
-                </span>
-                <h2 id="customizer-title" className="text-xl font-bold text-zinc-900 dark:text-white">
-                  {customizingProduct.name}
-                </h2>
+          <div className="w-full h-[78vh] sm:h-[75vh] bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden animate-drawer-up">
+            {/* Grab Handle + Sticky Drawer Header */}
+            <div className="shrink-0 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md">
+              <div className="flex justify-center pt-2.5 pb-1">
+                <span className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" aria-hidden="true" />
               </div>
-              <button
-                onClick={handleCloseCustomizer}
-                aria-label="Close customizer"
-                className="p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 cursor-pointer"
-              >
-                <X className="w-5 h-5" aria-hidden="true" />
-              </button>
+              <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-3.5 pt-1 flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <span className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                    {editingCartItemId && <Pencil className="w-3 h-3" />}
+                    {editingCartItemId ? 'Edit Cart Configuration' : 'Custom 3D Print Configurator'}
+                  </span>
+                  <h2 id="customizer-title" className="text-lg sm:text-2xl font-black text-zinc-900 dark:text-white truncate">
+                    {customizingProduct.name}
+                  </h2>
+                </div>
+                <button
+                  onClick={handleCloseCustomizer}
+                  aria-label="Close customizer drawer"
+                  className="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer shrink-0"
+                >
+                  <X className="w-5 h-5" aria-hidden="true" />
+                </button>
+              </div>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-              {/* Product Photograph & Live Filament Simulation */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="relative h-32 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-zinc-900">
-                  <img
-                    src={customizingProduct.imageUrl.startsWith('http') ? customizingProduct.imageUrl : `${import.meta.env.BASE_URL}${customizingProduct.imageUrl}`}
-                    alt={customizingProduct.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
-                  <span className="absolute bottom-2 left-3 text-[11px] font-semibold text-white/90">
-                    3D Print Geometry
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex items-center gap-4">
-                  <div
-                    className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-300 flex-shrink-0"
-                    style={{ backgroundColor: selectedColor.hex }}
-                  >
-                    <Layers className="w-8 h-8 text-white/90 drop-shadow" aria-hidden="true" />
-                  </div>
-                  <div className="min-w-0 space-y-0.5">
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-400 block truncate">
-                      Filament Preview
+            {/* Locally Scrollable Drawer Body */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Left Column: Sticky Visual & Live Config Summary */}
+                <div className="lg:col-span-5 lg:sticky lg:top-0 space-y-4">
+                  <div className="relative aspect-[16/10] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-zinc-900 shadow-lg">
+                    <img
+                      src={customizingProduct.imageUrl.startsWith('http') ? customizingProduct.imageUrl : `${import.meta.env.BASE_URL}${customizingProduct.imageUrl}`}
+                      alt={customizingProduct.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute bottom-3 left-4 text-xs font-semibold text-white/90">
+                      {customizingProduct.collection} • Hand-Inspected ±0.15mm
                     </span>
-                    <h4 className="font-bold text-xs text-zinc-900 dark:text-white truncate">
-                      {selectedColor.name}
-                    </h4>
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-                      {selectedMaterial.name} ({selectedInfill.name})
-                    </p>
                   </div>
-                </div>
-              </div>
 
-              {/* 1. Color Selection */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                    1. Select Filament Color Match
-                  </label>
-                  <span className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400">
-                    Selected: {selectedColor.name}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {FILAMENT_COLORS.map((col) => {
-                    const isSelected = selectedColor.id === col.id
+                  {/* Live Filament & Build Preview Card */}
+                  <div className="p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex items-center gap-4">
+                    <div
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-colors duration-300 flex-shrink-0 border border-white/15"
+                      style={{ backgroundColor: selectedColor.hex }}
+                    >
+                      <Layers className="w-8 h-8 text-white/90 drop-shadow" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0 space-y-1">
+                      <span className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-400 block">
+                        Live Configuration Preview
+                      </span>
+                      <h4 className="font-extrabold text-sm text-zinc-900 dark:text-white truncate">
+                        {selectedColor.name}
+                      </h4>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-300 truncate">
+                        {selectedMaterial.name} ({selectedMaterial.code}) • {selectedInfill.name}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Telemetry Summary Panel */}
+                  {(() => {
+                    const telem = calculateTelemetry(customizingProduct, selectedMaterial, selectedInfill)
+                    const unitPrice = calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill)
                     return (
-                      <button
-                        key={col.id}
-                        type="button"
-                        onClick={() => setSelectedColor(col)}
-                        className={`p-2.5 rounded-xl border flex items-center gap-2.5 text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                          isSelected
-                            ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 shadow-xs'
-                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-800/40'
-                        }`}
-                      >
-                        <span
-                          className="w-5 h-5 rounded-full border border-black/20 flex-shrink-0 shadow-xs"
-                          style={{ backgroundColor: col.hex }}
-                          aria-hidden="true"
-                        />
-                        <div className="min-w-0">
-                          <span className="text-xs font-bold block truncate text-zinc-900 dark:text-white">
-                            {col.name}
-                          </span>
-                          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate">
-                            {col.dysonMatch}
-                          </span>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* 2. Environment & Material Choice (Indoor PLA, Indoor+ PLA+, Outdoor PETG) */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                    2. Where Will You Use It? (Material)
-                  </label>
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                    Indoor (PLA) → Outdoor 75°C (PETG)
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {MATERIALS.map((mat) => {
-                    const isSelected = selectedMaterial.id === mat.id
-                    const badgeText =
-                      mat.id === 'pla'
-                        ? 'Everyday Indoor • PLA'
-                        : mat.id === 'pla_plus'
-                        ? 'Heavy-Use Indoor • PLA+'
-                        : 'All-Weather • 75°C PETG'
-                    const badgeColor =
-                      mat.id === 'pla'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
-                        : mat.id === 'pla_plus'
-                        ? 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800'
-                        : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800'
-
-                    return (
-                      <button
-                        key={mat.id}
-                        type="button"
-                        onClick={() => setSelectedMaterial(mat)}
-                        className={`p-3.5 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                          isSelected
-                            ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 text-zinc-900 dark:text-white shadow-xs'
-                            : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
-                        }`}
-                      >
+                      <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 grid grid-cols-3 gap-4 text-center">
                         <div>
-                          <div className="flex items-center justify-between mb-1.5">
-                            <span className="font-extrabold text-sm text-zinc-900 dark:text-white">{mat.name}</span>
-                            {isSelected && <Check className="w-4 h-4 text-cyan-500" aria-hidden="true" />}
-                          </div>
-
-                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-2 ${badgeColor}`}>
-                            {badgeText}
-                          </span>
-
-                          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                            {mat.description}
-                          </p>
+                          <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Est. Print Time</span>
+                          <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">{telem.timeFormatted}</span>
                         </div>
-
-                        <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-[10px] font-medium text-zinc-500 flex justify-between">
-                          <span>Durability</span>
-                          <span className="font-bold text-zinc-700 dark:text-zinc-300">
-                            {'★'.repeat(mat.durabilityRating)}{'☆'.repeat(5 - mat.durabilityRating)}
-                          </span>
+                        <div>
+                          <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Weight</span>
+                          <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">{telem.weightGrams}g</span>
                         </div>
-                      </button>
+                        <div>
+                          <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Unit Price</span>
+                          <span className="font-mono font-extrabold text-sm text-cyan-600 dark:text-cyan-400">${unitPrice.toFixed(2)}</span>
+                        </div>
+                      </div>
                     )
-                  })}
+                  })()}
                 </div>
-              </div>
 
-              {/* 3. Strength & Build Density */}
-              <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
-                  3. Select Strength Level
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {INFILL_OPTIONS.map((inf) => {
-                    const isSelected = selectedInfill.id === inf.id
-                    return (
-                      <button
-                        key={inf.id}
-                        type="button"
-                        onClick={() => setSelectedInfill(inf)}
-                        className={`p-3 rounded-xl border text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
-                          isSelected
-                            ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 shadow-xs'
-                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-zinc-900 dark:text-white">{inf.name}</span>
-                          <span className="text-[10px] font-semibold text-zinc-500">
-                            {inf.priceOffset === 0 ? 'Included' : `+$${inf.priceOffset.toFixed(2)}`}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
-                          {inf.description}
-                        </p>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Telemetry Summary Panel */}
-              {(() => {
-                const telem = calculateTelemetry(customizingProduct, selectedMaterial, selectedInfill)
-                const unitPrice = calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill)
-                return (
-                  <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Est. Print Time</span>
-                      <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">{telem.timeFormatted}</span>
+                {/* Right Column: Spacious Configuration Steps */}
+                <div className="lg:col-span-7 space-y-7">
+                  {/* 1. Color Selection */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                        1. Select Filament Color Match
+                      </label>
+                      <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400">
+                        {selectedColor.name}
+                      </span>
                     </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Filament Weight</span>
-                      <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white">{telem.weightGrams}g</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-zinc-500 block">Configured Price</span>
-                      <span className="font-mono font-extrabold text-sm text-cyan-600 dark:text-cyan-400">${unitPrice.toFixed(2)}</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {FILAMENT_COLORS.map((col) => {
+                        const isSelected = selectedColor.id === col.id
+                        return (
+                          <button
+                            key={col.id}
+                            type="button"
+                            onClick={() => setSelectedColor(col)}
+                            className={`p-3 rounded-xl border flex items-center gap-3 text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                              isSelected
+                                ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 shadow-xs'
+                                : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-800/40'
+                            }`}
+                          >
+                            <span
+                              className="w-6 h-6 rounded-full border border-black/20 flex-shrink-0 shadow-xs"
+                              style={{ backgroundColor: col.hex }}
+                              aria-hidden="true"
+                            />
+                            <div className="min-w-0">
+                              <span className="text-xs font-bold block truncate text-zinc-900 dark:text-white">
+                                {col.name}
+                              </span>
+                              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate">
+                                {col.dysonMatch}
+                              </span>
+                            </div>
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
-                )
-              })()}
+
+                  {/* 2. Environment & Material Choice (Indoor PLA, Indoor+ PLA+, Outdoor PETG) */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                        2. Where Will You Use It? (Material)
+                      </label>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                        Indoor (PLA) → Outdoor 75°C (PETG)
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {MATERIALS.map((mat) => {
+                        const isSelected = selectedMaterial.id === mat.id
+                        const badgeText =
+                          mat.id === 'pla'
+                            ? 'Everyday Indoor • PLA'
+                            : mat.id === 'pla_plus'
+                            ? 'Heavy-Use Indoor • PLA+'
+                            : 'All-Weather • 75°C PETG'
+                        const badgeColor =
+                          mat.id === 'pla'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                            : mat.id === 'pla_plus'
+                            ? 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800'
+                            : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800'
+
+                        return (
+                          <button
+                            key={mat.id}
+                            type="button"
+                            onClick={() => setSelectedMaterial(mat)}
+                            className={`p-4 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                              isSelected
+                                ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 text-zinc-900 dark:text-white shadow-xs'
+                                : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                          >
+                            <div>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <span className="font-extrabold text-sm text-zinc-900 dark:text-white">{mat.name}</span>
+                                {isSelected && <Check className="w-4 h-4 text-cyan-500" aria-hidden="true" />}
+                              </div>
+
+                              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-2 ${badgeColor}`}>
+                                {badgeText}
+                              </span>
+
+                              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug">
+                                {mat.description}
+                              </p>
+                            </div>
+
+                            <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-[10px] font-medium text-zinc-500 flex justify-between">
+                              <span>Durability</span>
+                              <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                                {'★'.repeat(mat.durabilityRating)}{'☆'.repeat(5 - mat.durabilityRating)}
+                              </span>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 3. Strength & Build Density */}
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 block">
+                      3. Select Strength Level
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {INFILL_OPTIONS.map((inf) => {
+                        const isSelected = selectedInfill.id === inf.id
+                        return (
+                          <button
+                            key={inf.id}
+                            type="button"
+                            onClick={() => setSelectedInfill(inf)}
+                            className={`p-4 rounded-xl border text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+                              isSelected
+                                ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 shadow-xs'
+                                : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-sm text-zinc-900 dark:text-white">{inf.name}</span>
+                              <span className="text-[11px] font-semibold text-zinc-500">
+                                {inf.priceOffset === 0 ? 'Included' : `+$${inf.priceOffset.toFixed(2)}`}
+                              </span>
+                            </div>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-snug">
+                              {inf.description}
+                            </p>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Modal Footer */}
-            <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800/80 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-4">
-              {/* Quantity */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-zinc-500">Qty:</span>
-                <div className="flex items-center border border-zinc-300 dark:border-zinc-700 rounded-xl overflow-hidden bg-white dark:bg-zinc-900">
-                  <button
-                    onClick={() => setCustomQuantity(Math.max(1, customQuantity - 1))}
-                    aria-label="Decrease quantity"
-                    className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300"
-                  >
-                    <Minus className="w-3.5 h-3.5" aria-hidden="true" />
-                  </button>
-                  <span className="px-3 text-xs font-bold font-mono text-zinc-900 dark:text-white">
-                    {customQuantity}
-                  </span>
-                  <button
-                    onClick={() => setCustomQuantity(customQuantity + 1)}
-                    aria-label="Increase quantity"
-                    className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300"
-                  >
-                    <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-                  </button>
+            {/* Sticky Drawer Footer */}
+            <div className="shrink-0 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 px-4 sm:px-8 py-4">
+              <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+                {/* Quantity */}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-zinc-500">Qty:</span>
+                  <div className="flex items-center border border-zinc-300 dark:border-zinc-700 rounded-xl overflow-hidden bg-white dark:bg-zinc-900">
+                    <button
+                      onClick={() => setCustomQuantity(Math.max(1, customQuantity - 1))}
+                      aria-label="Decrease quantity"
+                      className="p-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 cursor-pointer"
+                    >
+                      <Minus className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
+                    <span className="px-3.5 text-sm font-bold font-mono text-zinc-900 dark:text-white">
+                      {customQuantity}
+                    </span>
+                    <button
+                      onClick={() => setCustomQuantity(customQuantity + 1)}
+                      aria-label="Increase quantity"
+                      className="p-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Add or Update Cart button */}
-              <button
-                onClick={handleAddToCart}
-                className="px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
-              >
-                {editingCartItemId ? (
-                  <>
-                    <Check className="w-4 h-4" aria-hidden="true" />
-                    Update Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag className="w-4 h-4" aria-hidden="true" />
-                    Add to Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
-                  </>
-                )}
-              </button>
+                {/* Add or Update Cart button */}
+                <button
+                  onClick={handleAddToCart}
+                  className="px-6 sm:px-8 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-md transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 cursor-pointer"
+                >
+                  {editingCartItemId ? (
+                    <>
+                      <Check className="w-4 h-4" aria-hidden="true" />
+                      Update Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-4 h-4" aria-hidden="true" />
+                      Add to Cart • ${(calculateCustomPrice(customizingProduct, selectedMaterial, selectedInfill) * customQuantity).toFixed(2)}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
