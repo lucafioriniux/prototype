@@ -1499,7 +1499,7 @@ export function App() {
             if (e.target === e.currentTarget) setQuickViewProduct(null)
           }}
         >
-          <div className="relative w-full max-w-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden my-8">
+          <div className="relative w-full max-w-5xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden my-8">
             {/* Close Button Top Right */}
             <button
               onClick={() => setQuickViewProduct(null)}
@@ -1511,7 +1511,7 @@ export function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2">
               {/* Product Visual Showcase (Left) */}
-              <div className="relative bg-zinc-950 flex flex-col justify-between overflow-hidden min-h-[300px] md:min-h-[460px]">
+              <div className="relative bg-zinc-950 flex flex-col justify-between overflow-hidden min-h-[320px] md:min-h-[540px]">
                 <img
                   src={quickViewProduct.imageUrl.startsWith('http') ? quickViewProduct.imageUrl : `${import.meta.env.BASE_URL}${quickViewProduct.imageUrl}`}
                   alt={quickViewProduct.name}
@@ -1541,7 +1541,7 @@ export function App() {
               </div>
 
               {/* Product Information & Action (Right) */}
-              <div className="p-6 sm:p-8 flex flex-col justify-between space-y-6">
+              <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
                   {/* Collection Label */}
                   <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">
@@ -1633,7 +1633,7 @@ export function App() {
                               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                                 Overview
                               </h4>
-                              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed max-h-32 overflow-y-auto pr-1">
+                              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed max-h-44 overflow-y-auto pr-1">
                                 {quickViewProduct.description}
                               </p>
                             </div>
@@ -1656,7 +1656,7 @@ export function App() {
                             )}
                           </>
                         ) : (
-                          <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
+                          <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
                             {/* Write a Review Form */}
                             <form
                               onSubmit={(e) => {
