@@ -7,6 +7,7 @@ import {
   Copy,
   Layers,
   Mail,
+  MessageSquare,
   Package,
   PauseCircle,
   PlayCircle,
@@ -16,12 +17,14 @@ import {
   Trash2,
   Truck,
 } from 'lucide-react'
-import type { PrintJobStatus, PrintQueueOrder, QueueStatusSummary } from '../types'
+import type { MakerFeedback, PrintJobStatus, PrintQueueOrder, QueueStatusSummary } from '../types'
 import { getAmsFilamentGroups } from '../services/printQueue'
 
 interface AdminPrintQueueProps {
   orders: PrintQueueOrder[]
   queueStatus: QueueStatusSummary
+  feedbackItems: MakerFeedback[]
+  onToggleFeedbackStatus: (feedbackId: string) => void
   onUpdateStatus: (orderId: string, status: PrintJobStatus, trackingNumber?: string) => void
   onToggleManualPause: () => void
   onSimulateOrder: () => void
@@ -29,7 +32,7 @@ interface AdminPrintQueueProps {
   onExitAdmin: () => void
 }
 
-type FilterTab = 'active' | 'batch_1' | 'batch_2_24h' | 'shipped'
+type FilterTab = 'active' | 'batch_1' | 'batch_2_24h' | 'shipped' | 'inbox'
 
 const STATUS_STEPS: { id: PrintJobStatus; label: string }[] = [
   { id: 'queued', label: 'Queued' },
@@ -47,6 +50,8 @@ function formatDuration(minutes: number): string {
 export function AdminPrintQueue({
   orders,
   queueStatus,
+  feedbackItems,
+  onToggleFeedbackStatus,
   onUpdateStatus,
   onToggleManualPause,
   onSimulateOrder,
@@ -264,6 +269,10 @@ export function AdminPrintQueue({
                   id: 'shipped',
                   label: `Shipped (${orders.filter((o) => o.status === 'shipped').length})`,
                 },
+                {
+                  id: 'inbox',
+                  label: `Maker Inbox (${feedbackItems.filter((f) => f.status === 'unread').length} new)`,
+                },
               ] as { id: FilterTab; label: string }[]
             ).map((tab) => (
               <button
@@ -273,7 +282,9 @@ export function AdminPrintQueue({
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'bg-cyan-500 text-zinc-950'
+                    ? tab.id === 'inbox'
+                      ? 'bg-pink-500 text-white'
+                      : 'bg-cyan-500 text-zinc-950'
                     : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
                 }`}
               >
@@ -282,7 +293,7 @@ export function AdminPrintQueue({
             ))}
           </div>
 
-          {orders.some((o) => o.status === 'shipped') && (
+          {activeTab !== 'inbox' && orders.some((o) => o.status === 'shipped') && (
             <button
               type="button"
               onClick={onClearShipped}
@@ -294,8 +305,76 @@ export function AdminPrintQueue({
           )}
         </div>
 
-        {/* Orders List */}
-        {filteredOrders.length === 0 ? (
+        {/* Maker Inbox View vs Orders List */}
+        {activeTab === 'inbox' ? (
+          feedbackItems.length === 0 ? (
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-12 text-center space-y-3">
+              <MessageSquare className="w-10 h-10 text-zinc-600 mx-auto" aria-hidden="true" />
+              <h2 className="text-base font-bold text-white">Maker Inbox is Empty</h2>
+              <p className="text-xs text-zinc-400 max-w-md mx-auto">
+                Direct feedback, custom part ideas, and fit notes sent via the storefront&apos;s{' '}
+                <strong className="text-cyan-400">Message Luca</strong> button will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {feedbackItems.map((fb) => (
+                <article
+                  key={fb.id}
+                  className={`rounded-2xl border p-5 space-y-3 transition ${
+                    fb.status === 'unread'
+                      ? 'border-pink-500/40 bg-zinc-900/95'
+                      : 'border-zinc-800 bg-zinc-900/60 opacity-80'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-zinc-400">{fb.id}</span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                          {fb.category}
+                        </span>
+                        {fb.productName && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-zinc-800 text-zinc-300">
+                            {fb.productName}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-zinc-300">
+                        <strong className="text-white">{fb.name}</strong> •{' '}
+                        <span className="text-zinc-400">{fb.email}</span>
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`mailto:${fb.email}?subject=${encodeURIComponent(`Re: ${fb.category} — Forma`)}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold border border-zinc-700 transition"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-cyan-400" aria-hidden="true" />
+                        <span>Reply</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => onToggleFeedbackStatus(fb.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                          fb.status === 'unread'
+                            ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950'
+                            : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                        }`}
+                      >
+                        {fb.status === 'unread' ? 'Mark Resolved' : 'Reopen'}
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-zinc-200 leading-relaxed bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-3.5">
+                    {fb.message}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )
+        ) : filteredOrders.length === 0 ? (
           <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-12 text-center space-y-3">
             <Package className="w-10 h-10 text-zinc-600 mx-auto" aria-hidden="true" />
             <h2 className="text-base font-bold text-white">No orders in this view</h2>

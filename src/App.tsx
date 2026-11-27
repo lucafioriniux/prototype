@@ -30,11 +30,13 @@ import {
   Star,
   Eye,
   Pencil,
-  ArrowDown
+  ArrowDown,
+  MessageSquare
 } from 'lucide-react'
 import { Hero3DViewer } from './components/Hero3DViewer'
 import { InteractiveTiltCard } from './components/InteractiveTiltCard'
 import { AdminPrintQueue } from './components/AdminPrintQueue'
+import { DirectFeedbackModal } from './components/DirectFeedbackModal'
 import type {
   DysonModel,
   Product,
@@ -44,7 +46,9 @@ import type {
   CartItem,
   ProductCollection,
   PrintJobStatus,
-  PrintQueueOrder
+  PrintQueueOrder,
+  ProductReview,
+  MakerFeedback
 } from './types'
 import {
   DYSON_MODELS,
@@ -68,6 +72,14 @@ import {
   saveQueueOrders,
   updateOrderInList
 } from './services/printQueue'
+import {
+  getLiveProductRating,
+  getReviewsForProduct,
+  loadMakerFeedback,
+  loadUserReviews,
+  saveMakerFeedback,
+  saveUserReviews
+} from './services/feedbackAndReviews'
 
 interface CollectionThemeConfig {
   name: ProductCollection
@@ -239,6 +251,26 @@ export function App() {
     saveManualPause(manualQueuePause)
   }, [manualQueuePause])
 
+  // Product Reviews & Direct Maker Feedback state
+  const [userReviews, setUserReviews] = useState<ProductReview[]>(() => loadUserReviews())
+  const [makerFeedback, setMakerFeedback] = useState<MakerFeedback[]>(() => loadMakerFeedback())
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
+  const [quickViewTab, setQuickViewTab] = useState<'overview' | 'reviews'>('overview')
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewAuthor, setReviewAuthor] = useState('')
+  const [reviewTitle, setReviewTitle] = useState('')
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewConfig, setReviewConfig] = useState('')
+  const [reviewSubmitted, setReviewSubmitted] = useState(false)
+
+  useEffect(() => {
+    saveUserReviews(userReviews)
+  }, [userReviews])
+
+  useEffect(() => {
+    saveMakerFeedback(makerFeedback)
+  }, [makerFeedback])
+
   // Customizer form state
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption>(MATERIALS[0])
   const [selectedColor, setSelectedColor] = useState<FilamentColor>(FILAMENT_COLORS[0])
@@ -338,7 +370,8 @@ export function App() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (quickViewProduct) setQuickViewProduct(null)
+        if (isFeedbackOpen) setIsFeedbackOpen(false)
+        else if (quickViewProduct) setQuickViewProduct(null)
         else if (customizingProduct) {
           setCustomizingProduct(null)
           if (editingCartItemId) {
@@ -547,6 +580,16 @@ export function App() {
       <AdminPrintQueue
         orders={queueOrders}
         queueStatus={queueStatus}
+        feedbackItems={makerFeedback}
+        onToggleFeedbackStatus={(feedbackId: string) =>
+          setMakerFeedback((prev) =>
+            prev.map((f) =>
+              f.id === feedbackId
+                ? { ...f, status: f.status === 'unread' ? 'resolved' : 'unread' }
+                : f
+            )
+          )
+        }
         onUpdateStatus={(orderId: string, status: PrintJobStatus, trackingNumber?: string) =>
           setQueueOrders((prev) => updateOrderInList(prev, orderId, status, trackingNumber))
         }
@@ -627,7 +670,18 @@ export function App() {
           <Logo size="md" />
 
           {/* Search, Theme, Cart Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Direct Maker Feedback Trigger */}
+            <button
+              type="button"
+              onClick={() => setIsFeedbackOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+              title="Send feedback or custom part request directly to Luca"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
+              <span className="hidden sm:inline">Feedback</span>
+            </button>
+
             {/* Dark/Light Mode Switcher */}
             <button
               onClick={() => setDarkMode(!darkMode)}
@@ -1123,6 +1177,7 @@ export function App() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredProducts.map((product) => {
+                      const liveRating = getLiveProductRating(product, userReviews)
                       return (
                         <article
                           key={product.id}
@@ -1131,7 +1186,11 @@ export function App() {
                           <div>
                             {/* Product Preview Header Image with Quick View Trigger */}
                             <div
-                              onClick={() => setQuickViewProduct(product)}
+                              onClick={() => {
+                                setQuickViewTab('overview')
+                                setReviewSubmitted(false)
+                                setQuickViewProduct(product)
+                              }}
                               className="relative h-48 bg-zinc-900 overflow-hidden group/img cursor-pointer"
                               title={`Click to preview ${product.name}`}
                             >
@@ -1173,17 +1232,26 @@ export function App() {
                                 </h4>
                               </div>
 
-                              {/* Amazon-Style Rating Stars */}
-                              <div className="flex items-center gap-1.5 pt-0.5">
+                              {/* Amazon-Style Rating Stars (Click to read/write reviews) */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setQuickViewTab('reviews')
+                                  setReviewSubmitted(false)
+                                  setQuickViewProduct(product)
+                                }}
+                                className="flex items-center gap-1.5 pt-0.5 hover:opacity-80 transition cursor-pointer text-left"
+                                title="Read or write customer reviews"
+                              >
                                 <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
-                                  {product.rating.toFixed(1)}
+                                  {liveRating.rating.toFixed(1)}
                                 </span>
-                                <div className="flex items-center text-amber-400" aria-label={`${product.rating} out of 5 stars`}>
+                                <div className="flex items-center text-amber-400" aria-label={`${liveRating.rating} out of 5 stars`}>
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <Star
                                       key={star}
                                       className={`w-3.5 h-3.5 ${
-                                        star <= Math.round(product.rating)
+                                        star <= Math.round(liveRating.rating)
                                           ? 'fill-amber-400 text-amber-400'
                                           : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
                                       }`}
@@ -1191,10 +1259,10 @@ export function App() {
                                     />
                                   ))}
                                 </div>
-                                <span className="text-zinc-500 dark:text-zinc-400 text-[11px] font-medium">
-                                  ({product.reviewsCount.toLocaleString()})
+                                <span className="text-zinc-500 dark:text-zinc-400 text-[11px] font-medium underline-offset-2 hover:underline">
+                                  ({liveRating.count.toLocaleString()})
                                 </span>
-                              </div>
+                              </button>
 
                               {/* Concise Summary Description */}
                               <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2">
@@ -1381,7 +1449,15 @@ export function App() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <button
+              onClick={() => setIsFeedbackOpen(true)}
+              className="hover:underline flex items-center gap-1 text-zinc-700 dark:text-zinc-200 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
+              Message Luca
+            </button>
+            <span aria-hidden="true">•</span>
             <button
               onClick={() => setIsAdminView(true)}
               className="hover:underline flex items-center gap-1 text-cyan-600 dark:text-cyan-400 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded p-1 cursor-pointer"
@@ -1477,68 +1553,254 @@ export function App() {
                     {quickViewProduct.name}
                   </h3>
 
-                  {/* Amazon-Style Rating & Review Count */}
-                  <div className="flex items-center gap-2 pt-1 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
-                    <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">
-                      {quickViewProduct.rating.toFixed(1)}
-                    </span>
-                    <div className="flex items-center text-amber-400" aria-label={`${quickViewProduct.rating} out of 5 stars`}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${
-                            star <= Math.round(quickViewProduct.rating)
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
-                          }`}
-                          aria-hidden="true"
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                      ({quickViewProduct.reviewsCount.toLocaleString()} customer reviews)
-                    </span>
-                  </div>
+                  {/* Amazon-Style Rating & Review Count + Tab Switcher */}
+                  {(() => {
+                    const liveStats = getLiveProductRating(quickViewProduct, userReviews)
+                    const productReviews = getReviewsForProduct(quickViewProduct.id, userReviews)
+                    return (
+                      <>
+                        <div className="flex items-center justify-between gap-2 pt-1 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">
+                              {liveStats.rating.toFixed(1)}
+                            </span>
+                            <div className="flex items-center text-amber-400" aria-label={`${liveStats.rating} out of 5 stars`}>
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                  key={star}
+                                  className={`w-4 h-4 ${
+                                    star <= Math.round(liveStats.rating)
+                                      ? 'fill-amber-400 text-amber-400'
+                                      : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
+                                  }`}
+                                  aria-hidden="true"
+                                />
+                              ))}
+                            </div>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                              ({liveStats.count.toLocaleString()} reviews)
+                            </span>
+                          </div>
+                        </div>
 
-                  {/* Price */}
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-zinc-400 tracking-wider">Base Price</span>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black text-zinc-900 dark:text-white">
-                        ${quickViewProduct.basePrice.toFixed(2)}
-                      </span>
-                      <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                        • Customize filament & infill next
-                      </span>
-                    </div>
-                  </div>
+                        {/* Overview vs Reviews Tabs */}
+                        <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/70 p-1 rounded-xl" role="tablist">
+                          <button
+                            type="button"
+                            role="tab"
+                            aria-selected={quickViewTab === 'overview'}
+                            onClick={() => setQuickViewTab('overview')}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                              quickViewTab === 'overview'
+                                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
+                                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                            }`}
+                          >
+                            Overview
+                          </button>
+                          <button
+                            type="button"
+                            role="tab"
+                            aria-selected={quickViewTab === 'reviews'}
+                            onClick={() => setQuickViewTab('reviews')}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                              quickViewTab === 'reviews'
+                                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
+                                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                            }`}
+                          >
+                            Reviews & Write One ({productReviews.length})
+                          </button>
+                        </div>
 
-                  {/* In-depth Description */}
-                  <div className="space-y-1.5">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Overview
-                    </h4>
-                    <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed max-h-36 overflow-y-auto pr-1">
-                      {quickViewProduct.description}
-                    </p>
-                  </div>
+                        {quickViewTab === 'overview' ? (
+                          <>
+                            {/* Price */}
+                            <div className="space-y-0.5">
+                              <span className="text-[11px] uppercase font-bold text-zinc-400 tracking-wider">Base Price</span>
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-3xl font-black text-zinc-900 dark:text-white">
+                                  ${quickViewProduct.basePrice.toFixed(2)}
+                                </span>
+                                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                  • Customize environment & strength next
+                                </span>
+                              </div>
+                            </div>
 
-                  {/* Key Features */}
-                  {quickViewProduct.features && quickViewProduct.features.length > 0 && (
-                    <div className="space-y-1.5 pt-1">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                        Key Features
-                      </h4>
-                      <ul className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">
-                        {quickViewProduct.features.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                            {/* In-depth Description */}
+                            <div className="space-y-1.5">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                                Overview
+                              </h4>
+                              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed max-h-32 overflow-y-auto pr-1">
+                                {quickViewProduct.description}
+                              </p>
+                            </div>
+
+                            {/* Key Features */}
+                            {quickViewProduct.features && quickViewProduct.features.length > 0 && (
+                              <div className="space-y-1.5 pt-1">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                                  Key Features
+                                </h4>
+                                <ul className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">
+                                  {quickViewProduct.features.map((feature, i) => (
+                                    <li key={i} className="flex items-start gap-2">
+                                      <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
+                                      <span>{feature}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
+                            {/* Write a Review Form */}
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault()
+                                if (!reviewAuthor.trim() || !reviewTitle.trim() || !reviewComment.trim()) return
+                                const newRev: ProductReview = {
+                                  id: `rev-${Date.now().toString(36)}`,
+                                  productId: quickViewProduct.id,
+                                  author: reviewAuthor.trim(),
+                                  rating: reviewRating,
+                                  title: reviewTitle.trim(),
+                                  comment: reviewComment.trim(),
+                                  configSummary: reviewConfig.trim() || undefined,
+                                  createdAt: new Date().toISOString(),
+                                  verified: false,
+                                }
+                                setUserReviews((prev) => [newRev, ...prev])
+                                setReviewAuthor('')
+                                setReviewTitle('')
+                                setReviewComment('')
+                                setReviewConfig('')
+                                setReviewRating(5)
+                                setReviewSubmitted(true)
+                              }}
+                              className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 p-3.5 space-y-2.5"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-zinc-900 dark:text-white">
+                                  Write a Product Review
+                                </span>
+                                <div className="flex items-center gap-1" role="radiogroup" aria-label="Select star rating">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                      key={star}
+                                      type="button"
+                                      onClick={() => setReviewRating(star)}
+                                      aria-label={`${star} stars`}
+                                      className="p-0.5 cursor-pointer hover:scale-110 transition"
+                                    >
+                                      <Star
+                                        className={`w-4 h-4 ${
+                                          star <= reviewRating
+                                            ? 'fill-amber-400 text-amber-400'
+                                            : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300 dark:text-zinc-600'
+                                        }`}
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {reviewSubmitted && (
+                                <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                  ✓ Thanks! Your review is live below.
+                                </p>
+                              )}
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <input
+                                  type="text"
+                                  required
+                                  value={reviewAuthor}
+                                  onChange={(e) => setReviewAuthor(e.target.value)}
+                                  placeholder="Your name *"
+                                  className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                />
+                                <input
+                                  type="text"
+                                  value={reviewConfig}
+                                  onChange={(e) => setReviewConfig(e.target.value)}
+                                  placeholder="Material/Model (optional)"
+                                  className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                required
+                                value={reviewTitle}
+                                onChange={(e) => setReviewTitle(e.target.value)}
+                                placeholder="Headline (e.g. Snaps right on with zero wobble) *"
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                              />
+                              <textarea
+                                required
+                                rows={2}
+                                value={reviewComment}
+                                onChange={(e) => setReviewComment(e.target.value)}
+                                placeholder="Share how it fits and performs... *"
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                              />
+                              <button
+                                type="submit"
+                                className="w-full py-2 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-xs font-bold transition cursor-pointer"
+                              >
+                                Post Review
+                              </button>
+                            </form>
+
+                            {/* Existing Reviews List */}
+                            <div className="space-y-2.5">
+                              {productReviews.map((rev) => (
+                                <div
+                                  key={rev.id}
+                                  className="rounded-xl border border-zinc-200/80 dark:border-zinc-800 p-3 space-y-1 bg-white dark:bg-zinc-900/60"
+                                >
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-1.5">
+                                      <div className="flex text-amber-400">
+                                        {[1, 2, 3, 4, 5].map((s) => (
+                                          <Star
+                                            key={s}
+                                            className={`w-3 h-3 ${
+                                              s <= rev.rating
+                                                ? 'fill-amber-400 text-amber-400'
+                                                : 'fill-zinc-200 dark:fill-zinc-700 text-zinc-300'
+                                            }`}
+                                          />
+                                        ))}
+                                      </div>
+                                      <span className="text-xs font-bold text-zinc-900 dark:text-white">
+                                        {rev.title}
+                                      </span>
+                                    </div>
+                                    {rev.verified && (
+                                      <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Verified
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                                    {rev.comment}
+                                  </p>
+                                  <p className="text-[10px] text-zinc-400">
+                                    {rev.author}
+                                    {rev.configSummary ? ` • ${rev.configSummary}` : ''}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
 
                 {/* Bottom Actions */}
@@ -2378,6 +2640,12 @@ export function App() {
           </div>
         </div>
       )}
+      <DirectFeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        products={PRODUCTS}
+        onSubmitFeedback={(item) => setMakerFeedback((prev) => [item, ...prev])}
+      />
     </div>
   )
 }

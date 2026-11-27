@@ -124,3 +124,32 @@ export interface QueueStatusSummary {
   batch1Minutes: number
   batch2Minutes: number
 }
+
+export interface ProductReview {
+  id: string
+  productId: string
+  author: string
+  rating: number
+  title: string
+  comment: string
+  configSummary?: string
+  createdAt: string
+  verified?: boolean
+}
+
+export type FeedbackCategory =
+  | 'Product Idea / Custom Part'
+  | 'Fit & Tolerance Feedback'
+  | 'Website Experience'
+  | 'Order / General Question'
+
+export interface MakerFeedback {
+  id: string
+  category: FeedbackCategory
+  name: string
+  email: string
+  productName?: string
+  message: string
+  createdAt: string
+  status: 'unread' | 'resolved'
+}
